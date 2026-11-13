@@ -30,7 +30,7 @@ async function peer(server: BridgeServer, overrides: Record<string, unknown> = {
   const socket = new WebSocket(`ws://127.0.0.1:${server.port}`);
   sockets.push(socket);
   await new Promise<void>((resolve, reject) => { socket.once('open', resolve); socket.once('error', reject); });
-  socket.send(JSON.stringify({ version: 2, type: 'hello', workspace: server.config.workspace, token: server.config.token, plugin_version: '0.2.0', blockbench_version: '5.2.2', ...overrides }));
+  socket.send(JSON.stringify({ version: 3, type: 'hello', workspace: server.config.workspace, token: server.config.token, plugin_version: '0.3.0', blockbench_version: '5.2.2', ...overrides }));
   return socket;
 }
 const stateInput = inputSchemas.get_project_state.parse({});
@@ -75,7 +75,7 @@ describe('real loopback WebSocket bridge', () => {
       if (request.type !== 'request') return;
       received.push(request);
       if (received.length === 2) for (const item of received.reverse()) {
-        socket.send(JSON.stringify({ version: 2, type: 'response', request_id: item.request_id, ok: true, result: { ...emptyState, offset: (item.params as typeof stateInput).offset } }));
+        socket.send(JSON.stringify({ version: 3, type: 'response', request_id: item.request_id, ok: true, result: { ...emptyState, offset: (item.params as typeof stateInput).offset } }));
       }
     });
     const [first, second] = await Promise.all([
@@ -94,6 +94,30 @@ describe('real loopback WebSocket bridge', () => {
     await pause(60);
     expect(count).toBe(1);
   });
+  it('keeps animation reads certain after timeout, cancellation, invalid results and disconnect', async () => {
+    const server = await bridge(80);
+    const socket = await peer(server);
+    await until(() => server.connected);
+    const input = inputSchemas.get_animation_state.parse({ project_id: randomUUID() });
+    await expect(server.call('get_animation_state', input))
+      .rejects.toMatchObject({ code: 'TIMEOUT', outcomeUnknown: false });
+    const controller = new AbortController();
+    const cancelled = expect(server.call('get_animation_state', input, controller.signal))
+      .rejects.toMatchObject({ code: 'CANCELLED', outcomeUnknown: false });
+    controller.abort();
+    await cancelled;
+    socket.on('message', data => {
+      const value = JSON.parse(data.toString()) as Request;
+      socket.send(JSON.stringify({ version: 3, type: 'response', request_id: value.request_id, ok: true, result: {} }));
+    });
+    await expect(server.call('get_animation_state', input))
+      .rejects.toMatchObject({ code: 'INVALID_MESSAGE', outcomeUnknown: false });
+    socket.removeAllListeners('message');
+    const disconnected = expect(server.call('get_animation_state', input))
+      .rejects.toMatchObject({ code: 'DISCONNECTED', outcomeUnknown: false });
+    socket.close();
+    await disconnected;
+  });
   it('cleans pending requests on disconnect and can accept a replacement peer', async () => {
     const server = await bridge();
     const socket = await peer(server);
@@ -105,7 +129,7 @@ describe('real loopback WebSocket bridge', () => {
     await until(() => server.connected);
     replacement.on('message', data => {
       const value = JSON.parse(data.toString()) as Request;
-      replacement.send(JSON.stringify({ version: 2, type: 'response', request_id: value.request_id, ok: true, result: emptyState }));
+      replacement.send(JSON.stringify({ version: 3, type: 'response', request_id: value.request_id, ok: true, result: emptyState }));
     });
     await expect(server.call('get_project_state', stateInput)).resolves.toEqual(emptyState);
   });
@@ -119,7 +143,7 @@ describe('real loopback WebSocket bridge', () => {
     await result;
     socket.on('message', data => {
       const value = JSON.parse(data.toString()) as Request;
-      socket.send(JSON.stringify({ version: 2, type: 'response', request_id: value.request_id, ok: true, result: { wrong: true } }));
+      socket.send(JSON.stringify({ version: 3, type: 'response', request_id: value.request_id, ok: true, result: { wrong: true } }));
     });
     await expect(server.call('get_project_state', stateInput)).rejects.toMatchObject({ code: 'INVALID_MESSAGE' });
   });
@@ -149,7 +173,13 @@ describe('real loopback WebSocket bridge', () => {
 });
 
 describe('plugin dispatcher', () => {
-  const request = (): Request => ({ version: 2, type: 'request', request_id: randomUUID(), deadline_ms: Date.now() + 1000, command: 'get_project_state', params: stateInput });
+  const request = (): Request => ({ version: 3, type: 'request', request_id: randomUUID(), deadline_ms: Date.now() + 1000, command: 'get_project_state', params: stateInput });
+  it('marks invalid animation query output as a read-only failure', async () => {
+    const dispatcher = new Dispatcher(() => ({}), silentLogger);
+    expect(await dispatcher.receive(JSON.stringify({ ...request(), command: 'get_animation_state',
+      params: { project_id: randomUUID() } })))
+      .toMatchObject({ ok: false, error: { code: 'INVALID_MESSAGE', outcome_unknown: false } });
+  });
   it('deduplicates request_id and refuses reuse with different arguments', async () => {
     let calls = 0;
     const dispatcher = new Dispatcher(() => { calls++; return emptyState; }, silentLogger);

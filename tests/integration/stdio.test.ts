@@ -26,7 +26,7 @@ async function freePort(): Promise<number> {
 }
 
 describe('official SDK client -> real stdio server -> real WS -> adapter', () => {
-  it.each(['legacy', 'modern'] as const)('runs all ten tools using %s protocol mode', async mode => {
+  it.each(['legacy', 'modern'] as const)('runs all sixteen tools using %s protocol mode', async mode => {
     const root = tempWorkspace();
     const workspace = new Workspace(root, fs);
     fs.writeFileSync(path.join(root, 'atlas.png'), pngFixture());
@@ -53,7 +53,7 @@ describe('official SDK client -> real stdio server -> real WS -> adapter', () =>
       const peer = socket;
       await new Promise<void>((resolve, reject) => { peer.once('open', resolve); peer.once('error', reject); });
       const ready = new Promise<void>(resolve => peer.once('message', () => resolve()));
-      peer.send(JSON.stringify({ version: 2, type: 'hello', workspace: root, token: config.token, plugin_version: '0.2.0', blockbench_version: '5.2.2' }));
+      peer.send(JSON.stringify({ version: 3, type: 'hello', workspace: root, token: config.token, plugin_version: '0.3.0', blockbench_version: '5.2.2' }));
       await ready;
       peer.on('message', data => { void dispatcher.receive(data.toString()).then(response => { if (response) peer.send(JSON.stringify(response)); }); });
       const created = await client.callTool({ name: 'create_project', arguments: { name: 'stdio_test', model_identifier: 'stdio_test' } });
@@ -84,6 +84,21 @@ describe('official SDK client -> real stdio server -> real WS -> adapter', () =>
         cubes: [{ parent_id: head, uv_offset: [8,8], mirror_uv: true, texture_ids: [texture.id] }],
         textures: [{ id: texture.id, internal: true }],
       });
+      const clip = await client.callTool({name:'create_animation',arguments:{project_id:id,name:'animation.test.wave',length:2}});
+      const animationId = outputSchemas.create_animation.parse(clip.structuredContent).animation.id;
+      const metadata = await client.callTool({name:'update_animation',arguments:{project_id:id,animation_id:animationId,loop:'loop'}});
+      expect(outputSchemas.update_animation.parse(metadata.structuredContent).animation.loop).toBe('loop');
+      const keyed = await client.callTool({name:'set_keyframes',arguments:{project_id:id,animation_id:animationId,keyframes:[
+        {bone_id:head,channel:'rotation',time:0,value:[0,0,0]}, {bone_id:head,channel:'rotation',time:1,value:[0,45,0]},
+        {bone_id:head,channel:'position',time:1,value:[0,2,0]}, {bone_id:head,channel:'scale',time:1,value:[1,1.2,1]},
+      ]}});
+      const keyIds=outputSchemas.set_keyframes.parse(keyed.structuredContent).keyframe_ids;
+      const preview=await client.callTool({name:'preview_animation',arguments:{project_id:id,animation_id:animationId,time:0.5}});
+      expect(outputSchemas.preview_animation.parse(preview.structuredContent)).toMatchObject({time:0.5,playing:false});
+      const removed=await client.callTool({name:'delete_keyframes',arguments:{project_id:id,animation_id:animationId,keyframe_ids:[keyIds[3]]}});
+      expect(outputSchemas.delete_keyframes.parse(removed.structuredContent).count).toBe(1);
+      const animState=await client.callTool({name:'get_animation_state',arguments:{project_id:id,animation_id:animationId}});
+      expect(outputSchemas.get_animation_state.parse(animState.structuredContent).total).toBe(3);
       const saved = await client.callTool({ name: 'save_project', arguments: { project_id: id, path: 'stdio.bbmodel' } });
       expect(outputSchemas.save_project.parse(saved.structuredContent).saved).toBe(true);
       const blocked = await client.callTool({ name: 'save_project', arguments: { project_id: id, path: '../escape.bbmodel' } });

@@ -5,7 +5,7 @@ import type { BridgeConfig } from '../shared/config.js';
 import { BridgeError } from '../shared/errors.js';
 import type { Logger } from '../shared/logger.js';
 import {
-  helloSchema, inputSchemas, outputSchemas, parseJson, responseSchema, VERSION, MAX_MESSAGE_BYTES,
+  helloSchema, isReadOnlyCommand, inputSchemas, outputSchemas, parseJson, responseSchema, VERSION, MAX_MESSAGE_BYTES,
   type Command, type ToolInput, type ToolOutput,
 } from '../shared/protocol.js';
 
@@ -97,7 +97,7 @@ export class BridgeServer {
         if (!item) { this.log('warn', 'late_or_unknown_response', { request_id: response.request_id }); return; }
         if (response.ok) {
           const parsed = outputSchemas[item.command].safeParse(response.result);
-          if (!parsed.success) item.finish(new BridgeError('INVALID_MESSAGE', 'Plugin returned an invalid result.', item.command !== 'get_project_state'));
+          if (!parsed.success) item.finish(new BridgeError('INVALID_MESSAGE', 'Plugin returned an invalid result.', !isReadOnlyCommand(item.command)));
           else item.finish(null, parsed.data);
         } else item.finish(new BridgeError(response.error.code, response.error.message, response.error.outcome_unknown));
       } catch {
@@ -125,12 +125,12 @@ export class BridgeServer {
         });
         if (error) reject(error); else resolve(value);
       };
-      const abort = (): void => finish(new BridgeError('CANCELLED', 'Waiting cancelled; inspect state before retrying a mutation.', command !== 'get_project_state'));
-      const timer = setTimeout(() => finish(new BridgeError('TIMEOUT', 'Blockbench request timed out; inspect state before retrying a mutation.', command !== 'get_project_state')), this.config.timeout_ms);
+      const abort = (): void => finish(new BridgeError('CANCELLED', 'Waiting cancelled; inspect state before retrying a mutation.', !isReadOnlyCommand(command)));
+      const timer = setTimeout(() => finish(new BridgeError('TIMEOUT', 'Blockbench request timed out; inspect state before retrying a mutation.', !isReadOnlyCommand(command))), this.config.timeout_ms);
       this.pending.set(requestId, { command, finish });
       signal?.addEventListener('abort', abort, { once: true });
       peer.send(JSON.stringify({ version: VERSION, type: 'request', request_id: requestId, deadline_ms: started + this.config.timeout_ms, command, params }), error => {
-        if (error) finish(new BridgeError('DISCONNECTED', 'Request could not be delivered.', command !== 'get_project_state'));
+        if (error) finish(new BridgeError('DISCONNECTED', 'Request could not be delivered.', !isReadOnlyCommand(command)));
       });
     });
     // The command-specific schema is checked at the network boundary above.
@@ -138,7 +138,7 @@ export class BridgeServer {
   }
 
   private rejectPending(code: 'DISCONNECTED', message: string): void {
-    for (const pending of this.pending.values()) pending.finish(new BridgeError(code, message, pending.command !== 'get_project_state'));
+    for (const pending of this.pending.values()) pending.finish(new BridgeError(code, message, !isReadOnlyCommand(pending.command)));
   }
 
   async close(): Promise<void> {

@@ -1,0 +1,272 @@
+{
+  "instructions": "按顺序调用，用实际返回 ID 替换尖括号占位符。root/arm ID 来自 create_bones；new_position_keyframe_id 来自第二次 set_keyframes 的 keyframe_ids[1]；scale_end_keyframe_id 来自第一次的 keyframe_ids[8]。保存前可按手动说明验证 5 次 Undo/Redo。使用未占用的工程名和文件名。",
+  "calls": [
+    {
+      "name": "create_project",
+      "arguments": {
+        "name": "phase3_demo_unique",
+        "model_identifier": "phase3_demo_unique"
+      }
+    },
+    {
+      "name": "create_bones",
+      "arguments": {
+        "project_id": "<project_id>",
+        "bones": [
+          {
+            "key": "root",
+            "name": "root"
+          },
+          {
+            "key": "arm",
+            "name": "arm",
+            "origin": [
+              4,
+              10,
+              0
+            ],
+            "parent_key": "root"
+          }
+        ]
+      }
+    },
+    {
+      "name": "create_cubes",
+      "arguments": {
+        "project_id": "<project_id>",
+        "parent_id": "<root_bone_id>",
+        "cubes": [
+          {
+            "name": "body",
+            "from": [
+              -4,
+              0,
+              -2
+            ],
+            "to": [
+              4,
+              12,
+              2
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "create_cubes",
+      "arguments": {
+        "project_id": "<project_id>",
+        "parent_id": "<arm_bone_id>",
+        "cubes": [
+          {
+            "name": "arm",
+            "from": [
+              4,
+              2,
+              -2
+            ],
+            "to": [
+              7,
+              12,
+              2
+            ],
+            "origin": [
+              4,
+              10,
+              0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "create_animation",
+      "arguments": {
+        "project_id": "<project_id>",
+        "name": "animation.phase3.wave",
+        "length": 2,
+        "loop": "loop"
+      }
+    },
+    {
+      "name": "set_keyframes",
+      "arguments": {
+        "project_id": "<project_id>",
+        "animation_id": "<animation_id>",
+        "keyframes": [
+          {
+            "bone_id": "<arm_bone_id>",
+            "channel": "rotation",
+            "time": 0,
+            "value": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "bone_id": "<arm_bone_id>",
+            "channel": "rotation",
+            "time": 1,
+            "value": [
+              0,
+              0,
+              -80
+            ]
+          },
+          {
+            "bone_id": "<arm_bone_id>",
+            "channel": "rotation",
+            "time": 2,
+            "value": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "bone_id": "<root_bone_id>",
+            "channel": "position",
+            "time": 0,
+            "value": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "bone_id": "<root_bone_id>",
+            "channel": "position",
+            "time": 1,
+            "value": [
+              0,
+              2,
+              0
+            ],
+            "interpolation": "step"
+          },
+          {
+            "bone_id": "<root_bone_id>",
+            "channel": "position",
+            "time": 2,
+            "value": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "bone_id": "<arm_bone_id>",
+            "channel": "scale",
+            "time": 0,
+            "value": [
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "bone_id": "<arm_bone_id>",
+            "channel": "scale",
+            "time": 1,
+            "value": [
+              1,
+              1.2,
+              1
+            ]
+          },
+          {
+            "bone_id": "<arm_bone_id>",
+            "channel": "scale",
+            "time": 2,
+            "value": [
+              1,
+              1,
+              1
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "preview_animation",
+      "arguments": {
+        "project_id": "<project_id>",
+        "animation_id": "<animation_id>",
+        "time": 1
+      }
+    },
+    {
+      "name": "update_animation",
+      "arguments": {
+        "project_id": "<project_id>",
+        "animation_id": "<animation_id>",
+        "name": "animation.phase3.wave_checked",
+        "length": 2.5,
+        "loop": "hold",
+        "snapping": 30
+      }
+    },
+    {
+      "name": "set_keyframes",
+      "arguments": {
+        "project_id": "<project_id>",
+        "animation_id": "<animation_id>",
+        "keyframes": [
+          {
+            "bone_id": "<arm_bone_id>",
+            "channel": "rotation",
+            "time": 1,
+            "value": [
+              0,
+              0,
+              -65
+            ]
+          },
+          {
+            "bone_id": "<root_bone_id>",
+            "channel": "position",
+            "time": 0.12345,
+            "value": [
+              0,
+              0.5,
+              0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "get_animation_state",
+      "arguments": {
+        "project_id": "<project_id>",
+        "animation_id": "<animation_id>"
+      }
+    },
+    {
+      "name": "delete_keyframes",
+      "arguments": {
+        "project_id": "<project_id>",
+        "animation_id": "<animation_id>",
+        "keyframe_ids": [
+          "<new_position_keyframe_id>",
+          "<scale_end_keyframe_id>"
+        ]
+      }
+    },
+    {
+      "name": "get_animation_state",
+      "arguments": {
+        "project_id": "<project_id>",
+        "animation_id": "<animation_id>"
+      }
+    },
+    {
+      "name": "save_project",
+      "arguments": {
+        "project_id": "<project_id>",
+        "path": "models/phase3_demo_unique.bbmodel"
+      }
+    }
+  ]
+}

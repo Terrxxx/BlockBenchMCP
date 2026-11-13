@@ -1,15 +1,16 @@
 # Blockbench AI MCP
 
-通过本机 stdio MCP Server 与 Blockbench 桌面插件，操作 **Minecraft Bedrock Entity** 工程。v0.2.0 提供十个工具：工程、批量方块、骨骼层级、PNG 图集、贴图绑定、Box UV 和官方 `.bbmodel` 保存。
+通过本机 stdio MCP Server 与 Blockbench 桌面插件，操作 **Minecraft Bedrock Entity** 工程。v0.3.0 提供十六个工具：工程、批量方块、骨骼层级、PNG 图集、Box UV、骨骼动画和官方 `.bbmodel` 保存。
 
-第二阶段按用户选择实现工作目录 PNG 导入、绑定和 Box UV；像素绘制、贴图生成、骨骼删除、动画、渲染及资源包导出仍属于后续阶段。`save_project` 保存可继续编辑的 Blockbench 工程，不生成 Bedrock 资源包。
+第三阶段加入数值骨骼动画片段、批量关键帧与定点预览；像素绘制、贴图生成、骨骼删除、Molang、动画控制器、渲染及资源包导出仍属于后续阶段。`save_project` 保存可继续编辑的 Blockbench 工程，不生成 Bedrock 资源包。
 
 ## 当前实现与验证
 
 - 官方 MCP TypeScript SDK v2：`@modelcontextprotocol/server@2.4.0`，客户端测试使用同版 client；版本与 lockfile 已固定。
 - Blockbench 官方 API 基线 **5.2.2 桌面版**；编译类型 `blockbench-types@5.2.1`。
 - 共享 Zod schema、严格 TypeScript、白名单协议、工作目录隔离、批量 Undo、超时/重连、结构化日志。
-- v0.2.0 **82 项自动化测试通过**，覆盖单元、真实 WebSocket、两种 MCP 协议模式的十工具 stdio 闭环和受限模块环境中的插件 bundle。类型检查与构建通过；第二阶段真实宿主状态见[第二阶段验证记录](docs/phase-two-verification.md)。
+- v0.3.0 **105 项自动化测试通过**，覆盖单元、真实 WebSocket、两种 MCP 协议模式的十六工具 stdio 闭环和插件 bundle。严格类型检查与构建通过。
+- **第三阶段真实 Blockbench 5.2.2 验收通过**：官方 SDK 客户端调用六个动画工具，三通道关键帧、5 次 Undo/Redo、保存与重开一致；修复动画刷新和重建轨道的 Redo 问题。见[第三阶段验证记录](docs/phase-three-verification.md)。
 - **2026-11-13 真实 Blockbench 5.2.2 桌面验收通过**：两批共 6 个方块、Undo/Redo、官方保存、关闭后重新打开及错误保护。见[验收记录](docs/verification.md)和[复现步骤](docs/manual-smoke-test.md)。
 - **2026-11-13 Codex 原生 MCP 闭环通过**：当前聊天直接调用四个工具，新建 Bedrock 工程、一次创建 6 个方块、查询核对、保存并读取文件复核；本轮未使用 Computer Use。见[原生调用验收](docs/codex-direct-verification.md)。
 - **2026-11-13 第二阶段真实闭环通过**：原生调用十工具，3 个骨骼、2 个方块、1 张 PNG 图集、Box UV 与绑定、官方保存、7 次 Undo/Redo 及关闭后重开均已核对。见[第二阶段验证记录](docs/phase-two-verification.md)。
@@ -69,7 +70,7 @@ args = ["D:/Desktop/BlockBenchMCP/dist/server/index.js", "--workspace", "D:/Desk
 cwd = "D:/Desktop/BlockBenchMCP"
 startup_timeout_sec = 15
 tool_timeout_sec = 30
-enabled_tools = ["create_project", "get_project_state", "create_cubes", "save_project", "create_bones", "update_bones", "reparent_cubes", "import_texture", "assign_texture", "set_cube_uv"]
+enabled_tools = ["create_project", "get_project_state", "create_cubes", "save_project", "create_bones", "update_bones", "reparent_cubes", "import_texture", "assign_texture", "set_cube_uv", "create_animation", "update_animation", "set_keyframes", "delete_keyframes", "get_animation_state", "preview_animation"]
 ```
 
 请根据实际安装位置调整路径。若 Codex 找不到 `node`，将 `command` 改为 `Get-Command node` 返回的完整路径。`--workspace` 必须是绝对路径；工具调用不能改变它。`tool_timeout_sec` 应大于连接配置的 `timeout_ms / 1000`。
@@ -84,11 +85,11 @@ codex mcp get blockbench_ai --json
 
 配置后在 Codex 中重启该 MCP Server；如果当前聊天仍看不到工具，完全退出并重新启动 Codex 桌面应用后再检查。Codex 会启动进程，不需要额外手动运行 `npm start`。避免同时启动独立 smoke/另一个 Codex 实例占用同一个端口。MCP 初始化不要求插件已连接；未连接时调用工具返回 `NOT_CONNECTED`。Codex 中启用 `blockbench_ai` 与 Blockbench 插件执行 Connect 是两个步骤；工具出现后仍需完成上述插件连接。
 
-## 第一阶段升级到 v0.2.0
+## 升级到 v0.3.0
 
-构建后重载 Blockbench 中从文件加载的插件，并重启 Codex 的 `blockbench_ai` 服务，再在 Tools 中 Connect。本地桥接协议升级到 **v2**，要求插件 **0.2.0**；旧插件与新 Server 会拒绝握手。现有工作目录配置与密钥继续使用，不需要重新 setup。若原 Codex 配置设置了四项 `enabled_tools`，更新为上面的十项；没设置此白名单时无需添加它。
+构建后重载 Blockbench 中从文件加载的插件，并重启 Codex 的 `blockbench_ai` 服务，再在 Tools 中 Connect。本地桥接协议升级到 **v3**，要求插件 **0.3.0**；旧插件与新 Server 会拒绝握手。现有工作目录配置与密钥继续使用，不需要重新 setup。若原 Codex 配置设置了旧版 `enabled_tools`，更新为上面的十六项；没设置此白名单时无需添加它。
 
-插件重载会开始新的管理会话，已有标签可读取但不能修改；请用 `create_project` 新建测试工程。第二阶段[手动冒烟步骤](docs/phase-two-smoke-test.md)不需要 Computer Use。
+插件重载会开始新的管理会话，已有标签可读取但不能修改；请用 `create_project` 新建测试工程。第三阶段[手动冒烟步骤](docs/phase-three-smoke-test.md)覆盖完整动画闭环。本阶段已按用户授权使用正常 GUI 自动化验收。新增工具列表由客户端缓存时，需要完全重启 Codex；独立 SDK 验收不代表当前聊天已经热加载新工具。
 
 ## 四个基础工具
 
@@ -187,6 +188,25 @@ npm run smoke -- --workspace 'D:\Desktop\BlockBenchMCP'
 
 它启动 stdio 服务端，等待插件连接，新建测试标签、创建 body/head 方块，并保存不覆盖旧文件的 `mcp_smoke_<唯一后缀>.bbmodel`。只想检查连接可增加 `--inspect-only`。运行 smoke 前停止占用该端口的 Codex MCP。完整[桌面验收步骤](docs/manual-smoke-test.md)包括视图、Undo/Redo、重新打开文件和错误恢复。
 
+## 动画工具
+
+详见[官方 API 与动画架构](docs/phase-three-architecture.md)、[参数示例](examples/phase-three-tool-calls.json)。所有时间单位为秒，旋转为度，位移为 Blockbench 模型单位，缩放为倍率。
+
+| 工具 | 参数与行为 |
+| --- | --- |
+| `create_animation` | `project_id,name,length`；可选 `loop`（once/loop/hold）、`snapping`（10–500，默认 20） |
+| `update_animation` | `project_id,animation_id` 与至少一个 name/length/loop/snapping；禁止缩短到最后一帧之前 |
+| `set_keyframes` | `keyframes:[{bone_id,channel,time,value:[x,y,z],interpolation?}]`；三通道 rotation/position/scale；linear 默认或 step |
+| `delete_keyframes` | `keyframe_ids` 批量删除，整批检查后修改 |
+| `get_animation_state` | `project_id` 必填；未指定 `animation_id` 时分页片段，指定时分页该片段骨骼关键帧；offset/limit，返回 total/next_offset |
+| `preview_animation` | `project_id,animation_id,time`；暂停时间线并显示指定姿态，切换 Animate 模式，不添加 Undo |
+
+片段长度 (0,1000] 秒，每工程最多 128 个片段；每片段最多 4096 个关键帧。关键帧每批 1–256 项，查询每页最多 200 项。以“骨骼 ID＋通道＋精确时间”定位：已有帧更新并保留 UUID，新位置创建；不按 snapping 自动吸附。小于 1e-7 秒的近邻冲突直接报错。数值向量分量范围 [-32768,32768]，不接受表达式。
+
+设置/删除关键帧会选择目标片段并把所需轨道放入时间线。每批使用一个原生 Undo；先准备轨道再共同登记 animations/keyframes，确保从零动画重做时也能恢复。定点预览的 `playing:false` 表示时间线暂停，动画列表的播放标记表示该片段参与当前姿态计算。
+
+读取不计算 Molang，原生数值字符串原样返回；`editable:false` 表示包含本阶段不支持的表达式、效果或插值。预览/关键帧操作要求整个工程没有动画控制器和含表达式或效果的片段，因为暂停与选择动作也会触发宿主预览。重开的工程可以查询，不能直接修改。动画随官方 bbmodel 保存，尚不单独导出 Bedrock animation JSON；界面中的 “Unsaved” 动画文件分组不代表 bbmodel 没有保存。
+
 ## 项目结构
 
 ```text
@@ -216,8 +236,10 @@ models/         示例模型保存目录
 | INVALID_TEXTURE / TEXTURE_TOO_LARGE / TEXTURE_LOAD_FAILED | 使用可解码的静态 PNG，并检查尺寸/文件大小 |
 | TEXTURE_SIZE_MISMATCH / TEXTURE_LIMIT | 使用匹配工程尺寸的 PNG；当前阶段只导入一个图集 |
 | UV_OUT_OF_BOUNDS | 调整 UV 偏移，使完整 Box UV 展开范围落在工程图集内 |
+| KEYFRAME_OUT_OF_BOUNDS / KEYFRAME_CONFLICT | 检查片段长度、重复或过近的时间槽位 |
+| UNSUPPORTED_ANIMATION / ANIMATION_LIMIT | 使用本阶段支持的纯数值动画并检查片段/关键帧数量上限 |
 | 终端看起来没有输出 | stdio Server 等待 MCP 客户端；日志写 stderr，stdout 专用于 MCP |
 
 ## 后续阶段
 
-在第二阶段验收后，再分别设计贴图绘制、动画、渲染与资源导出模块；每次扩展都需要专用输入 schema、官方 API 调研、Undo 策略、目录边界与对应验证，不添加通用 `eval` 或 shell 工具。
+在第三阶段验收后，再分别设计贴图绘制、高级动画、渲染与资源导出模块；每次扩展都需要专用输入 schema、官方 API 调研、Undo 策略、目录边界与对应验证，不添加通用 `eval` 或 shell 工具。

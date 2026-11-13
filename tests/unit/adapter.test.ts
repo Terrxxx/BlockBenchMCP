@@ -13,7 +13,7 @@ describe('Blockbench command adapter', () => {
   let workspace: Workspace;
   let adapter: BlockbenchAdapter;
   function run<K extends Command>(command: K, params: unknown): ToolOutput<K> {
-    return adapter.execute(requestSchema.parse({ version: 2, type: 'request', request_id: randomUUID(), deadline_ms: Date.now() + 1000, command, params })) as ToolOutput<K>;
+    return adapter.execute(requestSchema.parse({ version: 3, type: 'request', request_id: randomUUID(), deadline_ms: Date.now() + 1000, command, params })) as ToolOutput<K>;
   }
   function create(): string { return run('create_project', { name: 'test', model_identifier: 'test' }).project.id; }
   const cube = { name: 'body', from: [0, 0, 0], to: [8, 12, 4] };

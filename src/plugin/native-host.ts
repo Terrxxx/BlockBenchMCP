@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { BridgeError } from '../shared/errors.js';
 import type { BlockbenchHost, CubeHandle, EditScope, GroupHandle } from './host.js';
 import { disposeNativeTexture, nativeTexture, prepareNativeTexture } from './native-texture.js';
+import { nativeAnimation, nativeAnimationHost, nativeKeyframe, refreshNativeAnimation } from './native-animation.js';
 
 function nativeCube(cube: CubeHandle): Cube {
   if (!(cube instanceof Cube)) throw new Error('Expected native Cube');
@@ -20,14 +21,17 @@ function projectCodec(): Codec {
 }
 
 function nativeScope(scope: EditScope): UndoAspects {
-  const { groups, textures, ...rest } = scope;
+  const { groups, textures, animations, keyframes, ...rest } = scope;
   return { ...rest, elements: scope.elements.map(nativeCube), ...(groups ? { groups: groups.map(nativeGroup) } : {}),
     ...(textures ? { textures: textures.map(nativeTexture) } : {}),
+    ...(animations ? { animations: animations.map(nativeAnimation) } : {}),
+    ...(keyframes ? { keyframes: keyframes.map(nativeKeyframe) } : {}),
   };
 }
 
 export function createNativeHost(): BlockbenchHost {
   return {
+    ...nativeAnimationHost(),
     get version() { return Blockbench.version; },
     get desktop() { return !Blockbench.isWeb; },
     getProject: () => typeof Project === 'undefined' || !Project ? null : Project,
@@ -80,7 +84,7 @@ export function createNativeHost(): BlockbenchHost {
       Object.assign(Undo.current_save.aspects, nativeScope(scope));
       Undo.cancelEdit(true);
     },
-    refresh: () => { Canvas.updateAll(); if (typeof UVEditor !== 'undefined') UVEditor.loadData(); },
+    refresh: () => { Canvas.updateAll(); if (typeof UVEditor !== 'undefined') UVEditor.loadData(); refreshNativeAnimation(); },
     compileProject: () => {
       try {
         const result: unknown = projectCodec().compile({ bitmaps: true, absolute_paths: false });

@@ -1,6 +1,8 @@
+import type { AnimationHandle, KeyframeHandle } from '../../src/plugin/animation-host.js';
+import type { KeyframeInput } from '../../src/shared/schemas/animations.js';
 import * as fs from 'node:fs';
 import { randomUUID } from 'node:crypto';
-import type { BlockbenchHost, CubeHandle, GroupHandle, ProjectHandle, TextureHandle } from '../../src/plugin/host.js';
+import type { BlockbenchHost, CubeHandle, EditScope, GroupHandle, ProjectHandle, TextureHandle } from '../../src/plugin/host.js';
 import type { CubeInput, ToolInput } from '../../src/shared/protocol.js';
 import type { BoneInput, BoneUpdate } from '../../src/shared/schemas/bones.js';
 import type { PngInfo } from '../../src/shared/png.js';
@@ -20,9 +22,15 @@ export class FakeHost implements BlockbenchHost {
   elements: CubeHandle[] = [];
   bones: GroupHandle[] = [];
   atlases: TextureHandle[] = [];
+  clips: AnimationHandle[] = [];
+  frames: Record<string, KeyframeHandle[]> = {};
+  failKeyframeAt = -1;
+  failRemoveAt = -1;
   resources: string[] = [];
   calls: string[] = [];
   editing = false;
+  lastBeforeScope: EditScope | undefined;
+  lastAfterScope: EditScope | undefined;
   failAttachAt = -1;
   failWrite = false;
   failGroupAt = -1;
@@ -30,21 +38,44 @@ export class FakeHost implements BlockbenchHost {
   failAddTexture = false;
   failApplyTexture = false;
   decodeGate: Promise<void> | undefined;
-  private before: { cubes: CubeHandle[]; groups: GroupHandle[]; textures: TextureHandle[] } | undefined;
+  private before: { cubes: CubeHandle[]; groups: GroupHandle[]; textures: TextureHandle[]; clips: AnimationHandle[]; frames: Record<string, KeyframeHandle[]> } | undefined;
   getProject(): ProjectHandle | null { return this.project; }
   cubes(): CubeHandle[] { return this.elements; }
   groups(): GroupHandle[] { return this.bones; }
   textures(): TextureHandle[] { return this.atlases; }
+  animations(): AnimationHandle[] { return this.clips; }
+  keyframes(a: AnimationHandle): KeyframeHandle[] { return this.frames[a.uuid] ?? []; }
+  animationEditable(a: AnimationHandle): boolean { return this.keyframes(a).every(f => f.data_points.every(p => [p.x,p.y,p.z].every(v => typeof v === 'number'))); }
+  makeAnimation(input: ToolInput<'create_animation'>): AnimationHandle { return { uuid: nativeId(), name: input.name, length: input.length, loop: input.loop, snapping: input.snapping }; }
+  addAnimation(a: AnimationHandle): void { this.clips.push(a); this.frames[a.uuid] = []; }
+  updateAnimation(a: AnimationHandle, input: ToolInput<'update_animation'>): void {
+    for (const key of ['name','length','loop','snapping'] as const) if(input[key] !== undefined) Object.assign(a, { [key]: input[key] });
+  }
+  prepareAnimationEdit(): void { this.calls.push('Animation.select'); }
+  putKeyframe(a: AnimationHandle, input: KeyframeInput, existing?: KeyframeHandle): KeyframeHandle {
+    if(this.keyframes(a).length === this.failKeyframeAt) throw new Error('Injected keyframe failure');
+    const f = existing ?? { uuid: nativeId(), animator: { uuid: input.bone_id }, time: input.time, channel: input.channel, interpolation: input.interpolation, data_points: [] };
+    Object.assign(f, { time: input.time, interpolation: input.interpolation, data_points: [{x:input.value[0],y:input.value[1],z:input.value[2]}] });
+    if(!existing) this.frames[a.uuid]!.push(f);
+    return f;
+  }
+  removeKeyframe(f: KeyframeHandle): void {
+    const list = Object.values(this.frames).find(frames => frames.includes(f))!;
+    if(list.length === this.failRemoveAt) throw new Error('Injected remove failure');
+    list.splice(list.indexOf(f),1);
+  }
+  previewAnimation(_a: AnimationHandle, time: number): number { this.calls.push('Animator.preview'); return time; }
   resourcePaths(): string[] { return this.resources; }
   isEditing(): boolean { return this.editing; }
   createProject(input: ToolInput<'create_project'>): ProjectHandle {
-    this.calls.push('newProject'); this.elements = []; this.bones = []; this.atlases = [];
+    this.calls.push('newProject'); this.elements = []; this.bones = []; this.atlases = []; this.clips = []; this.frames = {};
     this.project = { uuid: nativeId(), ...input, format: { id: 'bedrock' }, saved: false, save_path: '' };
     return this.project;
   }
-  beginEdit(): void {
+  beginEdit(scope: EditScope): void {
+    this.lastBeforeScope = scope;
     this.calls.push('initEdit'); this.editing = true;
-    this.before = structuredClone({ cubes: this.elements, groups: this.bones, textures: this.atlases });
+    this.before = structuredClone({ cubes: this.elements, groups: this.bones, textures: this.atlases, clips: this.clips, frames: this.frames });
   }
   makeRoot(): GroupHandle {
     const group = this.makeGroup({ name: 'root', origin: [0, 0, 0], rotation: [0, 0, 0] });
@@ -88,9 +119,9 @@ export class FakeHost implements BlockbenchHost {
   setCubeUV(cube: CubeHandle, uv: { uv_offset: [number, number]; mirror_uv?: boolean }): void {
     cube.box_uv = true; cube.uv_offset = [...uv.uv_offset]; if (uv.mirror_uv !== undefined) cube.mirror_uv = uv.mirror_uv;
   }
-  finishEdit(): void { this.calls.push('finishEdit'); this.editing = false; this.project!.saved = false; }
+  finishEdit(_label: string, scope: EditScope): void { this.lastAfterScope = scope; this.calls.push('finishEdit'); this.editing = false; this.project!.saved = false; }
   cancelEdit(): void {
-    this.calls.push('cancelEdit(true)'); this.elements = this.before!.cubes; this.bones = this.before!.groups; this.atlases = this.before!.textures; this.editing = false;
+    this.calls.push('cancelEdit(true)'); this.elements = this.before!.cubes; this.bones = this.before!.groups; this.atlases = this.before!.textures; this.clips = this.before!.clips; this.frames = this.before!.frames; this.editing = false;
   }
   refresh(): void { this.calls.push('Canvas.updateAll'); }
   compileProject(): string { this.calls.push('Codecs.project.compile'); return 'TEST_ONLY_OFFICIAL_CODEC_STUB'; }

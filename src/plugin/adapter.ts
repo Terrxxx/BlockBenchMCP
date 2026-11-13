@@ -6,6 +6,7 @@ import type { BlockbenchHost, CubeHandle, ProjectHandle } from './host.js';
 import { createBones, findGroup, reparentCubes, updateBones } from './bones.js';
 import { edit } from './edits.js';
 import { assignTexture, importTexture, setCubeUV, textureSummary } from './textures.js';
+import { createAnimation, updateAnimation, setKeyframes, deleteKeyframes, getAnimationState, previewAnimation } from './animations.js';
 
 export class BlockbenchAdapter {
   private readonly managed = new Set<string>();
@@ -15,6 +16,12 @@ export class BlockbenchAdapter {
   execute(request: Request): unknown {
     this.assertHost();
     switch (request.command) {
+      case 'create_animation': return createAnimation(this.host, this.mutableProject(request.params.project_id), request.params);
+      case 'update_animation': return updateAnimation(this.host, this.mutableProject(request.params.project_id), request.params);
+      case 'set_keyframes': return setKeyframes(this.host, this.mutableProject(request.params.project_id), request.params);
+      case 'delete_keyframes': return deleteKeyframes(this.host, this.mutableProject(request.params.project_id), request.params);
+      case 'get_animation_state': return getAnimationState(this.host, request.params);
+      case 'preview_animation': return previewAnimation(this.host, this.mutableProject(request.params.project_id), request.params);
       case 'create_project': return this.createProject(inputSchemas.create_project.parse(request.params));
       case 'get_project_state': return this.getProjectState(inputSchemas.get_project_state.parse(request.params));
       case 'create_cubes': return this.createCubes(inputSchemas.create_cubes.parse(request.params));

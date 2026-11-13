@@ -4,7 +4,7 @@
 
 ## 0. 范围与实施顺序
 
-最终方向包含模型、贴图、骨骼、动画、渲染与资源导出。第一阶段交付 `create_project`、`get_project_state`、`create_cubes`、`save_project`，已完成真实桌面及 Codex 原生验收。第二阶段已按用户选择限定为 Bedrock 骨骼、工作目录 PNG 导入、方块绑定和 Box UV，设计与实施门槛见[第二阶段架构](phase-two-architecture.md)。下文保留第一阶段的实现依据。
+最终方向包含模型、贴图、骨骼、动画、渲染与资源导出。第一阶段交付 `create_project`、`get_project_state`、`create_cubes`、`save_project`，已完成真实桌面及 Codex 原生验收。第二阶段已按用户选择限定为 Bedrock 骨骼、工作目录 PNG 导入、方块绑定和 Box UV，设计与实施门槛见[第二阶段架构](phase-two-architecture.md)。第三阶段新增骨骼数值动画，见[第三阶段架构](phase-three-architecture.md)与[真实验证](phase-three-verification.md)。下文保留第一阶段的实现依据。
 
 按以下门槛推进，每一阶段先验证再继续：
 

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { asBridgeError, BridgeError } from '../shared/errors.js';
-import { failure, outputSchemas, parseJson, requestSchema, VERSION, type Request, type Response } from '../shared/protocol.js';
+import { failure, isReadOnlyCommand, outputSchemas, parseJson, requestSchema, VERSION, type Request, type Response } from '../shared/protocol.js';
 import type { Logger } from '../shared/logger.js';
 
 export type CommandHandler = (request: Request) => unknown | Promise<unknown>;
@@ -34,7 +34,7 @@ export class Dispatcher {
         if (!active()) throw new BridgeError('DISCONNECTED', 'Connection closed before execution.');
         if (Date.now() >= request.deadline_ms) throw new BridgeError('TIMEOUT', 'Request expired before execution.');
         const parsedResult = outputSchemas[request.command].safeParse(await this.handler(request));
-        if (!parsedResult.success) throw new BridgeError('INVALID_MESSAGE', 'Host produced an invalid result; inspect state before retrying.', request.command !== 'get_project_state');
+        if (!parsedResult.success) throw new BridgeError('INVALID_MESSAGE', 'Host produced an invalid result; inspect state before retrying.', !isReadOnlyCommand(request.command));
         return { version: VERSION, type: 'response', request_id: request.request_id, ok: true, result: parsedResult.data };
       } catch (error) {
         const mapped = asBridgeError(error);

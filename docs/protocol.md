@@ -1,8 +1,8 @@
-# 本地桥接协议 v2
+# 本地桥接协议 v3
 
 外层为官方 SDK 提供的 MCP JSON-RPC/stdio；本文件描述 stdio Server 与 Blockbench 插件之间的私有 WebSocket 消息。它不是通用代码执行通道。
 
-v0.2.0 使用桥接协议 v2，服务端和插件必须同步重载。工作目录配置文件的 version 仍是 1；无需更换密钥或重新 setup。新旧插件/服务端混用会拒绝握手。
+v0.3.0 使用桥接协议 v3，服务端和插件必须同步重载。工作目录配置文件的 version 仍是 1；无需更换密钥或重新 setup。新旧插件/服务端混用会拒绝握手。
 
 ## 握手
 
@@ -10,16 +10,16 @@ Server 固定绑定 `127.0.0.1`。插件连接 `ws://127.0.0.1:<port>`，3 秒�
 
 ```json
 {
-  "version": 2,
+  "version": 3,
   "type": "hello",
   "workspace": "D:\\Desktop\\BlockBenchMCP",
   "token": "<初始化生成的64位十六进制随机密钥>",
-  "plugin_version": "0.2.0",
+  "plugin_version": "0.3.0",
   "blockbench_version": "5.2.2"
 }
 ```
 
-常量时间比较密钥、匹配工作目录与版本后，Server 回复 `{"version":2,"type":"ready"}`。握手失败关闭连接（1008）；未完成握手的连接 3 秒后终止。握手期间不接受工具请求。最多 4 个未关闭连接、1 个认证插件。无 Origin / `file://` / `null` 只为桌面运行时兼容，均仍需密钥。
+常量时间比较密钥、匹配工作目录与版本后，Server 回复 `{"version":3,"type":"ready"}`。握手失败关闭连接（1008）；未完成握手的连接 3 秒后终止。握手期间不接受工具请求。最多 4 个未关闭连接、1 个认证插件。无 Origin / `file://` / `null` 只为桌面运行时兼容，均仍需密钥。
 
 WebSocket 文本帧最大 1 MiB，关闭压缩，不接受二进制帧。每 10 秒协议级 ping/pong 检测失联；插件使用 0.5、1、2、4、8、10 秒上限退避重连。插件卸载或手动断开后停止重连。
 
@@ -27,7 +27,7 @@ WebSocket 文本帧最大 1 MiB，关闭压缩，不接受二进制帧。每 10 
 
 ```json
 {
-  "version": 2,
+  "version": 3,
   "type": "request",
   "request_id": "ca16f180-e67b-4b6f-bdf7-a856f826af48",
   "deadline_ms": 1794595500000,
@@ -42,7 +42,7 @@ WebSocket 文本帧最大 1 MiB，关闭压缩，不接受二进制帧。每 10 
 
 ```json
 {
-  "version": 2,
+  "version": 3,
   "type": "response",
   "request_id": "ca16f180-e67b-4b6f-bdf7-a856f826af48",
   "ok": true,
@@ -56,7 +56,7 @@ WebSocket 文本帧最大 1 MiB，关闭压缩，不接受二进制帧。每 10 
 
 ```json
 {
-  "version": 2,
+  "version": 3,
   "type": "response",
   "request_id": "ca16f180-e67b-4b6f-bdf7-a856f826af48",
   "ok": false,
@@ -110,3 +110,9 @@ MCP 工具成功同时返回 `content` 和 `structuredContent`。业务错误返
 插件缓存最近 256 个接受的 request_id 和结果，相同 ID、相同内容共享一次执行；不同内容返回冲突。缓存不跨插件重新连接操作/重载持久化；自然网络重连保留当前 dispatcher。不保证崩溃后的 exactly-once。服务端永不自动重发修改。
 
 日志只含事件、命令名、request_id、耗时、错误码，不记录密钥或完整模型/参数。Server 日志只写 stderr。工作目录、密钥文件及已安装的其他 Blockbench 插件必须可信；本协议不构成本机恶意进程之间的操作系统沙箱。
+
+## 第三阶段动画扩展
+
+新增 create_animation、update_animation、set_keyframes、delete_keyframes、get_animation_state、preview_animation。输入/输出的权威定义位于 `src/shared/schemas/animations.ts`；限制与语义见[第三阶段架构](phase-three-architecture.md)。新增错误码 UNSUPPORTED_ANIMATION、ANIMATION_LIMIT、KEYFRAME_OUT_OF_BOUNDS、KEYFRAME_CONFLICT。工具参数在 MCP SDK 和桥接两端校验；SDK 自身的 schema 拒绝可能以 SDK 错误文本返回，不包含桥接 structuredContent。
+
+预览改变编辑器模式、选择和时间，不改变模型数据；只读工具是两个 get_*_state。超时或断线后同时查询工程与动画状态；不可自动重试 set/delete/create。
