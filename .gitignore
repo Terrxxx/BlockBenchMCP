@@ -1,0 +1,9 @@
+node_modules/
+/AGENTS.md
+dist/
+.npm-cache/
+.research/
+.tmp/
+coverage/
+.blockbench-ai-mcp.json
+*.bbmodel

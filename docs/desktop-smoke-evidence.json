@@ -1,0 +1,1435 @@
+{
+  "date": "2026-11-13",
+  "environment": {
+    "node": "24.14.0",
+    "os": "Windows",
+    "plugin": "0.1.0",
+    "blockbench": "5.2.2",
+    "mcp_sdk": "2.4.0"
+  },
+  "transport": "Official MCP Client -> stdio Server -> authenticated loopback WebSocket -> real Blockbench desktop plugin",
+  "desktop_actions": [
+    "Ctrl+Z / Ctrl+Y for first batch",
+    "Ctrl+Z / Ctrl+Y for second batch",
+    "Ctrl+W closes saved project",
+    "Ctrl+O reopens the saved bbmodel"
+  ],
+  "output": {
+    "path": "desktop_smoke_final_20261113.bbmodel",
+    "bytes": 3687,
+    "sha256": "A2953447C03A8CF6544535B315E082013883D793B3B0A9DB5A95F696AF34C643"
+  },
+  "records": [
+    {
+      "time": "2026-11-13T18:45:11.158Z",
+      "tool": "create_project",
+      "arguments": {
+        "name": "desktop_smoke_final_20261113",
+        "model_identifier": "desktop_smoke_final_20261113"
+      },
+      "is_error": false,
+      "result": {
+        "project": {
+          "id": "24c87948-29b3-8922-1b17-8999fe30b94d",
+          "name": "desktop_smoke_final_20261113",
+          "format": "bedrock",
+          "model_identifier": "desktop_smoke_final_20261113",
+          "saved": false,
+          "texture_width": 64,
+          "texture_height": 64,
+          "cube_count": 0,
+          "group_count": 0,
+          "managed": true
+        }
+      }
+    },
+    {
+      "time": "2026-11-13T18:45:23.758Z",
+      "tool": "create_cubes",
+      "arguments": {
+        "project_id": "24c87948-29b3-8922-1b17-8999fe30b94d",
+        "cubes": [
+          {
+            "name": "body",
+            "from": [
+              -4,
+              4,
+              -2
+            ],
+            "to": [
+              4,
+              16,
+              2
+            ]
+          },
+          {
+            "name": "head",
+            "from": [
+              -4,
+              16,
+              -4
+            ],
+            "to": [
+              4,
+              24,
+              4
+            ],
+            "origin": [
+              0,
+              16,
+              0
+            ],
+            "rotation": [
+              0,
+              15,
+              0
+            ]
+          },
+          {
+            "name": "left_foot",
+            "from": [
+              0,
+              0,
+              -3
+            ],
+            "to": [
+              4,
+              4,
+              3
+            ]
+          },
+          {
+            "name": "right_foot",
+            "from": [
+              -4,
+              0,
+              -3
+            ],
+            "to": [
+              0,
+              4,
+              3
+            ]
+          }
+        ]
+      },
+      "is_error": false,
+      "result": {
+        "project_id": "24c87948-29b3-8922-1b17-8999fe30b94d",
+        "cube_ids": [
+          "08e55448-983f-696f-536b-7d56222e6353",
+          "148779a8-84c1-ffe4-134c-35c5aa978e0f",
+          "a844fbcd-cceb-eb5f-8c8c-7c7977805fd7",
+          "99c9e35a-6d3d-3421-fa5f-f86379e86b24"
+        ],
+        "count": 4,
+        "root_group_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+      }
+    },
+    {
+      "time": "2026-11-13T18:45:24.879Z",
+      "tool": "get_project_state",
+      "arguments": {},
+      "is_error": false,
+      "result": {
+        "project": {
+          "id": "24c87948-29b3-8922-1b17-8999fe30b94d",
+          "name": "desktop_smoke_final_20261113",
+          "format": "bedrock",
+          "model_identifier": "desktop_smoke_final_20261113",
+          "saved": false,
+          "texture_width": 64,
+          "texture_height": 64,
+          "cube_count": 4,
+          "group_count": 1,
+          "managed": true
+        },
+        "cubes": [
+          {
+            "id": "08e55448-983f-696f-536b-7d56222e6353",
+            "name": "body",
+            "from": [
+              -4,
+              4,
+              -2
+            ],
+            "to": [
+              4,
+              16,
+              2
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "148779a8-84c1-ffe4-134c-35c5aa978e0f",
+            "name": "head",
+            "from": [
+              -4,
+              16,
+              -4
+            ],
+            "to": [
+              4,
+              24,
+              4
+            ],
+            "origin": [
+              0,
+              16,
+              0
+            ],
+            "rotation": [
+              0,
+              15,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "a844fbcd-cceb-eb5f-8c8c-7c7977805fd7",
+            "name": "left_foot",
+            "from": [
+              0,
+              0,
+              -3
+            ],
+            "to": [
+              4,
+              4,
+              3
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "99c9e35a-6d3d-3421-fa5f-f86379e86b24",
+            "name": "right_foot",
+            "from": [
+              -4,
+              0,
+              -3
+            ],
+            "to": [
+              0,
+              4,
+              3
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          }
+        ],
+        "offset": 0,
+        "next_offset": null
+      }
+    },
+    {
+      "time": "2026-11-13T18:45:36.652Z",
+      "tool": "get_project_state",
+      "arguments": {},
+      "is_error": false,
+      "result": {
+        "project": {
+          "id": "24c87948-29b3-8922-1b17-8999fe30b94d",
+          "name": "desktop_smoke_final_20261113",
+          "format": "bedrock",
+          "model_identifier": "desktop_smoke_final_20261113",
+          "saved": false,
+          "texture_width": 64,
+          "texture_height": 64,
+          "cube_count": 0,
+          "group_count": 0,
+          "managed": true
+        },
+        "cubes": [],
+        "offset": 0,
+        "next_offset": null
+      }
+    },
+    {
+      "time": "2026-11-13T18:45:54.044Z",
+      "tool": "get_project_state",
+      "arguments": {},
+      "is_error": false,
+      "result": {
+        "project": {
+          "id": "24c87948-29b3-8922-1b17-8999fe30b94d",
+          "name": "desktop_smoke_final_20261113",
+          "format": "bedrock",
+          "model_identifier": "desktop_smoke_final_20261113",
+          "saved": false,
+          "texture_width": 64,
+          "texture_height": 64,
+          "cube_count": 4,
+          "group_count": 1,
+          "managed": true
+        },
+        "cubes": [
+          {
+            "id": "08e55448-983f-696f-536b-7d56222e6353",
+            "name": "body",
+            "from": [
+              -4,
+              4,
+              -2
+            ],
+            "to": [
+              4,
+              16,
+              2
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "148779a8-84c1-ffe4-134c-35c5aa978e0f",
+            "name": "head",
+            "from": [
+              -4,
+              16,
+              -4
+            ],
+            "to": [
+              4,
+              24,
+              4
+            ],
+            "origin": [
+              0,
+              16,
+              0
+            ],
+            "rotation": [
+              0,
+              15,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "a844fbcd-cceb-eb5f-8c8c-7c7977805fd7",
+            "name": "left_foot",
+            "from": [
+              0,
+              0,
+              -3
+            ],
+            "to": [
+              4,
+              4,
+              3
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "99c9e35a-6d3d-3421-fa5f-f86379e86b24",
+            "name": "right_foot",
+            "from": [
+              -4,
+              0,
+              -3
+            ],
+            "to": [
+              0,
+              4,
+              3
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          }
+        ],
+        "offset": 0,
+        "next_offset": null
+      }
+    },
+    {
+      "time": "2026-11-13T18:46:09.129Z",
+      "tool": "create_cubes",
+      "arguments": {
+        "project_id": "24c87948-29b3-8922-1b17-8999fe30b94d",
+        "cubes": [
+          {
+            "name": "left_arm",
+            "from": [
+              4,
+              6,
+              -2
+            ],
+            "to": [
+              7,
+              16,
+              2
+            ],
+            "origin": [
+              4,
+              16,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              10
+            ]
+          },
+          {
+            "name": "right_arm",
+            "from": [
+              -7,
+              6,
+              -2
+            ],
+            "to": [
+              -4,
+              16,
+              2
+            ],
+            "origin": [
+              -4,
+              16,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              -10
+            ]
+          }
+        ]
+      },
+      "is_error": false,
+      "result": {
+        "project_id": "24c87948-29b3-8922-1b17-8999fe30b94d",
+        "cube_ids": [
+          "1daf38c3-bcc0-4568-e311-9cf21752965a",
+          "067be1a4-6982-c8fa-69c3-5abd7e07ce4b"
+        ],
+        "count": 2,
+        "root_group_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+      }
+    },
+    {
+      "time": "2026-11-13T18:46:10.256Z",
+      "tool": "create_cubes",
+      "arguments": {
+        "project_id": "24c87948-29b3-8922-1b17-8999fe30b94d",
+        "cubes": [
+          {
+            "name": "must_not_exist",
+            "from": [
+              0,
+              0,
+              0
+            ],
+            "to": [
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "name": "invalid",
+            "from": [
+              2,
+              0,
+              0
+            ],
+            "to": [
+              1,
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      "is_error": true,
+      "result": {
+        "type": "text",
+        "text": "Input validation error: Invalid arguments for tool create_cubes: cubes.1: Each from coordinate must be <= to."
+      }
+    },
+    {
+      "time": "2026-11-13T18:46:11.378Z",
+      "tool": "get_project_state",
+      "arguments": {},
+      "is_error": false,
+      "result": {
+        "project": {
+          "id": "24c87948-29b3-8922-1b17-8999fe30b94d",
+          "name": "desktop_smoke_final_20261113",
+          "format": "bedrock",
+          "model_identifier": "desktop_smoke_final_20261113",
+          "saved": false,
+          "texture_width": 64,
+          "texture_height": 64,
+          "cube_count": 6,
+          "group_count": 1,
+          "managed": true
+        },
+        "cubes": [
+          {
+            "id": "08e55448-983f-696f-536b-7d56222e6353",
+            "name": "body",
+            "from": [
+              -4,
+              4,
+              -2
+            ],
+            "to": [
+              4,
+              16,
+              2
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "148779a8-84c1-ffe4-134c-35c5aa978e0f",
+            "name": "head",
+            "from": [
+              -4,
+              16,
+              -4
+            ],
+            "to": [
+              4,
+              24,
+              4
+            ],
+            "origin": [
+              0,
+              16,
+              0
+            ],
+            "rotation": [
+              0,
+              15,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "a844fbcd-cceb-eb5f-8c8c-7c7977805fd7",
+            "name": "left_foot",
+            "from": [
+              0,
+              0,
+              -3
+            ],
+            "to": [
+              4,
+              4,
+              3
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "99c9e35a-6d3d-3421-fa5f-f86379e86b24",
+            "name": "right_foot",
+            "from": [
+              -4,
+              0,
+              -3
+            ],
+            "to": [
+              0,
+              4,
+              3
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "1daf38c3-bcc0-4568-e311-9cf21752965a",
+            "name": "left_arm",
+            "from": [
+              4,
+              6,
+              -2
+            ],
+            "to": [
+              7,
+              16,
+              2
+            ],
+            "origin": [
+              4,
+              16,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              10
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "067be1a4-6982-c8fa-69c3-5abd7e07ce4b",
+            "name": "right_arm",
+            "from": [
+              -7,
+              6,
+              -2
+            ],
+            "to": [
+              -4,
+              16,
+              2
+            ],
+            "origin": [
+              -4,
+              16,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              -10
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          }
+        ],
+        "offset": 0,
+        "next_offset": null
+      }
+    },
+    {
+      "time": "2026-11-13T18:46:20.24Z",
+      "tool": "get_project_state",
+      "arguments": {},
+      "is_error": false,
+      "result": {
+        "project": {
+          "id": "24c87948-29b3-8922-1b17-8999fe30b94d",
+          "name": "desktop_smoke_final_20261113",
+          "format": "bedrock",
+          "model_identifier": "desktop_smoke_final_20261113",
+          "saved": false,
+          "texture_width": 64,
+          "texture_height": 64,
+          "cube_count": 4,
+          "group_count": 1,
+          "managed": true
+        },
+        "cubes": [
+          {
+            "id": "08e55448-983f-696f-536b-7d56222e6353",
+            "name": "body",
+            "from": [
+              -4,
+              4,
+              -2
+            ],
+            "to": [
+              4,
+              16,
+              2
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "148779a8-84c1-ffe4-134c-35c5aa978e0f",
+            "name": "head",
+            "from": [
+              -4,
+              16,
+              -4
+            ],
+            "to": [
+              4,
+              24,
+              4
+            ],
+            "origin": [
+              0,
+              16,
+              0
+            ],
+            "rotation": [
+              0,
+              15,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "a844fbcd-cceb-eb5f-8c8c-7c7977805fd7",
+            "name": "left_foot",
+            "from": [
+              0,
+              0,
+              -3
+            ],
+            "to": [
+              4,
+              4,
+              3
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "99c9e35a-6d3d-3421-fa5f-f86379e86b24",
+            "name": "right_foot",
+            "from": [
+              -4,
+              0,
+              -3
+            ],
+            "to": [
+              0,
+              4,
+              3
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          }
+        ],
+        "offset": 0,
+        "next_offset": null
+      }
+    },
+    {
+      "time": "2026-11-13T18:46:34.554Z",
+      "tool": "get_project_state",
+      "arguments": {},
+      "is_error": false,
+      "result": {
+        "project": {
+          "id": "24c87948-29b3-8922-1b17-8999fe30b94d",
+          "name": "desktop_smoke_final_20261113",
+          "format": "bedrock",
+          "model_identifier": "desktop_smoke_final_20261113",
+          "saved": false,
+          "texture_width": 64,
+          "texture_height": 64,
+          "cube_count": 6,
+          "group_count": 1,
+          "managed": true
+        },
+        "cubes": [
+          {
+            "id": "08e55448-983f-696f-536b-7d56222e6353",
+            "name": "body",
+            "from": [
+              -4,
+              4,
+              -2
+            ],
+            "to": [
+              4,
+              16,
+              2
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "148779a8-84c1-ffe4-134c-35c5aa978e0f",
+            "name": "head",
+            "from": [
+              -4,
+              16,
+              -4
+            ],
+            "to": [
+              4,
+              24,
+              4
+            ],
+            "origin": [
+              0,
+              16,
+              0
+            ],
+            "rotation": [
+              0,
+              15,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "a844fbcd-cceb-eb5f-8c8c-7c7977805fd7",
+            "name": "left_foot",
+            "from": [
+              0,
+              0,
+              -3
+            ],
+            "to": [
+              4,
+              4,
+              3
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "99c9e35a-6d3d-3421-fa5f-f86379e86b24",
+            "name": "right_foot",
+            "from": [
+              -4,
+              0,
+              -3
+            ],
+            "to": [
+              0,
+              4,
+              3
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "1daf38c3-bcc0-4568-e311-9cf21752965a",
+            "name": "left_arm",
+            "from": [
+              4,
+              6,
+              -2
+            ],
+            "to": [
+              7,
+              16,
+              2
+            ],
+            "origin": [
+              4,
+              16,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              10
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "067be1a4-6982-c8fa-69c3-5abd7e07ce4b",
+            "name": "right_arm",
+            "from": [
+              -7,
+              6,
+              -2
+            ],
+            "to": [
+              -4,
+              16,
+              2
+            ],
+            "origin": [
+              -4,
+              16,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              -10
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          }
+        ],
+        "offset": 0,
+        "next_offset": null
+      }
+    },
+    {
+      "time": "2026-11-13T18:46:35.682Z",
+      "tool": "save_project",
+      "arguments": {
+        "project_id": "24c87948-29b3-8922-1b17-8999fe30b94d",
+        "path": "desktop_smoke_final_20261113.bbmodel"
+      },
+      "is_error": false,
+      "result": {
+        "project_id": "24c87948-29b3-8922-1b17-8999fe30b94d",
+        "path": "desktop_smoke_final_20261113.bbmodel",
+        "bytes": 3687,
+        "saved": true
+      }
+    },
+    {
+      "time": "2026-11-13T18:46:57.589Z",
+      "tool": "save_project",
+      "arguments": {
+        "project_id": "24c87948-29b3-8922-1b17-8999fe30b94d",
+        "path": "../escape.bbmodel"
+      },
+      "is_error": true,
+      "result": {
+        "error": {
+          "code": "PATH_FORBIDDEN",
+          "message": "Unsafe path component.",
+          "outcome_unknown": false
+        }
+      }
+    },
+    {
+      "time": "2026-11-13T18:46:58.703Z",
+      "tool": "save_project",
+      "arguments": {
+        "project_id": "24c87948-29b3-8922-1b17-8999fe30b94d",
+        "path": "desktop_smoke_final_20261113.bbmodel"
+      },
+      "is_error": true,
+      "result": {
+        "error": {
+          "code": "FILE_EXISTS",
+          "message": "Target exists. Choose a new path or explicitly set overwrite: true.",
+          "outcome_unknown": false
+        }
+      }
+    },
+    {
+      "time": "2026-11-13T18:46:59.82Z",
+      "tool": "create_cubes",
+      "arguments": {
+        "project_id": "5b61a57c-8131-56d1-c128-6255ad70e54a",
+        "cubes": [
+          {
+            "name": "must_not_exist",
+            "from": [
+              0,
+              0,
+              0
+            ],
+            "to": [
+              1,
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      "is_error": true,
+      "result": {
+        "error": {
+          "code": "PROJECT_MISMATCH",
+          "message": "The active project changed; select the intended project and inspect its state.",
+          "outcome_unknown": false
+        }
+      }
+    },
+    {
+      "time": "2026-11-13T18:47:00.944Z",
+      "tool": "save_project",
+      "arguments": {
+        "project_id": "24c87948-29b3-8922-1b17-8999fe30b94d",
+        "path": "desktop_smoke_final_20261113.bbmodel",
+        "overwrite": true
+      },
+      "is_error": false,
+      "result": {
+        "project_id": "24c87948-29b3-8922-1b17-8999fe30b94d",
+        "path": "desktop_smoke_final_20261113.bbmodel",
+        "bytes": 3687,
+        "saved": true
+      }
+    },
+    {
+      "time": "2026-11-13T18:47:02.041Z",
+      "tool": "get_project_state",
+      "arguments": {},
+      "is_error": false,
+      "result": {
+        "project": {
+          "id": "24c87948-29b3-8922-1b17-8999fe30b94d",
+          "name": "desktop_smoke_final_20261113",
+          "format": "bedrock",
+          "model_identifier": "desktop_smoke_final_20261113",
+          "saved": true,
+          "texture_width": 64,
+          "texture_height": 64,
+          "cube_count": 6,
+          "group_count": 1,
+          "managed": true
+        },
+        "cubes": [
+          {
+            "id": "08e55448-983f-696f-536b-7d56222e6353",
+            "name": "body",
+            "from": [
+              -4,
+              4,
+              -2
+            ],
+            "to": [
+              4,
+              16,
+              2
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "148779a8-84c1-ffe4-134c-35c5aa978e0f",
+            "name": "head",
+            "from": [
+              -4,
+              16,
+              -4
+            ],
+            "to": [
+              4,
+              24,
+              4
+            ],
+            "origin": [
+              0,
+              16,
+              0
+            ],
+            "rotation": [
+              0,
+              15,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "a844fbcd-cceb-eb5f-8c8c-7c7977805fd7",
+            "name": "left_foot",
+            "from": [
+              0,
+              0,
+              -3
+            ],
+            "to": [
+              4,
+              4,
+              3
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "99c9e35a-6d3d-3421-fa5f-f86379e86b24",
+            "name": "right_foot",
+            "from": [
+              -4,
+              0,
+              -3
+            ],
+            "to": [
+              0,
+              4,
+              3
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "1daf38c3-bcc0-4568-e311-9cf21752965a",
+            "name": "left_arm",
+            "from": [
+              4,
+              6,
+              -2
+            ],
+            "to": [
+              7,
+              16,
+              2
+            ],
+            "origin": [
+              4,
+              16,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              10
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "067be1a4-6982-c8fa-69c3-5abd7e07ce4b",
+            "name": "right_arm",
+            "from": [
+              -7,
+              6,
+              -2
+            ],
+            "to": [
+              -4,
+              16,
+              2
+            ],
+            "origin": [
+              -4,
+              16,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              -10
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          }
+        ],
+        "offset": 0,
+        "next_offset": null
+      }
+    },
+    {
+      "time": "2026-11-13T18:47:37.808Z",
+      "tool": "get_project_state",
+      "arguments": {},
+      "is_error": false,
+      "result": {
+        "project": {
+          "id": "105f177e-7a46-1b73-c8f4-a2f8ad0735ef",
+          "name": "desktop_smoke_final_20261113",
+          "format": "bedrock",
+          "model_identifier": "desktop_smoke_final_20261113",
+          "saved": true,
+          "texture_width": 64,
+          "texture_height": 64,
+          "cube_count": 6,
+          "group_count": 1,
+          "managed": false
+        },
+        "cubes": [
+          {
+            "id": "08e55448-983f-696f-536b-7d56222e6353",
+            "name": "body",
+            "from": [
+              -4,
+              4,
+              -2
+            ],
+            "to": [
+              4,
+              16,
+              2
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "148779a8-84c1-ffe4-134c-35c5aa978e0f",
+            "name": "head",
+            "from": [
+              -4,
+              16,
+              -4
+            ],
+            "to": [
+              4,
+              24,
+              4
+            ],
+            "origin": [
+              0,
+              16,
+              0
+            ],
+            "rotation": [
+              0,
+              15,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "a844fbcd-cceb-eb5f-8c8c-7c7977805fd7",
+            "name": "left_foot",
+            "from": [
+              0,
+              0,
+              -3
+            ],
+            "to": [
+              4,
+              4,
+              3
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "99c9e35a-6d3d-3421-fa5f-f86379e86b24",
+            "name": "right_foot",
+            "from": [
+              -4,
+              0,
+              -3
+            ],
+            "to": [
+              0,
+              4,
+              3
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "1daf38c3-bcc0-4568-e311-9cf21752965a",
+            "name": "left_arm",
+            "from": [
+              4,
+              6,
+              -2
+            ],
+            "to": [
+              7,
+              16,
+              2
+            ],
+            "origin": [
+              4,
+              16,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              10
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          },
+          {
+            "id": "067be1a4-6982-c8fa-69c3-5abd7e07ce4b",
+            "name": "right_arm",
+            "from": [
+              -7,
+              6,
+              -2
+            ],
+            "to": [
+              -4,
+              16,
+              2
+            ],
+            "origin": [
+              -4,
+              16,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              -10
+            ],
+            "parent_id": "02d04ca2-2f9a-9fb3-e2b8-fa4201ca560c"
+          }
+        ],
+        "offset": 0,
+        "next_offset": null
+      }
+    },
+    {
+      "time": "2026-11-13T18:47:55.281Z",
+      "tool": "save_project",
+      "arguments": {
+        "project_id": "105f177e-7a46-1b73-c8f4-a2f8ad0735ef",
+        "path": "must_not_write.bbmodel"
+      },
+      "is_error": true,
+      "result": {
+        "error": {
+          "code": "PROJECT_NOT_OWNED",
+          "message": "Only projects created by this plugin connection session can be modified.",
+          "outcome_unknown": false
+        }
+      }
+    }
+  ]
+}

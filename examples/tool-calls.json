@@ -1,0 +1,21 @@
+{
+  "create_project": {
+    "name": "mcp_demo",
+    "model_identifier": "mcp_demo",
+    "texture_width": 64,
+    "texture_height": 64
+  },
+  "get_project_state": { "offset": 0, "limit": 100 },
+  "create_cubes": {
+    "project_id": "REPLACE_WITH_CREATE_PROJECT_RESULT_UUID",
+    "cubes": [
+      { "name": "body", "from": [-4, 0, -2], "to": [4, 12, 2] },
+      { "name": "head", "from": [-4, 12, -4], "to": [4, 20, 4], "origin": [0, 12, 0] }
+    ]
+  },
+  "save_project": {
+    "project_id": "REPLACE_WITH_CREATE_PROJECT_RESULT_UUID",
+    "path": "models/mcp_demo.bbmodel",
+    "overwrite": false
+  }
+}

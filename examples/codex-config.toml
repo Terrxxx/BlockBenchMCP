@@ -1,0 +1,9 @@
+# Copy this table into your Codex config.toml. Adjust all paths for your machine.
+# This file does not install or activate the MCP server by itself.
+[mcp_servers.blockbench_ai]
+command = "node"
+args = ["D:/Desktop/BlockBenchMCP/dist/server/index.js", "--workspace", "D:/Desktop/BlockBenchMCP"]
+cwd = "D:/Desktop/BlockBenchMCP"
+startup_timeout_sec = 15
+tool_timeout_sec = 30
+enabled_tools = ["create_project", "get_project_state", "create_cubes", "save_project", "create_bones", "update_bones", "reparent_cubes", "import_texture", "assign_texture", "set_cube_uv"]

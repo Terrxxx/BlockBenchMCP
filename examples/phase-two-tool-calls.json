@@ -1,0 +1,32 @@
+{
+  "note": "Execute in order. Replace angle-bracket placeholders with IDs returned by preceding calls; placeholders are not valid literal IDs.",
+  "create_project": { "name": "bedrock_phase2", "model_identifier": "bedrock_phase2", "texture_width": 64, "texture_height": 64 },
+  "create_bones": {
+    "project_id": "<project_id>",
+    "bones": [
+      { "key": "head", "name": "head", "parent_key": "torso", "origin": [0, 12, 0] },
+      { "key": "torso", "name": "torso", "parent_key": "root" },
+      { "key": "root", "name": "root" }
+    ]
+  },
+  "create_cubes": {
+    "project_id": "<project_id>", "parent_id": "<torso_id>",
+    "cubes": [
+      { "name": "body", "from": [-4, 0, -2], "to": [4, 12, 2] },
+      { "name": "head", "from": [-4, 12, -4], "to": [4, 20, 4], "origin": [0, 12, 0] }
+    ]
+  },
+  "update_bones": { "project_id": "<project_id>", "bones": [{ "bone_id": "<head_id>", "origin": [0, 12, 0], "rotation": [0, 15, 0] }] },
+  "reparent_cubes": { "project_id": "<project_id>", "cube_ids": ["<head_cube_id>"], "parent_id": "<head_id>" },
+  "import_texture": { "project_id": "<project_id>", "path": "examples/atlas-64.png", "name": "atlas" },
+  "set_cube_uv": {
+    "project_id": "<project_id>",
+    "cubes": [
+      { "cube_id": "<body_cube_id>", "uv_offset": [0, 0] },
+      { "cube_id": "<head_cube_id>", "uv_offset": [0, 24], "mirror_uv": true }
+    ]
+  },
+  "assign_texture": { "project_id": "<project_id>", "texture_id": "<texture_id>", "cube_ids": ["<body_cube_id>", "<head_cube_id>"] },
+  "get_project_state": { "offset": 0, "bone_offset": 0, "texture_offset": 0, "limit": 100 },
+  "save_project": { "project_id": "<project_id>", "path": "models/bedrock_phase2.bbmodel", "overwrite": false }
+}

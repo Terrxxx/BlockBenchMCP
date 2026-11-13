@@ -1,0 +1,1172 @@
+{
+  "phase": 2,
+  "date": "2026-11-13",
+  "time_zone": "America/Chicago",
+  "application_version": "0.2.0",
+  "bridge_protocol": 2,
+  "invocation": "Codex native mcp__blockbench_ai tools",
+  "computer_use": false,
+  "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+  "project_name": "phase2_smoke_20261113t203037z",
+  "calls": [
+    {
+      "at": "2026-11-13T20:30:29.677Z",
+      "tool": "get_project_state",
+      "input": {
+        "limit": 100
+      },
+      "isError": false,
+      "result": {
+        "project": null,
+        "cubes": [],
+        "offset": 0,
+        "next_offset": null,
+        "bones": [],
+        "bone_offset": 0,
+        "next_bone_offset": null,
+        "textures": [],
+        "texture_offset": 0,
+        "next_texture_offset": null
+      }
+    },
+    {
+      "at": "2026-11-13T20:30:37.174Z",
+      "tool": "create_project",
+      "input": {
+        "name": "phase2_smoke_20261113t203037z",
+        "model_identifier": "phase2_smoke_20261113t203037z",
+        "texture_width": 64,
+        "texture_height": 64
+      },
+      "isError": false,
+      "result": {
+        "project": {
+          "id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+          "name": "phase2_smoke_20261113t203037z",
+          "format": "bedrock",
+          "model_identifier": "phase2_smoke_20261113t203037z",
+          "saved": false,
+          "texture_width": 64,
+          "texture_height": 64,
+          "cube_count": 0,
+          "group_count": 0,
+          "managed": true,
+          "texture_count": 0
+        }
+      }
+    },
+    {
+      "at": "2026-11-13T20:30:45.056Z",
+      "tool": "create_bones",
+      "input": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "bones": [
+          {
+            "key": "head",
+            "name": "head",
+            "parent_key": "torso",
+            "origin": [
+              0,
+              12,
+              0
+            ]
+          },
+          {
+            "key": "torso",
+            "name": "torso",
+            "parent_key": "root"
+          },
+          {
+            "key": "root",
+            "name": "root"
+          }
+        ]
+      },
+      "isError": false,
+      "result": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "count": 3,
+        "bones": [
+          {
+            "key": "head",
+            "id": "5ef05d79-6bdf-e333-bca6-5f8e05d6f3ce"
+          },
+          {
+            "key": "torso",
+            "id": "202c649d-fb2e-db54-2065-076f1d6aec9b"
+          },
+          {
+            "key": "root",
+            "id": "58e5e444-424a-7b1b-f42b-eab60c84d990"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-11-13T20:30:55.584Z",
+      "tool": "create_cubes",
+      "input": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "parent_id": "202c649d-fb2e-db54-2065-076f1d6aec9b",
+        "cubes": [
+          {
+            "name": "body",
+            "from": [
+              -4,
+              0,
+              -2
+            ],
+            "to": [
+              4,
+              12,
+              2
+            ]
+          },
+          {
+            "name": "head",
+            "from": [
+              -4,
+              12,
+              -4
+            ],
+            "to": [
+              4,
+              20,
+              4
+            ],
+            "origin": [
+              0,
+              12,
+              0
+            ]
+          }
+        ]
+      },
+      "isError": false,
+      "result": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "cube_ids": [
+          "6c8c8717-9f41-c652-6817-da99a62b3177",
+          "7bebda61-ebf7-45d4-a118-4b1441778ee3"
+        ],
+        "count": 2,
+        "root_group_id": "202c649d-fb2e-db54-2065-076f1d6aec9b"
+      }
+    },
+    {
+      "at": "2026-11-13T20:31:04.241Z",
+      "tool": "update_bones",
+      "input": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "bones": [
+          {
+            "bone_id": "5ef05d79-6bdf-e333-bca6-5f8e05d6f3ce",
+            "origin": [
+              0,
+              12,
+              0
+            ],
+            "rotation": [
+              0,
+              15,
+              0
+            ]
+          }
+        ]
+      },
+      "isError": false,
+      "result": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "count": 1,
+        "bone_ids": [
+          "5ef05d79-6bdf-e333-bca6-5f8e05d6f3ce"
+        ]
+      }
+    },
+    {
+      "at": "2026-11-13T20:31:04.258Z",
+      "tool": "reparent_cubes",
+      "input": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "cube_ids": [
+          "7bebda61-ebf7-45d4-a118-4b1441778ee3"
+        ],
+        "parent_id": "5ef05d79-6bdf-e333-bca6-5f8e05d6f3ce"
+      },
+      "isError": false,
+      "result": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "count": 1,
+        "cube_ids": [
+          "7bebda61-ebf7-45d4-a118-4b1441778ee3"
+        ],
+        "parent_id": "5ef05d79-6bdf-e333-bca6-5f8e05d6f3ce"
+      }
+    },
+    {
+      "at": "2026-11-13T20:31:10.780Z",
+      "tool": "import_texture",
+      "input": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "path": "examples/atlas-64.png",
+        "name": "atlas"
+      },
+      "isError": false,
+      "result": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "texture": {
+          "id": "af7143de-b0ba-2cdf-ca48-d7d94d9d5ffc",
+          "name": "atlas",
+          "width": 64,
+          "height": 64,
+          "internal": true
+        }
+      }
+    },
+    {
+      "at": "2026-11-13T20:31:48.486Z",
+      "tool": "set_cube_uv",
+      "input": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "cubes": [
+          {
+            "cube_id": "6c8c8717-9f41-c652-6817-da99a62b3177",
+            "uv_offset": [
+              0,
+              0
+            ]
+          },
+          {
+            "cube_id": "7bebda61-ebf7-45d4-a118-4b1441778ee3",
+            "uv_offset": [
+              0,
+              24
+            ],
+            "mirror_uv": true
+          }
+        ]
+      },
+      "isError": false,
+      "result": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "cube_ids": [
+          "6c8c8717-9f41-c652-6817-da99a62b3177",
+          "7bebda61-ebf7-45d4-a118-4b1441778ee3"
+        ],
+        "count": 2
+      }
+    },
+    {
+      "at": "2026-11-13T20:31:48.506Z",
+      "tool": "assign_texture",
+      "input": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "texture_id": "af7143de-b0ba-2cdf-ca48-d7d94d9d5ffc",
+        "cube_ids": [
+          "6c8c8717-9f41-c652-6817-da99a62b3177",
+          "7bebda61-ebf7-45d4-a118-4b1441778ee3"
+        ]
+      },
+      "isError": false,
+      "result": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "texture_id": "af7143de-b0ba-2cdf-ca48-d7d94d9d5ffc",
+        "cube_ids": [
+          "6c8c8717-9f41-c652-6817-da99a62b3177",
+          "7bebda61-ebf7-45d4-a118-4b1441778ee3"
+        ],
+        "count": 2
+      }
+    },
+    {
+      "at": "2026-11-13T20:31:48.524Z",
+      "tool": "get_project_state",
+      "input": {
+        "limit": 100
+      },
+      "isError": false,
+      "result": {
+        "project": {
+          "id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+          "name": "phase2_smoke_20261113t203037z",
+          "format": "bedrock",
+          "model_identifier": "phase2_smoke_20261113t203037z",
+          "saved": false,
+          "texture_width": 64,
+          "texture_height": 64,
+          "cube_count": 2,
+          "group_count": 3,
+          "managed": true,
+          "texture_count": 1
+        },
+        "cubes": [
+          {
+            "id": "6c8c8717-9f41-c652-6817-da99a62b3177",
+            "name": "body",
+            "from": [
+              -4,
+              0,
+              -2
+            ],
+            "to": [
+              4,
+              12,
+              2
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "202c649d-fb2e-db54-2065-076f1d6aec9b",
+            "box_uv": true,
+            "uv_offset": [
+              0,
+              0
+            ],
+            "mirror_uv": false,
+            "texture_ids": [
+              "af7143de-b0ba-2cdf-ca48-d7d94d9d5ffc"
+            ]
+          },
+          {
+            "id": "7bebda61-ebf7-45d4-a118-4b1441778ee3",
+            "name": "head",
+            "from": [
+              -4,
+              12,
+              -4
+            ],
+            "to": [
+              4,
+              20,
+              4
+            ],
+            "origin": [
+              0,
+              12,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "5ef05d79-6bdf-e333-bca6-5f8e05d6f3ce",
+            "box_uv": true,
+            "uv_offset": [
+              0,
+              24
+            ],
+            "mirror_uv": true,
+            "texture_ids": [
+              "af7143de-b0ba-2cdf-ca48-d7d94d9d5ffc"
+            ]
+          }
+        ],
+        "offset": 0,
+        "next_offset": null,
+        "bones": [
+          {
+            "id": "58e5e444-424a-7b1b-f42b-eab60c84d990",
+            "name": "root",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": null
+          },
+          {
+            "id": "202c649d-fb2e-db54-2065-076f1d6aec9b",
+            "name": "torso",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "58e5e444-424a-7b1b-f42b-eab60c84d990"
+          },
+          {
+            "id": "5ef05d79-6bdf-e333-bca6-5f8e05d6f3ce",
+            "name": "head",
+            "origin": [
+              0,
+              12,
+              0
+            ],
+            "rotation": [
+              0,
+              15,
+              0
+            ],
+            "parent_id": "202c649d-fb2e-db54-2065-076f1d6aec9b"
+          }
+        ],
+        "bone_offset": 0,
+        "next_bone_offset": null,
+        "textures": [
+          {
+            "id": "af7143de-b0ba-2cdf-ca48-d7d94d9d5ffc",
+            "name": "atlas",
+            "width": 64,
+            "height": 64,
+            "internal": true
+          }
+        ],
+        "texture_offset": 0,
+        "next_texture_offset": null
+      }
+    },
+    {
+      "at": "2026-11-13T20:32:10.557Z",
+      "tool": "save_project",
+      "input": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "path": "models/phase2_smoke_20261113t203037z.bbmodel",
+        "overwrite": false
+      },
+      "isError": false,
+      "result": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "path": "models/phase2_smoke_20261113t203037z.bbmodel",
+        "bytes": 3741,
+        "saved": true
+      }
+    },
+    {
+      "at": "2026-11-13T20:32:35.424Z",
+      "tool": "update_bones",
+      "input": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "bones": [
+          {
+            "bone_id": "58e5e444-424a-7b1b-f42b-eab60c84d990",
+            "parent_id": "5ef05d79-6bdf-e333-bca6-5f8e05d6f3ce"
+          }
+        ]
+      },
+      "expected_error": "HIERARCHY_CYCLE",
+      "isError": true,
+      "result": {
+        "error": {
+          "code": "HIERARCHY_CYCLE",
+          "message": "Bone hierarchy must not contain a cycle.",
+          "outcome_unknown": false
+        }
+      }
+    },
+    {
+      "at": "2026-11-13T20:32:35.436Z",
+      "tool": "update_bones",
+      "input": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "bones": [
+          {
+            "bone_id": "5ef05d79-6bdf-e333-bca6-5f8e05d6f3ce",
+            "name": "root"
+          }
+        ]
+      },
+      "expected_error": "NAME_CONFLICT",
+      "isError": true,
+      "result": {
+        "error": {
+          "code": "NAME_CONFLICT",
+          "message": "Bone names must be unique within the project.",
+          "outcome_unknown": false
+        }
+      }
+    },
+    {
+      "at": "2026-11-13T20:32:35.453Z",
+      "tool": "import_texture",
+      "input": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "path": "examples/atlas-64.png"
+      },
+      "expected_error": "TEXTURE_LIMIT",
+      "isError": true,
+      "result": {
+        "error": {
+          "code": "TEXTURE_LIMIT",
+          "message": "This phase supports one shared Bedrock atlas; the project already has a texture.",
+          "outcome_unknown": false
+        }
+      }
+    },
+    {
+      "at": "2026-11-13T20:32:35.464Z",
+      "tool": "import_texture",
+      "input": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "path": "../outside.png"
+      },
+      "expected_error": "PATH_FORBIDDEN",
+      "isError": true,
+      "result": {
+        "error": {
+          "code": "PATH_FORBIDDEN",
+          "message": "Unsafe path component.",
+          "outcome_unknown": false
+        }
+      }
+    },
+    {
+      "at": "2026-11-13T20:32:35.476Z",
+      "tool": "set_cube_uv",
+      "input": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "cubes": [
+          {
+            "cube_id": "6c8c8717-9f41-c652-6817-da99a62b3177",
+            "uv_offset": [
+              8,
+              8
+            ]
+          },
+          {
+            "cube_id": "7bebda61-ebf7-45d4-a118-4b1441778ee3",
+            "uv_offset": [
+              63,
+              63
+            ]
+          }
+        ]
+      },
+      "expected_error": "UV_OUT_OF_BOUNDS",
+      "isError": true,
+      "result": {
+        "error": {
+          "code": "UV_OUT_OF_BOUNDS",
+          "message": "The complete Box UV rectangle must fit within the project atlas.",
+          "outcome_unknown": false
+        }
+      }
+    },
+    {
+      "at": "2026-11-13T20:32:35.492Z",
+      "tool": "assign_texture",
+      "input": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "texture_id": "af7143de-b0ba-2cdf-ca48-d7d94d9d5ffc",
+        "cube_ids": [
+          "6c8c8717-9f41-c652-6817-da99a62b3177",
+          "11111111-1111-1111-1111-111111111111"
+        ]
+      },
+      "expected_error": "NOT_FOUND",
+      "isError": true,
+      "result": {
+        "error": {
+          "code": "NOT_FOUND",
+          "message": "A cube does not exist in the active project.",
+          "outcome_unknown": false
+        }
+      }
+    },
+    {
+      "at": "2026-11-13T20:32:38.709Z",
+      "tool": "save_project",
+      "input": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "path": "models/phase2_smoke_20261113t203037z.bbmodel",
+        "overwrite": false
+      },
+      "expected_error": "FILE_EXISTS",
+      "isError": true,
+      "result": {
+        "error": {
+          "code": "FILE_EXISTS",
+          "message": "Target exists. Choose a new path or explicitly set overwrite: true.",
+          "outcome_unknown": false
+        }
+      }
+    },
+    {
+      "at": "2026-11-13T20:32:38.726Z",
+      "tool": "get_project_state",
+      "input": {
+        "limit": 100
+      },
+      "isError": false,
+      "result": {
+        "project": {
+          "id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+          "name": "phase2_smoke_20261113t203037z",
+          "format": "bedrock",
+          "model_identifier": "phase2_smoke_20261113t203037z",
+          "saved": true,
+          "texture_width": 64,
+          "texture_height": 64,
+          "cube_count": 2,
+          "group_count": 3,
+          "managed": true,
+          "texture_count": 1
+        },
+        "cubes": [
+          {
+            "id": "6c8c8717-9f41-c652-6817-da99a62b3177",
+            "name": "body",
+            "from": [
+              -4,
+              0,
+              -2
+            ],
+            "to": [
+              4,
+              12,
+              2
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "202c649d-fb2e-db54-2065-076f1d6aec9b",
+            "box_uv": true,
+            "uv_offset": [
+              0,
+              0
+            ],
+            "mirror_uv": false,
+            "texture_ids": [
+              "af7143de-b0ba-2cdf-ca48-d7d94d9d5ffc"
+            ]
+          },
+          {
+            "id": "7bebda61-ebf7-45d4-a118-4b1441778ee3",
+            "name": "head",
+            "from": [
+              -4,
+              12,
+              -4
+            ],
+            "to": [
+              4,
+              20,
+              4
+            ],
+            "origin": [
+              0,
+              12,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "5ef05d79-6bdf-e333-bca6-5f8e05d6f3ce",
+            "box_uv": true,
+            "uv_offset": [
+              0,
+              24
+            ],
+            "mirror_uv": true,
+            "texture_ids": [
+              "af7143de-b0ba-2cdf-ca48-d7d94d9d5ffc"
+            ]
+          }
+        ],
+        "offset": 0,
+        "next_offset": null,
+        "bones": [
+          {
+            "id": "58e5e444-424a-7b1b-f42b-eab60c84d990",
+            "name": "root",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": null
+          },
+          {
+            "id": "202c649d-fb2e-db54-2065-076f1d6aec9b",
+            "name": "torso",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "58e5e444-424a-7b1b-f42b-eab60c84d990"
+          },
+          {
+            "id": "5ef05d79-6bdf-e333-bca6-5f8e05d6f3ce",
+            "name": "head",
+            "origin": [
+              0,
+              12,
+              0
+            ],
+            "rotation": [
+              0,
+              15,
+              0
+            ],
+            "parent_id": "202c649d-fb2e-db54-2065-076f1d6aec9b"
+          }
+        ],
+        "bone_offset": 0,
+        "next_bone_offset": null,
+        "textures": [
+          {
+            "id": "af7143de-b0ba-2cdf-ca48-d7d94d9d5ffc",
+            "name": "atlas",
+            "width": 64,
+            "height": 64,
+            "internal": true
+          }
+        ],
+        "texture_offset": 0,
+        "next_texture_offset": null
+      }
+    },
+    {
+      "at": "2026-11-13T20:35:12.597Z",
+      "step": "after_user_undo_7",
+      "tool": "get_project_state",
+      "input": {
+        "limit": 100
+      },
+      "isError": false,
+      "result": {
+        "project": {
+          "id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+          "name": "phase2_smoke_20261113t203037z",
+          "format": "bedrock",
+          "model_identifier": "phase2_smoke_20261113t203037z",
+          "saved": true,
+          "texture_width": 64,
+          "texture_height": 64,
+          "cube_count": 0,
+          "group_count": 0,
+          "managed": true,
+          "texture_count": 0
+        },
+        "cubes": [],
+        "offset": 0,
+        "next_offset": null,
+        "bones": [],
+        "bone_offset": 0,
+        "next_bone_offset": null,
+        "textures": [],
+        "texture_offset": 0,
+        "next_texture_offset": null
+      }
+    },
+    {
+      "at": "2026-11-13T20:36:23.548Z",
+      "step": "after_user_redo_7",
+      "tool": "get_project_state",
+      "input": {
+        "limit": 100
+      },
+      "isError": false,
+      "result": {
+        "project": {
+          "id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+          "name": "phase2_smoke_20261113t203037z",
+          "format": "bedrock",
+          "model_identifier": "phase2_smoke_20261113t203037z",
+          "saved": true,
+          "texture_width": 64,
+          "texture_height": 64,
+          "cube_count": 2,
+          "group_count": 3,
+          "managed": true,
+          "texture_count": 1
+        },
+        "cubes": [
+          {
+            "id": "6c8c8717-9f41-c652-6817-da99a62b3177",
+            "name": "body",
+            "from": [
+              -4,
+              0,
+              -2
+            ],
+            "to": [
+              4,
+              12,
+              2
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "202c649d-fb2e-db54-2065-076f1d6aec9b",
+            "box_uv": true,
+            "uv_offset": [
+              0,
+              0
+            ],
+            "mirror_uv": false,
+            "texture_ids": [
+              "af7143de-b0ba-2cdf-ca48-d7d94d9d5ffc"
+            ]
+          },
+          {
+            "id": "7bebda61-ebf7-45d4-a118-4b1441778ee3",
+            "name": "head",
+            "from": [
+              -4,
+              12,
+              -4
+            ],
+            "to": [
+              4,
+              20,
+              4
+            ],
+            "origin": [
+              0,
+              12,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "5ef05d79-6bdf-e333-bca6-5f8e05d6f3ce",
+            "box_uv": true,
+            "uv_offset": [
+              0,
+              24
+            ],
+            "mirror_uv": true,
+            "texture_ids": [
+              "af7143de-b0ba-2cdf-ca48-d7d94d9d5ffc"
+            ]
+          }
+        ],
+        "offset": 0,
+        "next_offset": null,
+        "bones": [
+          {
+            "id": "58e5e444-424a-7b1b-f42b-eab60c84d990",
+            "name": "root",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": null
+          },
+          {
+            "id": "202c649d-fb2e-db54-2065-076f1d6aec9b",
+            "name": "torso",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "58e5e444-424a-7b1b-f42b-eab60c84d990"
+          },
+          {
+            "id": "5ef05d79-6bdf-e333-bca6-5f8e05d6f3ce",
+            "name": "head",
+            "origin": [
+              0,
+              12,
+              0
+            ],
+            "rotation": [
+              0,
+              15,
+              0
+            ],
+            "parent_id": "202c649d-fb2e-db54-2065-076f1d6aec9b"
+          }
+        ],
+        "bone_offset": 0,
+        "next_bone_offset": null,
+        "textures": [
+          {
+            "id": "af7143de-b0ba-2cdf-ca48-d7d94d9d5ffc",
+            "name": "atlas",
+            "width": 64,
+            "height": 64,
+            "internal": true
+          }
+        ],
+        "texture_offset": 0,
+        "next_texture_offset": null
+      }
+    },
+    {
+      "at": "2026-11-13T20:36:52.664Z",
+      "step": "save_after_redo",
+      "tool": "save_project",
+      "input": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "path": "models/phase2_smoke_20261113t203037z.bbmodel",
+        "overwrite": true
+      },
+      "isError": false,
+      "result": {
+        "project_id": "ccbddb9d-c393-f89d-4b73-8dd06e0a09b2",
+        "path": "models/phase2_smoke_20261113t203037z.bbmodel",
+        "bytes": 3741,
+        "saved": true
+      }
+    },
+    {
+      "at": "2026-11-13T20:40:26.221Z",
+      "step": "after_user_close_and_reopen",
+      "tool": "get_project_state",
+      "input": {
+        "limit": 100
+      },
+      "isError": false,
+      "result": {
+        "project": {
+          "id": "4e2bb05d-1533-4f4c-f57d-602eb9921633",
+          "name": "phase2_smoke_20261113t203037z",
+          "format": "bedrock",
+          "model_identifier": "phase2_smoke_20261113t203037z",
+          "saved": true,
+          "texture_width": 64,
+          "texture_height": 64,
+          "cube_count": 2,
+          "group_count": 3,
+          "managed": false,
+          "texture_count": 1
+        },
+        "cubes": [
+          {
+            "id": "6c8c8717-9f41-c652-6817-da99a62b3177",
+            "name": "body",
+            "from": [
+              -4,
+              0,
+              -2
+            ],
+            "to": [
+              4,
+              12,
+              2
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "202c649d-fb2e-db54-2065-076f1d6aec9b",
+            "box_uv": true,
+            "uv_offset": [
+              0,
+              0
+            ],
+            "mirror_uv": false,
+            "texture_ids": [
+              "af7143de-b0ba-2cdf-ca48-d7d94d9d5ffc"
+            ]
+          },
+          {
+            "id": "7bebda61-ebf7-45d4-a118-4b1441778ee3",
+            "name": "head",
+            "from": [
+              -4,
+              12,
+              -4
+            ],
+            "to": [
+              4,
+              20,
+              4
+            ],
+            "origin": [
+              0,
+              12,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "5ef05d79-6bdf-e333-bca6-5f8e05d6f3ce",
+            "box_uv": true,
+            "uv_offset": [
+              0,
+              24
+            ],
+            "mirror_uv": true,
+            "texture_ids": [
+              "af7143de-b0ba-2cdf-ca48-d7d94d9d5ffc"
+            ]
+          }
+        ],
+        "offset": 0,
+        "next_offset": null,
+        "bones": [
+          {
+            "id": "58e5e444-424a-7b1b-f42b-eab60c84d990",
+            "name": "root",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": null
+          },
+          {
+            "id": "202c649d-fb2e-db54-2065-076f1d6aec9b",
+            "name": "torso",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "58e5e444-424a-7b1b-f42b-eab60c84d990"
+          },
+          {
+            "id": "5ef05d79-6bdf-e333-bca6-5f8e05d6f3ce",
+            "name": "head",
+            "origin": [
+              0,
+              12,
+              0
+            ],
+            "rotation": [
+              0,
+              15,
+              0
+            ],
+            "parent_id": "202c649d-fb2e-db54-2065-076f1d6aec9b"
+          }
+        ],
+        "bone_offset": 0,
+        "next_bone_offset": null,
+        "textures": [
+          {
+            "id": "af7143de-b0ba-2cdf-ca48-d7d94d9d5ffc",
+            "name": "atlas",
+            "width": 64,
+            "height": 64,
+            "internal": true
+          }
+        ],
+        "texture_offset": 0,
+        "next_texture_offset": null
+      }
+    }
+  ],
+  "checks": {
+    "live": {
+      "project": true,
+      "counts": true,
+      "hierarchy": true,
+      "pivot_rotation": true,
+      "cubes": true,
+      "uv": true,
+      "atlas": true
+    },
+    "rejected_mutations_preserved_state": true,
+    "disk": {
+      "saved_bytes": true,
+      "file_format": true,
+      "bones": true,
+      "cubes": true,
+      "texture": true,
+      "source_unchanged": true,
+      "embedded_png_matches_source": true
+    },
+    "undo_7_empty": true,
+    "redo_7": {
+      "same_project": true,
+      "all_cubes": true,
+      "all_bones": true,
+      "all_textures": true
+    },
+    "reopen": {
+      "new_project_id": true,
+      "reopened_unmanaged": true,
+      "project_metadata": true,
+      "all_cubes": true,
+      "all_bones": true,
+      "all_textures": true
+    }
+  },
+  "artifact": {
+    "path": "models/phase2_smoke_20261113t203037z.bbmodel",
+    "bytes": 3741,
+    "sha256": "8B215824C27237D6D03D0FA934866FC3C04E1FA597E268A5778A3673CE238E15"
+  },
+  "source_png": {
+    "path": "examples/atlas-64.png",
+    "bytes": 250,
+    "sha256": "D852B07075BA1B6D249098E41BBD3AAB58029721A888775E08773B493F2B9C12",
+    "embedded_png_sha256": "D852B07075BA1B6D249098E41BBD3AAB58029721A888775E08773B493F2B9C12"
+  },
+  "manual_actions": {
+    "undo": "User performed 7 Undo operations; MCP readback confirmed 0 cubes, 0 bones, 0 textures.",
+    "redo": "User performed 7 Redo operations; MCP readback matched the original complete state.",
+    "reopen": "User closed and reopened the saved bbmodel. MCP readback verified identical bones, cubes, texture, UV, identifiers and hierarchy; new project ID, managed=false."
+  },
+  "reopened_project_id": "4e2bb05d-1533-4f4c-f57d-602eb9921633"
+}
