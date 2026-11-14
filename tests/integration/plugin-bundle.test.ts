@@ -22,6 +22,9 @@ it('loads the standalone bundle with only supported native modules and a scoped 
   let registration: Registration | undefined;
   let confirm: ((values: { workspace: string }) => void) | undefined;
   let connected = false;
+  let displayedStatus: unknown;
+  let statusReadOnly: unknown;
+  const statusUpdates: unknown[] = [];
   const actions: { click: () => void }[] = [];
   const scopedFs: FileSystem = {
     statSync: fs.statSync, readdirSync: fs.readdirSync, readFileSync: fs.readFileSync,
@@ -44,7 +47,17 @@ it('loads the standalone bundle with only supported native modules and a scoped 
         delete(): void {}
       },
       Dialog: class {
-        constructor(_id: string, options: { onConfirm: typeof confirm }) { confirm = options.onConfirm; }
+        constructor(_id: string, options: { onConfirm: typeof confirm; form: { status: { value: unknown; readonly: unknown } } }) {
+          confirm = options.onConfirm;
+          displayedStatus = options.form.status.value;
+          statusReadOnly = options.form.status.readonly;
+        }
+        setFormValues(values: Record<string, unknown>, update: boolean): void {
+          expect(Object.keys(values)).toEqual(['status']); // Do not overwrite the workspace input.
+          expect(update).toBe(false);
+          displayedStatus = values.status;
+          statusUpdates.push(displayedStatus);
+        }
         show(): void {}
         hide(): void {}
       },
@@ -53,12 +66,20 @@ it('loads the standalone bundle with only supported native modules and a scoped 
     expect(registration).toBeDefined();
     registration!.onload();
     actions[0]!.click();
+    expect(displayedStatus).toBe('Disconnected');
+    expect(statusReadOnly).toBe(true);
     confirm!({ workspace: workspace.root });
+    expect(displayedStatus).toBe('Connecting');
     for (let i = 0; i < 100 && !connected; i++) await new Promise(resolve => setTimeout(resolve, 10));
     expect(server.connected).toBe(true);
+    expect(displayedStatus).toBe('Connected');
+    actions[0]!.click(); // A reopened dialog gets the current state as well.
+    expect(displayedStatus).toBe('Connected');
     expect(await server.call('get_project_state', inputSchemas.get_project_state.parse({}))).toMatchObject({ project: null });
     registration!.onunload();
     for (let i = 0; i < 100 && server.connected; i++) await new Promise(resolve => setTimeout(resolve, 10));
     expect(server.connected).toBe(false);
+    expect(displayedStatus).toBe('Disconnected');
+    expect(statusUpdates).toContain('Connecting');
   } finally { registration?.onunload(); await server.close(); }
 });

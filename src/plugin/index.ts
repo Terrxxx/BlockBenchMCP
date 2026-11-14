@@ -16,6 +16,12 @@ let connectionDialog: Dialog | undefined;
 let status = 'Disconnected';
 const logger: Logger = (level, event, fields = {}) => console[level === 'info' ? 'info' : level]('[Blockbench AI MCP]', event, fields);
 
+function updateStatus(value: string): void {
+  status = value;
+  connectionDialog?.setFormValues({ status: value }, false);
+  if (value === 'Connected') Blockbench.showQuickMessage('Blockbench AI MCP connected', 2000);
+}
+
 BBPlugin.register('blockbench_ai_mcp', {
   title: 'Blockbench AI MCP', author: 'Terrxx',
   description: '基岩版 Minecraft 模型 MCP 桥接插件',
@@ -25,11 +31,12 @@ BBPlugin.register('blockbench_ai_mcp', {
     connectAction = new Action('blockbench_ai_mcp_connect', {
       name: 'Blockbench AI MCP: Connect', icon: 'link',
       click() {
+        connectionDialog?.hide();
         connectionDialog = new Dialog('blockbench_ai_mcp_connection', {
           title: 'Blockbench AI MCP',
           form: {
             workspace: { label: 'Workspace directory', type: 'text', placeholder: '...\BlockBenchMCP' },
-            status: { label: 'Status', type: 'info', text: status },
+            status: { label: 'Status', type: 'text', readonly: true, value: status },
           },
           onConfirm(form) {
             try {
@@ -45,7 +52,7 @@ BBPlugin.register('blockbench_ai_mcp', {
               const adapter = new BlockbenchAdapter(createNativeHost(), workspace);
               connection?.stop();
               connection = new PluginConnection(config, new Dispatcher(request => adapter.execute(request), logger), browserSocket, logger, Blockbench.version,
-                value => { status = value; if (value === 'Connected') Blockbench.showQuickMessage('Blockbench AI MCP connected', 2000); });
+                updateStatus);
               connection.start();
             } catch (error) {
               // Only local UI messages can show local permission/setup details.

@@ -4,6 +4,8 @@
 
 ## 0. 范围与实施顺序
 
+连接窗口状态必须随 PluginConnection 回调实时刷新，不能使用创建时的静态 info 文本。使用官方只读 text 表单与 `Dialog.setFormValues({status}, false)`，避免改动用户正在输入的工作目录或触发表单回调；重新打开窗口读取最新状态。依据：[官方表单实现](https://github.com/JannisX11/blockbench/blob/v5.2.2/js/interface/form.ts)。
+
 公开仓库文档入口为根目录 README，详细安装与工具参数放在[使用指南](usage.md)。项目采用根目录 MIT LICENSE，作者 Terrxx；公开仓库整理不改变 MCP 协议或运行时能力，验证记录见[公开仓库整理](public-repository-verification.md)。
 帐篷细化先按[设计记录](field-tent-refinement-plan.md)执行现有工具链，再对原位几何修改、纹理替换、临时可见性与查询体积提出[实战复盘](mcp-modeling-retrospective.md)。细化当时只改资产配方、资源与文档；随后第六阶段按用户反馈实现[两点杆件与端点对齐](phase-six-architecture.md)，升级为 v0.6.0 / 22 工具，实测记录见[第六阶段验证](phase-six-verification.md)。第七阶段针对门模型实战补齐标签切换、逐面 UV、原位方块修改及诊断，当前为 v0.7.0 / 29 工具，见[第七阶段架构](phase-seven-architecture.md)与[验证记录](phase-seven-verification.md)。图集替换、自动美化与工程接管仍未实现。
 
