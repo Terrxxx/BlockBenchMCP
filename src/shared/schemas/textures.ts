@@ -1,3 +1,4 @@
+import { uvWarningsSchema } from './modeling.js';
 import { z } from 'zod';
 import { displayName, idBatch, nativeId, uniqueIds, uvOffsetSchema } from './common.js';
 
@@ -16,5 +17,5 @@ export const textureInputs = {
 export const textureOutputs = {
   import_texture: z.strictObject({ project_id: nativeId, texture: textureStateSchema }),
   assign_texture: z.strictObject({ project_id: nativeId, texture_id: nativeId, cube_ids: idBatch, count: z.number().int() }),
-  set_cube_uv: z.strictObject({ project_id: nativeId, cube_ids: idBatch, count: z.number().int() }),
+  set_cube_uv: z.strictObject({ project_id: nativeId, cube_ids: idBatch, count: z.number().int(), uv_warnings: uvWarningsSchema }),
 } as const;

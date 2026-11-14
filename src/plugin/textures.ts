@@ -5,6 +5,7 @@ import type { Workspace } from '../shared/workspace.js';
 import { findCubes } from './bones.js';
 import { edit } from './edits.js';
 import type { BlockbenchHost, CubeHandle, ProjectHandle, TextureHandle } from './host.js';
+import { boxWarnings, checkFaceBounds } from './uv.js';
 
 export function textureSummary(texture: TextureHandle): ToolOutput<'import_texture'>['texture'] {
   return { id: texture.uuid, name: texture.name, width: texture.width, height: texture.height, internal: texture.internal };
@@ -51,8 +52,8 @@ export function assignTexture(host: BlockbenchHost, project: ProjectHandle, inpu
   if (host.textures().length !== 1) throw new BridgeError('TEXTURE_LIMIT', 'A single Bedrock atlas is required.');
   const cubes = findCubes(host, input.cube_ids);
   for (const cube of cubes) {
-    if (!cube.box_uv) throw new BridgeError('INVALID_PARAMS', 'Set Box UV on every target cube before binding the atlas.');
-    checkBoxUV(project, cube, cube.uv_offset);
+    if (cube.box_uv) checkBoxUV(project, cube, cube.uv_offset);
+    else checkFaceBounds(project, host.cubeFaces(cube));
   }
   const scope = { elements: cubes };
   return edit(host, project, 'Blockbench AI: Assign texture', scope, () => scope, () => {
@@ -68,6 +69,6 @@ export function setCubeUV(host: BlockbenchHost, project: ProjectHandle, input: T
     input.cubes.forEach((value, index) => host.setCubeUV(cubes[index]!, {
       uv_offset: value.uv_offset, ...(value.mirror_uv !== undefined ? { mirror_uv: value.mirror_uv } : {}),
     }));
-    return { project_id: project.uuid, count: cubes.length, cube_ids: cubes.map(cube => cube.uuid) };
+    return { project_id: project.uuid, count: cubes.length, cube_ids: cubes.map(cube => cube.uuid), uv_warnings: boxWarnings(cubes) };
   });
 }

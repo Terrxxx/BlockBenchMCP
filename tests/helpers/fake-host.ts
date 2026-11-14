@@ -10,6 +10,8 @@ import type { RenderInput } from '../../src/shared/schemas/render.js';
 import { pngFixture } from './png.js';
 import type { BeamGeometry } from '../../src/shared/beam-geometry.js';
 import type { Vector3 } from '../../src/shared/schemas/common.js';
+import { faceNames, type CubeUpdate, type FaceEdits, type FaceStates } from '../../src/shared/schemas/modeling.js';
+import type { CollisionShape } from '../../src/shared/collision.js';
 
 // Native Blockbench GUIDs need not have RFC UUID version/variant bits. Force
 // that case in every host fixture so the full MCP path exercises compatibility.
@@ -40,6 +42,42 @@ export class FakeHost implements BlockbenchHost {
   desktop = true;
   renderPng(input:RenderInput):string {this.calls.push('Preview.render');return `data:image/png;base64,${pngFixture(input.width,input.height).toString('base64')}`;}
   project: ProjectHandle | null = null;
+  tabs: ProjectHandle[] = [];
+  private tabData = new Map<string, { elements: CubeHandle[]; bones: GroupHandle[]; atlases: TextureHandle[]; clips: AnimationHandle[]; frames: Record<string, KeyframeHandle[]> }>();
+  projects(): ProjectHandle[] { return this.tabs; }
+  private storeTab(): void {
+    if (this.project) this.tabData.set(this.project.uuid, { elements: this.elements, bones: this.bones, atlases: this.atlases, clips: this.clips, frames: this.frames });
+  }
+  selectProject(project: ProjectHandle): boolean {
+    if (!this.tabs.includes(project) || project.locked || this.project?.locked) return false;
+    this.storeTab(); this.project = project;
+    const data = this.tabData.get(project.uuid);
+    if (data) Object.assign(this, data);
+    return true;
+  }
+  cubeFaces(cube: CubeHandle): FaceStates {
+    const custom = this.faceData.get(cube.uuid);
+    if (!cube.box_uv && custom) return structuredClone(custom);
+    const [x, y, z] = cube.to.map((v, i) => Math.floor(v - cube.from[i]! + 1e-7)) as Vector3;
+    const [u, v] = cube.uv_offset;
+    const rects = { north: [u+z,v+z,u+z+x,v+z+y], east: [u,v+z,u+z,v+z+y], south: [u+2*z+x,v+z,u+2*z+2*x,v+z+y], west: [u+z+x,v+z,u+2*z+x,v+z+y], up: [u+z,v,u+z+x,v+z], down: [u+z+x,v,u+z+2*x,v+z] };
+    return Object.fromEntries(faceNames.map(face => [face, { uv: rects[face], rotation: 0, texture: cube.faces[face]!.texture ?? null, enabled: true }])) as FaceStates;
+  }
+  faceData = new Map<string, FaceStates>();
+  setFaceUV(cube: CubeHandle, faces: FaceEdits): void {
+    const current = this.cubeFaces(cube);
+    cube.box_uv = false;
+    for (const face of faceNames) Object.assign(current[face], structuredClone(faces[face]));
+    this.faceData.set(cube.uuid, current);
+    if (this.failUpdate) throw new Error('Injected face update failure');
+  }
+  updateCube(cube: CubeHandle, update: CubeUpdate): void {
+    Object.assign(cube, structuredClone(update));
+    if (this.failUpdate) throw new Error('Injected update failure');
+  }
+  collisionShapes(cubes: CubeHandle[], _animation?: AnimationHandle, _time?: number): CollisionShape[] {
+    return cubes.map(c => ({ cube_id: c.uuid, corners: Array.from({ length: 8 }, (_, i) => [i & 1 ? c.to[0] : c.from[0], i & 2 ? c.to[1] : c.from[1], i & 4 ? c.to[2] : c.from[2]] as Vector3) }));
+  }
   elements: CubeHandle[] = [];
   bones: GroupHandle[] = [];
   atlases: TextureHandle[] = [];
@@ -60,7 +98,7 @@ export class FakeHost implements BlockbenchHost {
   failAddTexture = false;
   failApplyTexture = false;
   decodeGate: Promise<void> | undefined;
-  private before: { cubes: CubeHandle[]; groups: GroupHandle[]; textures: TextureHandle[]; clips: AnimationHandle[]; frames: Record<string, KeyframeHandle[]> } | undefined;
+  private before: { cubes: CubeHandle[]; groups: GroupHandle[]; textures: TextureHandle[]; clips: AnimationHandle[]; frames: Record<string, KeyframeHandle[]>; faceData: Map<string, FaceStates> } | undefined;
   getProject(): ProjectHandle | null { return this.project; }
   cubes(): CubeHandle[] { return this.elements; }
   groups(): GroupHandle[] { return this.bones; }
@@ -90,14 +128,16 @@ export class FakeHost implements BlockbenchHost {
   resourcePaths(): string[] { return this.resources; }
   isEditing(): boolean { return this.editing; }
   createProject(input: ToolInput<'create_project'>): ProjectHandle {
+    this.storeTab();
     this.calls.push('newProject'); this.elements = []; this.bones = []; this.atlases = []; this.clips = []; this.frames = {};
     this.project = { uuid: nativeId(), ...input, format: { id: 'bedrock' }, saved: false, save_path: '' };
+    this.tabs.push(this.project);
     return this.project;
   }
   beginEdit(scope: EditScope): void {
     this.lastBeforeScope = scope;
     this.calls.push('initEdit'); this.editing = true;
-    this.before = structuredClone({ cubes: this.elements, groups: this.bones, textures: this.atlases, clips: this.clips, frames: this.frames });
+    this.before = structuredClone({ cubes: this.elements, groups: this.bones, textures: this.atlases, clips: this.clips, frames: this.frames, faceData: this.faceData });
   }
   makeRoot(): GroupHandle {
     const group = this.makeGroup({ name: 'root', origin: [0, 0, 0], rotation: [0, 0, 0] });
@@ -138,6 +178,8 @@ export class FakeHost implements BlockbenchHost {
   applyTexture(cube: CubeHandle, texture: TextureHandle): void {
     this.calls.push('Cube.applyTexture');
     for (const face of Object.values(cube.faces)) if (face.texture !== null) face.texture = texture.uuid;
+    const custom = this.faceData.get(cube.uuid);
+    if (custom) for (const face of Object.values(custom)) if (face.texture !== null) face.texture = texture.uuid;
     if (this.failApplyTexture) throw new Error('Injected binding failure');
   }
   setCubeUV(cube: CubeHandle, uv: { uv_offset: [number, number]; mirror_uv?: boolean }): void {
@@ -145,6 +187,7 @@ export class FakeHost implements BlockbenchHost {
   }
   finishEdit(_label: string, scope: EditScope): void { this.lastAfterScope = scope; this.calls.push('finishEdit'); this.editing = false; this.project!.saved = false; }
   cancelEdit(): void {
+    this.faceData = this.before!.faceData;
     this.calls.push('cancelEdit(true)'); this.elements = this.before!.cubes; this.bones = this.before!.groups; this.atlases = this.before!.textures; this.clips = this.before!.clips; this.frames = this.before!.frames; this.editing = false;
   }
   refresh(): void { this.calls.push('Canvas.updateAll'); }

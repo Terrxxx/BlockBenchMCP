@@ -15,6 +15,7 @@ import { silentLogger } from '../../src/shared/logger.js';
 import { FakeHost } from '../helpers/fake-host.js';
 import { tempWorkspace } from '../helpers/temp.js';
 import { pngFixture } from '../helpers/png.js';
+import { faceNames } from '../../src/shared/schemas/modeling.js';
 
 async function freePort(): Promise<number> {
   const socket = net.createServer();
@@ -26,7 +27,7 @@ async function freePort(): Promise<number> {
 }
 
 describe('official SDK client -> real stdio server -> real WS -> adapter', () => {
-  it.each(['legacy', 'modern'] as const)('runs all twenty-two tools using %s protocol mode', async mode => {
+  it.each(['legacy', 'modern'] as const)('runs all twenty-nine tools using %s protocol mode', async mode => {
     const root = tempWorkspace();
     const workspace = new Workspace(root, fs);
     fs.writeFileSync(path.join(root, 'atlas.png'), pngFixture());
@@ -53,7 +54,7 @@ describe('official SDK client -> real stdio server -> real WS -> adapter', () =>
       const peer = socket;
       await new Promise<void>((resolve, reject) => { peer.once('open', resolve); peer.once('error', reject); });
       const ready = new Promise<void>(resolve => peer.once('message', () => resolve()));
-      peer.send(JSON.stringify({ version: 6, type: 'hello', workspace: root, token: config.token, plugin_version: '0.6.0', blockbench_version: '5.2.2' }));
+      peer.send(JSON.stringify({ version: 7, type: 'hello', workspace: root, token: config.token, plugin_version: '0.7.0', blockbench_version: '5.2.2' }));
       await ready;
       peer.on('message', data => { void dispatcher.receive(data.toString()).then(response => { if (response) peer.send(JSON.stringify(response)); }); });
       const created = await client.callTool({ name: 'create_project', arguments: { name: 'stdio_test', model_identifier: 'stdio_test' } });
@@ -123,6 +124,25 @@ describe('official SDK client -> real stdio server -> real WS -> adapter', () =>
       const aligned=await client.callTool({name:'align_beams',arguments:{project_id:id,beams:[{cube_id:rod.cube_id,start:[3,4,5],end:[-9,-20,13]}]}});
       expect(outputSchemas.align_beams.parse(aligned.structuredContent).beams[0]).toMatchObject({cube_id:rod.cube_id});
       expect(host.elements.find(c=>c.uuid===rod.cube_id)!.parent).toEqual(host.bones.find(b=>b.uuid===head));
+      const listed = await client.callTool({ name: 'list_projects', arguments: {} });
+      expect(outputSchemas.list_projects.parse(listed.structuredContent).projects[0]).toMatchObject({ id, active: true, managed: true });
+      const uvState = await client.callTool({ name: 'get_cube_uv', arguments: { project_id: id, cube_ids: [rod.cube_id] } });
+      expect(outputSchemas.get_cube_uv.parse(uvState.structuredContent).cubes[0]!.dimensions.some(d => d.pixel_size.includes(0))).toBe(true);
+      const faceEdit = await client.callTool({ name: 'set_face_uv', arguments: { project_id: id, cubes: [{ cube_id: rod.cube_id,
+        faces: Object.fromEntries(faceNames.map(face => [face, { uv: [8, 8, 12, 12] }])) }] } });
+      expect(outputSchemas.set_face_uv.parse(faceEdit.structuredContent).count).toBe(1);
+      const patched = await client.callTool({ name: 'update_cubes', arguments: { project_id: id, cubes: [{ cube_id: rod.cube_id, name: 'repaired_rope' }] } });
+      expect(outputSchemas.update_cubes.parse(patched.structuredContent).uv_warnings).toEqual([]);
+      const report = await client.callTool({ name: 'validate_project', arguments: { project_id: id } });
+      expect(outputSchemas.validate_project.parse(report.structuredContent).checked_cubes).toBe(2);
+      const collisions = await client.callTool({ name: 'check_collisions', arguments: { project_id: id, cube_ids: [...cubeIds, rod.cube_id], include_same_bone: true, animation: { animation_id: animationId, times: [0, .5, 1] } } });
+      expect(outputSchemas.check_collisions.parse(collisions.structuredContent)).toMatchObject({ complete: true, sampled_times: [0, .5, 1], checked_pairs: 3 });
+      const secondTab = await client.callTool({ name: 'create_project', arguments: { name: 'second_tab', model_identifier: 'second_tab' } });
+      expect(secondTab.isError).not.toBe(true);
+      const selected = await client.callTool({ name: 'select_project', arguments: { project_id: id } });
+      expect(outputSchemas.select_project.parse(selected.structuredContent).project).toMatchObject({ id, active: true, managed: true });
+      const afterSwitch = await client.callTool({ name: 'get_project_state', arguments: {} });
+      expect(outputSchemas.get_project_state.parse(afterSwitch.structuredContent).cubes.find(c => c.id === rod.cube_id)!.name).toBe('repaired_rope');
       expect(logs).not.toContain(config.token);
       expect(fs.readFileSync(path.join(root, 'stdio.bbmodel'), 'utf8')).toBe('TEST_ONLY_OFFICIAL_CODEC_STUB');
     } finally {

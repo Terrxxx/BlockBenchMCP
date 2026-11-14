@@ -5,6 +5,8 @@ import { disposeNativeTexture, nativeTexture, prepareNativeTexture } from './nat
 import { nativeAnimation, nativeAnimationHost, nativeKeyframe, refreshNativeAnimation } from './native-animation.js';
 import { nativeExportHost } from './native-export.js';
 import { renderNativePng } from './native-render.js';
+import { nativeCollisionShapes } from './native-collision.js';
+import { faceNames, facesStateSchema } from '../shared/schemas/modeling.js';
 
 function nativeCube(cube: CubeHandle): Cube {
   if (!(cube instanceof Cube)) throw new Error('Expected native Cube');
@@ -52,6 +54,23 @@ export function createNativeHost(): BlockbenchHost {
     get version() { return Blockbench.version; },
     get desktop() { return !Blockbench.isWeb; },
     getProject: () => typeof Project === 'undefined' || !Project ? null : Project,
+    projects: () => ModelProject.all,
+    selectProject: project => {
+      if (!(project instanceof ModelProject)) throw new BridgeError('NOT_FOUND', 'Project tab no longer exists.');
+      return project.select();
+    },
+    cubeFaces: cube => facesStateSchema.parse(Object.fromEntries(faceNames.map(name => {
+      const face = nativeCube(cube).faces[name]!;
+      return [name, { uv: [...face.uv], rotation: face.rotation, texture: face.texture ?? null, enabled: face.enabled !== false }];
+    }))),
+    setFaceUV: (cube, faces) => {
+      const native = nativeCube(cube);
+      native.setUVMode(false);
+      native.autouv = 0;
+      for (const face of faceNames) native.faces[face]!.extend(faces[face]);
+    },
+    updateCube: (cube, update) => { nativeCube(cube).extend(update); },
+    collisionShapes: nativeCollisionShapes,
     cubes: () => Cube.all,
     groups: () => Group.all,
     textures: () => Texture.all,
@@ -92,7 +111,13 @@ export function createNativeHost(): BlockbenchHost {
     addTexture: texture => { nativeTexture(texture).add(false); },
     disposeTexture: disposeNativeTexture,
     applyTexture: (cube, texture) => { nativeCube(cube).applyTexture(nativeTexture(texture), true); },
-    setCubeUV: (cube, uv) => { const native = nativeCube(cube); native.setUVMode(true); native.extend({ ...uv, autouv: 0 }); },
+    setCubeUV: (cube, uv) => {
+      const native = nativeCube(cube), mirror = uv.mirror_uv ?? native.mirror_uv;
+      // Native mode conversion infers a new mirror flag from face UV. Omitted
+      // mirror_uv must still preserve the caller's prior flag, as documented.
+      native.setUVMode(true);
+      native.extend({ ...uv, mirror_uv: mirror, autouv: 0 });
+    },
     finishEdit: (label, scope) => { Undo.finishEdit(label, nativeScope(scope)); },
     cancelEdit: scope => {
       // cancelEdit(true) computes its reference from current_save.aspects. It must see

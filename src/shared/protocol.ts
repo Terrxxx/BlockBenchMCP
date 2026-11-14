@@ -1,3 +1,4 @@
+import { modelingInputs, modelingOutputs, uvWarningsSchema } from './schemas/modeling.js';
 import { animationInputs, animationOutputs } from './schemas/animations.js';
 import { exportInputs, exportOutputs } from './schemas/exports.js';
 import { renderInput, renderOutput } from './schemas/render.js';
@@ -9,11 +10,11 @@ import { boneInputs, boneOutputs, boneStateSchema } from './schemas/bones.js';
 import { textureInputs, textureOutputs, textureStateSchema } from './schemas/textures.js';
 export { vectorSchema, type Vector3 } from './schemas/common.js';
 
-export const VERSION = 6;
-export const PLUGIN_VERSION = '0.6.0';
+export const VERSION = 7;
+export const PLUGIN_VERSION = '0.7.0';
 export const MAX_MESSAGE_BYTES = 1_048_576;
 export const MAX_BATCH = 256;
-export const commandNames = ['create_project', 'get_project_state', 'create_cubes', 'save_project', 'create_bones', 'update_bones', 'reparent_cubes', 'import_texture', 'assign_texture', 'set_cube_uv', 'create_animation', 'update_animation', 'set_keyframes', 'delete_keyframes', 'get_animation_state', 'preview_animation', 'export_bedrock_model', 'export_bedrock_animations', 'export_texture_png', 'render_project', 'create_beams', 'align_beams'] as const;
+export const commandNames = ['list_projects', 'select_project', 'get_cube_uv', 'set_face_uv', 'update_cubes', 'validate_project', 'check_collisions', 'create_project', 'get_project_state', 'create_cubes', 'save_project', 'create_bones', 'update_bones', 'reparent_cubes', 'import_texture', 'assign_texture', 'set_cube_uv', 'create_animation', 'update_animation', 'set_keyframes', 'delete_keyframes', 'get_animation_state', 'preview_animation', 'export_bedrock_model', 'export_bedrock_animations', 'export_texture_png', 'render_project', 'create_beams', 'align_beams'] as const;
 export type Command = typeof commandNames[number];
 // Blockbench guid()/isUUID() use 8-4-4-4-12 hex groups without RFC version or
 // variant bits. Keep those native IDs distinct from our RFC request UUIDs.
@@ -30,6 +31,7 @@ export const cubeSchema = z.strictObject({
 export type CubeInput = z.infer<typeof cubeSchema>;
 
 export const inputSchemas = {
+  ...modelingInputs,
   ...beamInputs,
   render_project: renderInput,
   ...exportInputs,
@@ -70,6 +72,7 @@ export const cubeStateSchema = z.strictObject({
   box_uv: z.boolean(), uv_offset: z.tuple([z.number().finite(), z.number().finite()]), mirror_uv: z.boolean(), texture_ids: z.array(id).max(6),
 });
 export const outputSchemas = {
+  ...modelingOutputs,
   ...beamOutputs,
   render_project: renderOutput,
   ...exportOutputs,
@@ -83,7 +86,7 @@ export const outputSchemas = {
     bones: z.array(boneStateSchema).max(200), bone_offset: z.number().int(), next_bone_offset: z.number().int().nullable(),
     textures: z.array(textureStateSchema).max(200), texture_offset: z.number().int(), next_texture_offset: z.number().int().nullable(),
   }),
-  create_cubes: z.strictObject({ project_id: id, cube_ids: z.array(id).min(1).max(MAX_BATCH), count: z.number().int(), root_group_id: id }),
+  create_cubes: z.strictObject({ project_id: id, cube_ids: z.array(id).min(1).max(MAX_BATCH), count: z.number().int(), root_group_id: id, uv_warnings: uvWarningsSchema }),
   save_project: z.strictObject({ project_id: id, path: z.string(), bytes: z.number().int().nonnegative(), saved: z.literal(true) }),
 } as const;
 export type ToolOutput<K extends Command> = z.infer<typeof outputSchemas[K]>;
@@ -93,6 +96,13 @@ const envelope = {
   deadline_ms: z.number().int().positive(),
 };
 export const requestSchema = z.discriminatedUnion('command', [
+  z.strictObject({ ...envelope, command: z.literal('list_projects'), params: inputSchemas.list_projects }),
+  z.strictObject({ ...envelope, command: z.literal('select_project'), params: inputSchemas.select_project }),
+  z.strictObject({ ...envelope, command: z.literal('get_cube_uv'), params: inputSchemas.get_cube_uv }),
+  z.strictObject({ ...envelope, command: z.literal('set_face_uv'), params: inputSchemas.set_face_uv }),
+  z.strictObject({ ...envelope, command: z.literal('update_cubes'), params: inputSchemas.update_cubes }),
+  z.strictObject({ ...envelope, command: z.literal('validate_project'), params: inputSchemas.validate_project }),
+  z.strictObject({ ...envelope, command: z.literal('check_collisions'), params: inputSchemas.check_collisions }),
   z.strictObject({...envelope,command:z.literal('create_beams'),params:inputSchemas.create_beams}),
   z.strictObject({...envelope,command:z.literal('align_beams'),params:inputSchemas.align_beams}),
   z.strictObject({ ...envelope, command:z.literal('render_project'), params:inputSchemas.render_project }),
@@ -140,5 +150,5 @@ export function failure(requestId: string, error: BridgeError): Response {
 }
 
 export function isReadOnlyCommand(command: Command): boolean {
-  return command === 'get_project_state' || command === 'get_animation_state';
+  return command === 'list_projects' || command === 'get_cube_uv' || command === 'validate_project' || command === 'check_collisions' || command === 'get_project_state' || command === 'get_animation_state';
 }

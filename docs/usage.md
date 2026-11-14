@@ -1,5 +1,8 @@
 # 使用指南与工具参考
 
+> 当前 v0.7.0 / 29 工具 / bridge 7。新增标签切换、逐面 UV、原位修改和质量诊断，见[第七阶段使用指南](phase-seven-usage.md)。下文各阶段示例保留其原始功能范围。升级必须同时重载插件和重启 MCP 服务；若配置了工具白名单，请同步更新。
+
+
 本文包含安装、连接、工具参数与错误恢复说明。项目概览见[仓库首页](../README.md)。
 
 ## 安装和构建
@@ -55,7 +58,7 @@ args = ["C:/path/to/BlockBenchMCP/dist/server/index.js", "--workspace", "C:/path
 cwd = "C:/path/to/BlockBenchMCP"
 startup_timeout_sec = 15
 tool_timeout_sec = 30
-enabled_tools = ["create_project", "get_project_state", "create_cubes", "save_project", "create_bones", "update_bones", "reparent_cubes", "import_texture", "assign_texture", "set_cube_uv", "create_animation", "update_animation", "set_keyframes", "delete_keyframes", "get_animation_state", "preview_animation", "export_bedrock_model", "export_bedrock_animations", "export_texture_png", "render_project", "create_beams", "align_beams"]
+enabled_tools = ["list_projects", "select_project", "get_cube_uv", "set_face_uv", "update_cubes", "validate_project", "check_collisions", "create_project", "get_project_state", "create_cubes", "save_project", "create_bones", "update_bones", "reparent_cubes", "import_texture", "assign_texture", "set_cube_uv", "create_animation", "update_animation", "set_keyframes", "delete_keyframes", "get_animation_state", "preview_animation", "export_bedrock_model", "export_bedrock_animations", "export_texture_png", "render_project", "create_beams", "align_beams"]
 ```
 
 请根据实际安装位置调整路径。若 Codex 找不到 `node`，将 `command` 改为 `Get-Command node` 返回的完整路径。`--workspace` 必须是绝对路径；工具调用不能改变它。`tool_timeout_sec` 应大于连接配置的 `timeout_ms / 1000`。
@@ -70,9 +73,9 @@ codex mcp get blockbench_ai --json
 
 配置后在 Codex 中重启该 MCP Server；如果当前聊天仍看不到工具，完全退出并重新启动 Codex 桌面应用后再检查。Codex 会启动进程，不需要额外手动运行 `npm start`。避免同时启动独立 smoke/另一个 Codex 实例占用同一个端口。MCP 初始化不要求插件已连接；未连接时调用工具返回 `NOT_CONNECTED`。Codex 中启用 `blockbench_ai` 与 Blockbench 插件执行 Connect 是两个步骤；工具出现后仍需完成上述插件连接。
 
-## 升级到 v0.6.0
+## 升级到 v0.7.0
 
-构建后重载 Blockbench 中从文件加载的插件，并重启 Codex 的 `blockbench_ai` 服务，再在 Tools 中 Connect。本地桥接协议升级到 **v6**，要求插件 **0.6.0**；旧插件与新 Server 会拒绝握手。现有工作目录配置与密钥继续使用，不需要重新 setup。若原 Codex 配置设置了旧版 `enabled_tools`，更新为上面的二十二项；没设置此白名单时无需添加它。
+构建后重载 Blockbench 中从文件加载的插件，并重启 Codex 的 `blockbench_ai` 服务，再在 Tools 中 Connect。本地桥接协议升级到 **v7**，要求插件 **0.7.0**；旧插件与新 Server 会拒绝握手。现有工作目录配置与密钥继续使用，不需要重新 setup。若原 Codex 配置设置了旧版 `enabled_tools`，更新为上面的二十九项；没设置此白名单时无需添加它。
 
 插件重载会开始新的管理会话，已有标签可读取但不能修改；请用 `create_project` 新建测试工程。第三阶段[手动冒烟步骤](phase-three-smoke-test.md)覆盖完整动画闭环。各阶段真实宿主测试的范围与结果见对应验证记录。新增工具列表由客户端缓存时，需要完全重启 Codex；独立 SDK 验收不代表当前聊天已经热加载新工具。
 

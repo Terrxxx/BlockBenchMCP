@@ -8,9 +8,9 @@ describe('validated protocol', () => {
     const nativeId = '01234567-89ab-cdef-0123-456789abcdef';
     expect(inputSchemas.create_cubes.parse({ project_id: nativeId, cubes: [cube] }).project_id).toBe(nativeId);
     expect(inputSchemas.save_project.parse({ project_id: nativeId, path: 'x.bbmodel' }).project_id).toBe(nativeId);
-    expect(outputSchemas.create_cubes.parse({ project_id: nativeId, cube_ids: [nativeId], count: 1, root_group_id: nativeId }).cube_ids).toEqual([nativeId]);
-    expect(() => requestSchema.parse({ version: 6, type: 'request', request_id: nativeId, deadline_ms: Date.now(), command: 'get_project_state', params: {} })).toThrow();
-    expect(() => responseSchema.parse({ version: 6, type: 'response', request_id: nativeId, ok: true, result: {} })).toThrow();
+    expect(outputSchemas.create_cubes.parse({ project_id: nativeId, cube_ids: [nativeId], count: 1, root_group_id: nativeId, uv_warnings: [] }).cube_ids).toEqual([nativeId]);
+    expect(() => requestSchema.parse({ version: 7, type: 'request', request_id: nativeId, deadline_ms: Date.now(), command: 'get_project_state', params: {} })).toThrow();
+    expect(() => responseSchema.parse({ version: 7, type: 'response', request_id: nativeId, ok: true, result: {} })).toThrow();
   });
   it('validates the complete batch and supplies explicit defaults', () => {
     const value = inputSchemas.create_cubes.parse({ project_id: randomUUID(), cubes: [cube] });
@@ -27,7 +27,7 @@ describe('validated protocol', () => {
   });
   it('rejects arbitrary execution fields and unknown commands', () => {
     expect(() => inputSchemas.get_project_state.parse({ code: 'anything' })).toThrow();
-    expect(() => requestSchema.parse({ version: 6, type: 'request', request_id: randomUUID(), deadline_ms: Date.now(), command: 'eval', params: {} })).toThrow();
+    expect(() => requestSchema.parse({ version: 7, type: 'request', request_id: randomUUID(), deadline_ms: Date.now(), command: 'eval', params: {} })).toThrow();
   });
   it('rejects invalid project identifiers, unknown fields and invalid JSON', () => {
     expect(() => inputSchemas.create_project.parse({ name: 'test', model_identifier: 'geometry.test' })).toThrow();

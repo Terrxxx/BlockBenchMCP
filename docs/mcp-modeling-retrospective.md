@@ -50,3 +50,7 @@ render_views 应是有界独立渲染集合，不承诺文件原子性。预检�
 - [Undo 文档](https://www.blockbench.net/wiki/docs/undo/)：元素/图像变更必须进入对应 Undo aspects。
 
 下一阶段至少验证：批量最后一项非法时零变更、UV 越界零变更、保持 ID、修改后 Undo/Redo、保存重开、解码期间工程切换、deadline、重复/不存在 ID、目录越界和纹理替换失败恢复。使用此次帐篷对 1000+ 方块做实际增量修改，并记录请求次数、耗时和响应体积，才能证明优化有效；当前未虚构此类性能对比数据。
+
+## 第七阶段落实（2026-11-14）
+
+门模型复查表明，原先仅检查整张图集边界无法发现零面积 Box UV；成功建模也无法证明运动零件不相交。已增加 get_cube_uv/set_face_uv/update_cubes/validate_project/check_collisions，以及 list_projects/select_project，见[设计](phase-seven-architecture.md)与[验收](phase-seven-verification.md)。薄零件现在可用独立面矩形修复，仍须调用者规划材质区域并渲染检查。自动纹理替换、材质区域语义识别、连续碰撞检测与自动避碰暂未实现。

@@ -1,8 +1,8 @@
-# 本地桥接协议 v6
+# 本地桥接协议 v7
 
 外层为官方 SDK 提供的 MCP JSON-RPC/stdio；本文件描述 stdio Server 与 Blockbench 插件之间的私有 WebSocket 消息。它不是通用代码执行通道。
 
-v0.6.0 使用桥接协议 v6，服务端和插件必须同步重载。工作目录配置文件的 version 仍是 1；无需更换密钥或重新 setup。新旧插件/服务端混用会拒绝握手。
+v0.7.0 使用桥接协议 v7，服务端和插件必须同步重载。工作目录配置文件的 version 仍是 1；无需更换密钥或重新 setup。新旧插件/服务端混用会拒绝握手。
 
 ## 握手
 
@@ -10,16 +10,16 @@ Server 固定绑定 `127.0.0.1`。插件连接 `ws://127.0.0.1:<port>`，3 秒�
 
 ```json
 {
-  "version": 6,
+  "version": 7,
   "type": "hello",
   "workspace": "C:\\path\\to\\BlockBenchMCP",
   "token": "<初始化生成的64位十六进制随机密钥>",
-  "plugin_version": "0.6.0",
+  "plugin_version": "0.7.0",
   "blockbench_version": "5.2.2"
 }
 ```
 
-常量时间比较密钥、匹配工作目录与版本后，Server 回复 `{"version":6,"type":"ready"}`。握手失败关闭连接（1008）；未完成握手的连接 3 秒后终止。握手期间不接受工具请求。最多 4 个未关闭连接、1 个认证插件。无 Origin / `file://` / `null` 只为桌面运行时兼容，均仍需密钥。
+常量时间比较密钥、匹配工作目录与版本后，Server 回复 `{"version":7,"type":"ready"}`。握手失败关闭连接（1008）；未完成握手的连接 3 秒后终止。握手期间不接受工具请求。最多 4 个未关闭连接、1 个认证插件。无 Origin / `file://` / `null` 只为桌面运行时兼容，均仍需密钥。
 
 WebSocket 文本帧最大 1 MiB，关闭压缩，不接受二进制帧。每 10 秒协议级 ping/pong 检测失联；插件使用 0.5、1、2、4、8、10 秒上限退避重连。插件卸载或手动断开后停止重连。
 
@@ -27,7 +27,7 @@ WebSocket 文本帧最大 1 MiB，关闭压缩，不接受二进制帧。每 10 
 
 ```json
 {
-  "version": 6,
+  "version": 7,
   "type": "request",
   "request_id": "ca16f180-e67b-4b6f-bdf7-a856f826af48",
   "deadline_ms": 1794595500000,
@@ -42,7 +42,7 @@ WebSocket 文本帧最大 1 MiB，关闭压缩，不接受二进制帧。每 10 
 
 ```json
 {
-  "version": 6,
+  "version": 7,
   "type": "response",
   "request_id": "ca16f180-e67b-4b6f-bdf7-a856f826af48",
   "ok": true,
@@ -56,7 +56,7 @@ WebSocket 文本帧最大 1 MiB，关闭压缩，不接受二进制帧。每 10 
 
 ```json
 {
-  "version": 6,
+  "version": 7,
   "type": "response",
   "request_id": "ca16f180-e67b-4b6f-bdf7-a856f826af48",
   "ok": false,
@@ -126,3 +126,11 @@ MCP 工具成功同时返回 `content` 和 `structuredContent`。业务错误返
 新增 create_animation、update_animation、set_keyframes、delete_keyframes、get_animation_state、preview_animation。输入/输出的权威定义位于 `src/shared/schemas/animations.ts`；限制与语义见[第三阶段架构](phase-three-architecture.md)。新增错误码 UNSUPPORTED_ANIMATION、ANIMATION_LIMIT、KEYFRAME_OUT_OF_BOUNDS、KEYFRAME_CONFLICT。工具参数在 MCP SDK 和桥接两端校验；SDK 自身的 schema 拒绝可能以 SDK 错误文本返回，不包含桥接 structuredContent。
 
 预览改变编辑器模式、选择和时间，不改变模型数据；只读工具是两个 get_*_state。超时或断线后同时查询工程与动画状态；不可自动重试 set/delete/create。
+
+## 第七阶段扩展
+
+新增 `list_projects`、`select_project`、`get_cube_uv`、`set_face_uv`、`update_cubes`、`validate_project`、`check_collisions`。严格参数和结果见 `src/shared/schemas/modeling.ts`；[完整语义与限制](phase-seven-usage.md)。读取诊断要求显式 project_id 与当前活动工程一致；标签列表支持分页。select_project 改变活动标签但不授予编辑权限。
+
+create_cubes 现在预检 Box UV 全图边界，并与 set_cube_uv、update_cubes 一同返回 `uv_warnings: [{cube_id,code:"DEGENERATE_BOX_UV",faces:[...]}]`。这是警告，不自动拒绝有意点取样。set_face_uv 默认拒绝退化矩形，明确 allow_degenerate 才允许。assign_texture 接受 Box UV 和逐面 UV。
+
+list_projects/get_cube_uv/validate_project/check_collisions 标记只读；select_project 不标记只读。碰撞检查在 finally 中恢复临时姿态；恢复失败返回 outcome_unknown:true。输出有界，validate_project 的 truncated 与 check_collisions 的 complete 明确提示检查覆盖范围。

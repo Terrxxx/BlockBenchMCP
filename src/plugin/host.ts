@@ -5,6 +5,8 @@ import type { AnimationHandle, AnimationHost, KeyframeHandle } from './animation
 import type { ExportHost } from './export-host.js';
 import type { RenderInput } from '../shared/schemas/render.js';
 import type { BeamGeometry } from '../shared/beam-geometry.js';
+import type { CubeUpdate, FaceEdits, FaceStates } from '../shared/schemas/modeling.js';
+import type { CollisionShape } from '../shared/collision.js';
 
 /** Narrow, typed seam around the official host API; no dynamically named calls. */
 export interface ProjectHandle {
@@ -16,6 +18,7 @@ export interface ProjectHandle {
   texture_height: number;
   saved: boolean;
   save_path: string;
+  locked?: boolean;
 }
 export interface GroupHandle {
   uuid: string; name: string; origin: Vector3; rotation: Vector3; parent: { uuid: string } | 'root';
@@ -42,6 +45,12 @@ export interface BlockbenchHost extends AnimationHost, ExportHost {
   readonly version: string;
   readonly desktop: boolean;
   getProject(): ProjectHandle | null;
+  projects(): ProjectHandle[];
+  selectProject(project: ProjectHandle): boolean;
+  cubeFaces(cube: CubeHandle): FaceStates;
+  setFaceUV(cube: CubeHandle, faces: FaceEdits): void;
+  updateCube(cube: CubeHandle, update: CubeUpdate): void;
+  collisionShapes(cubes: CubeHandle[], animation?: AnimationHandle, time?: number): CollisionShape[];
   cubes(): CubeHandle[];
   groups(): GroupHandle[];
   textures(): TextureHandle[];

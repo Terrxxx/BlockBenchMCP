@@ -2,7 +2,7 @@
 
 **让支持 MCP 的 AI 客户端直接操作本机 Blockbench，完成 Minecraft 基岩版实体的建模、贴图绑定、骨骼动画、渲染与资源导出。**
 
-> **v0.6.0**，**22 个工具**，通过 Blockbench 官方 API 修改工程，支持批量 Undo/Redo 和可编辑 `.bbmodel` 保存。
+> **v0.7.0**，**29 个工具**，通过 Blockbench 官方 API 修改工程，支持批量 Undo/Redo、逐面 UV、建模诊断和可编辑 `.bbmodel` 保存。
 
 [快速开始](#快速开始) · [完整使用指南](docs/usage.md) · [工具示例](#工具一览) · [架构设计](docs/architecture.md) · [MIT 许可证](LICENSE)
 
@@ -13,7 +13,8 @@
 ## 功能特点
 
 - **批量建模**：创建方块、组织骨骼层级、调整枢轴和旋转；使用起点与终点创建或对齐杆件。
-- **贴图与 UV**：导入工作目录内的 PNG 图集，绑定方块并设置 Box UV。
+- **贴图与 UV**：导入工作目录内的 PNG 图集，绑定方块并设置 Box UV 或逐面 UV；查询实际面 UV 与像素尺寸，修复薄零件的退化取样。
+- **检查与修复**：批量原位修改方块，诊断 UV/零体积问题，检查静态及指定动画时刻的潜在穿模；按 ID 切换工程标签。
 - **骨骼动画**：创建动画、批量编辑三通道关键帧，并预览指定时刻。
 - **预览与交付**：指定透视或正交相机导出 PNG；保存 `.bbmodel`，导出 Bedrock 模型 JSON、动画 JSON 和 PNG。
 - **可靠编辑**：严格参数校验、整批预检、原生 Undo 事务、错误码、超时处理与断线重连。
@@ -85,7 +86,7 @@ tool_timeout_sec = 30
 3. 将 **Workspace directory** 填为初始化时的工作目录绝对路径，按需允许该目录的文件访问权限。
 4. 出现连接成功提示后，即可通过 MCP 客户端调用工具。
 
-工具已注册但插件尚未连接时，会返回 `NOT_CONNECTED`。升级插件时须同步重启服务端；v0.6.0 使用桥接协议 v6，旧版本不会混用。
+工具已注册但插件尚未连接时，会返回 `NOT_CONNECTED`。升级插件时须同步重启客户端的 MCP 服务端；v0.7.0 使用桥接协议 v7，旧版本不会混用。只重载插件而没有重启旧服务端，会无法连接。使用工具白名单时，也要加入新增的 7 个工具。
 
 ### 5. 开始建模
 
@@ -99,10 +100,11 @@ tool_timeout_sec = 30
 
 | 类别 | 工具 | 示例与说明 |
 | --- | --- | --- |
-| 工程 | `create_project`、`get_project_state`、`save_project` | [基础工具](docs/usage.md#四个基础工具) |
-| 方块与杆件 | `create_cubes`、`create_beams`、`align_beams` | [两点杆件示例](examples/phase-six-tool-calls.json) |
+| 工程 | `create_project`、`get_project_state`、`save_project`、`list_projects`、`select_project` | [基础工具](docs/usage.md#四个基础工具)、[标签切换](docs/phase-seven-usage.md) |
+| 方块与杆件 | `create_cubes`、`update_cubes`、`create_beams`、`align_beams` | [两点杆件示例](examples/phase-six-tool-calls.json)、[原位修改](docs/phase-seven-usage.md) |
 | 骨骼 | `create_bones`、`update_bones`、`reparent_cubes` | [骨骼与贴图示例](examples/phase-two-tool-calls.json) |
-| 贴图与 UV | `import_texture`、`assign_texture`、`set_cube_uv` | [骨骼与贴图示例](examples/phase-two-tool-calls.json) |
+| 贴图与 UV | `import_texture`、`assign_texture`、`set_cube_uv`、`get_cube_uv`、`set_face_uv` | [骨骼与贴图示例](examples/phase-two-tool-calls.json)、[薄件 UV 修复](docs/phase-seven-usage.md) |
+| 诊断 | `validate_project`、`check_collisions` | [质量检查与限制](docs/phase-seven-usage.md) |
 | 动画 | `create_animation`、`update_animation`、`set_keyframes`、`delete_keyframes`、`get_animation_state`、`preview_animation` | [动画示例](examples/phase-three-tool-calls.json) |
 | 导出 | `export_bedrock_model`、`export_bedrock_animations`、`export_texture_png` | [导出示例](examples/phase-four-tool-calls.json) |
 | 渲染 | `render_project` | [相机与动画时刻示例](examples/phase-five-tool-calls.json) |
@@ -112,7 +114,8 @@ tool_timeout_sec = 30
 ## 使用边界
 
 - 仅支持当前插件管理会话创建的活动工程。手动打开或插件重载前的工程可以查询，但不能直接接管修改；普通网络断线自动重连保留管理会话。
-- 贴图使用一张共享 PNG 图集与 Box UV；暂不支持贴图绘制、图集替换或多材质。
+- 贴图使用一张共享 PNG 图集，支持 Box UV 与逐面 UV；暂不支持贴图绘制、图集替换或多材质。
+- 诊断返回可核查的警告，不自动美化或移动零件。穿模检查仅覆盖选中的方块、指定时刻，正常连接处也可能重叠；不能证明整段动画无碰撞。
 - 动画支持数值骨骼关键帧与 linear/step 插值；暂不支持 Molang、IK、动画控制器和效果轨道。
 - 导出提供资源文件，尚不自动组装完整的 Minecraft 资源包。
 - 文件路径必须位于授权工作目录内；覆盖需要显式设置 `overwrite:true`。超时或断线可能发生在修改已完成之后，应先查询状态再决定是否重试。
@@ -128,11 +131,12 @@ npm run build           # 构建服务端与插件
 npm run check           # 以上类型检查、全部测试与构建
 ```
 
-v0.6.0 已通过 **174 项自动化测试**，并完成真实 Blockbench 的建模、骨骼、贴图、动画、导出、渲染与端点对齐验收。各阶段测试范围分别记录，自动化替身测试不等同于真实宿主测试：
+v0.7.0 通过 **207 项自动化测试**，新增能力的真实 Blockbench 验收见[第七阶段验证](docs/phase-seven-verification.md)。此前各阶段已验证建模、骨骼、贴图、动画、导出、渲染与端点对齐；自动化替身测试不等同于真实宿主测试：
 
 - [骨骼与贴图验证](docs/phase-two-verification.md) · [动画验证](docs/phase-three-verification.md)
 - [资源导出验证](docs/phase-four-verification.md) · [渲染验证](docs/phase-five-verification.md)
 - [杆件端点与批量 Undo/Redo 验证](docs/phase-six-verification.md)
+- [工程标签、逐面 UV 与穿模诊断](docs/phase-seven-usage.md) · [设计依据](docs/phase-seven-architecture.md)
 
 独立桌面冒烟测试见[手动验收说明](docs/manual-smoke-test.md)。运行前停止占用同端口的 MCP 服务；测试会在宿主中新建工程并写入测试文件。
 

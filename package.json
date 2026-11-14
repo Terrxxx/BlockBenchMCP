@@ -1,6 +1,6 @@
 {
   "name": "blockbench-ai-mcp",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "description": "A workspace-scoped MCP bridge for the Blockbench desktop application",
   "type": "module",
@@ -18,7 +18,8 @@
     "start": "node dist/server/index.js",
     "smoke": "tsx scripts/smoke.ts",
     "smoke:exports": "tsx scripts/smoke-exports.ts",
-    "smoke:render": "tsx scripts/smoke-render.ts"
+    "smoke:render": "tsx scripts/smoke-render.ts",
+    "smoke:modeling": "tsx scripts/smoke-modeling.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.4.0",

@@ -5,11 +5,14 @@ import type { Workspace } from '../shared/workspace.js';
 import type { BlockbenchHost, CubeHandle, ProjectHandle } from './host.js';
 import { createBones, findGroup, reparentCubes, updateBones } from './bones.js';
 import { edit } from './edits.js';
-import { assignTexture, importTexture, setCubeUV, textureSummary } from './textures.js';
+import { assignTexture, checkBoxUV, importTexture, setCubeUV, textureSummary } from './textures.js';
 import { createAnimation, updateAnimation, setKeyframes, deleteKeyframes, getAnimationState, previewAnimation } from './animations.js';
 import { exportResource } from './exports.js';
 import { renderProject } from './render.js';
 import { alignBeams, createBeams } from './beams.js';
+import { getCubeUV, setFaceUV, updateCubes, validateProject } from './modeling.js';
+import { boxWarnings } from './uv.js';
+import { checkCollisions } from './collisions.js';
 
 export class BlockbenchAdapter {
   private readonly managed = new Set<string>();
@@ -19,6 +22,16 @@ export class BlockbenchAdapter {
   execute(request: Request): unknown {
     this.assertHost();
     switch (request.command) {
+      case 'list_projects': {
+        const all = this.host.projects(), { offset, limit } = request.params;
+        return { projects: all.slice(offset, offset + limit).map(p => this.tabSummary(p)), total: all.length, next_offset: offset + limit < all.length ? offset + limit : null } satisfies ToolOutput<'list_projects'>;
+      }
+      case 'select_project': return this.selectProject(request.params);
+      case 'get_cube_uv': return getCubeUV(this.host, this.readProject(request.params.project_id), request.params);
+      case 'set_face_uv': return setFaceUV(this.host, this.mutableProject(request.params.project_id), request.params);
+      case 'update_cubes': return updateCubes(this.host, this.mutableProject(request.params.project_id), request.params);
+      case 'validate_project': return validateProject(this.host, this.readProject(request.params.project_id), request.params, request.deadline_ms);
+      case 'check_collisions': return checkCollisions(this.host, this.readProject(request.params.project_id), request.params, request.deadline_ms);
       case 'create_beams': return createBeams(this.host,this.mutableProject(request.params.project_id),request.params);
       case 'align_beams': return alignBeams(this.host,this.mutableProject(request.params.project_id),request.params);
       case 'render_project': return renderProject(this.host,this.workspace,request.params,request.deadline_ms,()=>this.mutableProject(request.params.project_id));
@@ -51,6 +64,35 @@ export class BlockbenchAdapter {
       || Number(match[2]) < 2 || (Number(match[2]) === 2 && Number(match[3]) < 2)) {
       throw new BridgeError('UNSUPPORTED_HOST', 'This plugin requires stable Blockbench desktop 5.2.2 or newer within major 5.');
     }
+  }
+
+  private tabSummary(project: ProjectHandle): ToolOutput<'select_project'>['project'] {
+    return { id: project.uuid, name: project.name, format: project.format.id, saved: project.saved,
+      active: this.host.getProject()?.uuid === project.uuid, managed: this.managed.has(project.uuid), locked: project.locked === true };
+  }
+
+  private selectProject(input: ToolInput<'select_project'>): ToolOutput<'select_project'> {
+    if (this.host.isEditing()) throw new BridgeError('BUSY', 'Finish the active edit before switching tabs.');
+    const project = this.host.projects().find(p => p.uuid === input.project_id);
+    if (!project) throw new BridgeError('NOT_FOUND', 'Project tab is closed or unknown; list_projects again.');
+    if (this.host.getProject()?.uuid === project.uuid) return { project: this.tabSummary(project) };
+    if (project.locked || this.host.getProject()?.locked) throw new BridgeError('BUSY', 'The current or requested project tab is locked.');
+    try {
+      if (!this.host.selectProject(project) || this.host.getProject()?.uuid !== project.uuid) throw new BridgeError('BUSY', 'The host refused to select the requested tab; inspect list_projects.');
+    } catch (error) {
+      if (error instanceof BridgeError) throw error;
+      throw new BridgeError('INTERNAL_ERROR', 'Native project selection failed; inspect list_projects before retrying.', true);
+    }
+    return { project: this.tabSummary(project) };
+  }
+
+  private readProject(id: string): ProjectHandle {
+    const project = this.host.getProject();
+    if (!project) throw new BridgeError('NO_PROJECT', 'No active project.');
+    if (project.uuid !== id) throw new BridgeError('PROJECT_MISMATCH', 'Select the intended project by ID first.');
+    if (project.format.id !== 'bedrock') throw new BridgeError('UNSUPPORTED_FORMAT', 'Requires a Bedrock Entity project.');
+    if (this.host.isEditing()) throw new BridgeError('BUSY', 'Finish the active edit first.');
+    return project;
   }
 
   private summary(project: ProjectHandle): ToolOutput<'create_project'>['project'] {
@@ -115,6 +157,7 @@ export class BlockbenchAdapter {
 
   private createCubes(input: ToolInput<'create_cubes'>): ToolOutput<'create_cubes'> {
     const project = this.mutableProject(input.project_id);
+    for (const cube of input.cubes) checkBoxUV(project, cube, cube.uv_offset);
     const cubes: CubeHandle[] = [];
     let root = input.parent_id ? findGroup(this.host, input.parent_id)
       : this.host.groups().find(group => group.uuid === this.roots.get(project.uuid))
@@ -129,7 +172,7 @@ export class BlockbenchAdapter {
         this.host.attachCube(cube, root);
       }
       if (!input.parent_id) this.roots.set(project.uuid, root.uuid);
-      return { project_id: project.uuid, cube_ids: cubes.map(cube => cube.uuid), count: cubes.length, root_group_id: root.uuid };
+      return { project_id: project.uuid, cube_ids: cubes.map(cube => cube.uuid), count: cubes.length, root_group_id: root.uuid, uv_warnings: boxWarnings(cubes) };
     });
   }
 
