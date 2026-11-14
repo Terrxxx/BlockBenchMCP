@@ -4,6 +4,7 @@ import type { PngInfo } from '../shared/png.js';
 import type { AnimationHandle, AnimationHost, KeyframeHandle } from './animation-host.js';
 import type { ExportHost } from './export-host.js';
 import type { RenderInput } from '../shared/schemas/render.js';
+import type { BeamGeometry } from '../shared/beam-geometry.js';
 
 /** Narrow, typed seam around the official host API; no dynamically named calls. */
 export interface ProjectHandle {
@@ -34,6 +35,9 @@ export interface CubeHandle {
 }
 export interface TextureHandle { uuid: string; name: string; width: number; height: number; internal: boolean }
 export interface BlockbenchHost extends AnimationHost, ExportHost {
+  eulerOrder(): string;
+  beamEndpoints(cube:CubeHandle): [Vector3,Vector3];
+  updateCubeGeometry(cube:CubeHandle,geometry:BeamGeometry):void;
   renderPng(input: RenderInput, animation?: AnimationHandle): string;
   readonly version: string;
   readonly desktop: boolean;

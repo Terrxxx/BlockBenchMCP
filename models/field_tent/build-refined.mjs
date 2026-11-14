@@ -9,6 +9,7 @@ import { Client } from '@modelcontextprotocol/client';
 import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
 import { inputSchemas, outputSchemas } from '../../src/shared/protocol.ts';
 import { pngChunk } from '../../tests/helpers/png.ts';
+import { beamGeometry } from '../../src/shared/beam-geometry.ts';
 
 const root=process.cwd(),dir='models/field_tent/refined-final',W=2048,H=2048;
 assert.equal(path.resolve(root).toLowerCase(),'d:\\desktop\\blockbenchmcp');
@@ -58,9 +59,8 @@ function slopePanel(group,name,x1,y1,x2,y2,z0,z1,thickness,material){
  box(group,name,[c[0]-width/2-.12,c[1]-thickness/2,z0],[c[0]+width/2+.12,c[1]+thickness/2,z1],material,[0,0,Math.atan2(y2-y1,x2-x1)*180/Math.PI],c);
 }
 function beam(group,name,a,b,width,material='metal'){
- const d=b.map((v,i)=>v-a[i]),len=Math.hypot(...d),mid=a.map((v,i)=>(v+b[i])/2);
- const rot=[Math.atan2(d[2],d[1])*180/Math.PI,0,-Math.asin(d[0]/len)*180/Math.PI];
- return box(group,name,[mid[0]-width/2,mid[1]-len/2,mid[2]-width/2],[mid[0]+width/2,mid[1]+len/2,mid[2]+width/2],material,rot,mid);
+ const g=beamGeometry(a,b,width);
+ return box(group,name,g.from,g.to,material,g.rotation,g.origin);
 }
 function chest(group,x,y,z,w=14,h=10,d=12,material='wood'){
  box(group,'crate_body',[x,y,z],[x+w,y+h,z+d],material);
@@ -158,7 +158,8 @@ beam('lights','lantern_wire',[0,76,-66],[0,76,65],.5,'black');
 for(const c of groups.get('storage'))for(const k of ['from','to','origin'])c[k][0]+=3.5;
 const original=JSON.parse(fs.readFileSync('models/field_tent/final/recipe.json','utf8'));
 const interiorGroups=['floor','rug','workbench','lights','noticeboard','bunks_front','bunks_back','storage','loose_supplies'];
-const normalize=(c,shift=0)=>({name:c.name.replace(/_\d+$/,''),from:c.from.map((v,i)=>v+(i===0?shift:0)),to:c.to.map((v,i)=>v+(i===0?shift:0)),origin:c.origin.map((v,i)=>v+(i===0?shift:0)),rotation:c.rotation.map(v=>v+0)});
+const rounded=a=>a.map(v=>Math.round(v*1e8)/1e8+0);
+const normalize=(c,shift=0)=>({name:c.name.replace(/_\d+$/,''),from:rounded(c.from.map((v,i)=>v+(i===0?shift:0))),to:rounded(c.to.map((v,i)=>v+(i===0?shift:0))),origin:rounded(c.origin.map((v,i)=>v+(i===0?shift:0))),rotation:rounded(c.rotation)});
 for(const g of interiorGroups)assert.deepEqual(groups.get(g).map(c=>normalize(c)),original.groups[g].map(c=>normalize(c,g==='storage'?3.5:0)),`Interior preservation: ${g}`);
 const plan={name:'Ranger Field Tent Refined',dimensions_blocks:[10,7,5],axis:'X width, Y up, front -Z',texture:[W,H],cubes:serial,wall_tilt:tilt,interior_groups_preserved:interiorGroups,groups:Object.fromEntries(groups)};
 for(const cubes of groups.values())for(const cube of cubes)inputSchemas.create_cubes.shape.cubes.element.parse(cube);

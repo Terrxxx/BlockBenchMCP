@@ -7,7 +7,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { Client } from '@modelcontextprotocol/client';
 import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
 import { z } from 'zod';
-import { commandNames, outputSchemas, type Command, type ToolOutput } from '../src/shared/protocol.js';
+import { PLUGIN_VERSION, commandNames, outputSchemas, type Command, type ToolOutput } from '../src/shared/protocol.js';
 import { Workspace } from '../src/shared/workspace.js';
 import { errorSchema } from '../src/shared/errors.js';
 
@@ -20,7 +20,7 @@ const prefix = `models/mcp_export_${Date.now().toString(36)}_${randomUUID().slic
 workspace.exportTarget(`${prefix}.geo.json`,'bedrock_model',false);
 const atlas = workspace.readPng('examples/atlas-64.png');
 const evidence: unknown[] = [];
-const client = new Client({name:'blockbench-export-smoke',version:'0.4.0'});
+const client = new Client({name:'blockbench-export-smoke',version:PLUGIN_VERSION});
 const transport = new StdioClientTransport({command:process.execPath,args:[path.resolve('dist/server/index.js'),'--workspace',workspace.root],stderr:'inherit'});
 async function call<K extends Command>(name: K, args: Record<string,unknown>): Promise<ToolOutput<K>> {
   const result=await client.callTool({name,arguments:args});
@@ -39,7 +39,7 @@ const geometry = z.object({'minecraft:geometry':z.array(z.object({description:z.
 try {
   await client.connect(transport);
   assert.deepEqual((await client.listTools()).tools.map(t=>t.name).sort(),[...commandNames].sort());
-  console.log('19 tools ready; connect the v0.4.0 desktop plugin to this workspace.');
+  console.log(`${commandNames.length} tools ready; connect the v${PLUGIN_VERSION} desktop plugin to this workspace.`);
   const end=Date.now()+wait*1000;
   while(true) {
     const result=await client.callTool({name:'get_project_state',arguments:{}});
@@ -98,6 +98,6 @@ try {
     const file=`${prefix}.${suffix}`; const content=fs.readFileSync(workspace.resolve(file));
     return {path:file,bytes:content.length,sha256:createHash('sha256').update(content).digest('hex')};
   });
-  fs.writeFileSync(workspace.resolve(`${prefix}.evidence.json`,true),JSON.stringify({date:new Date().toISOString(),version:'0.4.0',transport:'official SDK -> stdio -> real desktop plugin',files,calls:evidence},null,2),{flag:'wx'});
+  fs.writeFileSync(workspace.resolve(`${prefix}.evidence.json`,true),JSON.stringify({date:new Date().toISOString(),version:PLUGIN_VERSION,transport:'official SDK -> stdio -> real desktop plugin',files,calls:evidence},null,2),{flag:'wx'});
   console.log(JSON.stringify({passed:true,files,evidence:`${prefix}.evidence.json`},null,2));
 } finally { await client.close(); }

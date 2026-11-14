@@ -7,7 +7,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { Client } from '@modelcontextprotocol/client';
 import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
 import { z } from 'zod';
-import { commandNames, outputSchemas, type Command, type ToolOutput } from '../src/shared/protocol.js';
+import { PLUGIN_VERSION, commandNames, outputSchemas, type Command, type ToolOutput } from '../src/shared/protocol.js';
 import { errorSchema } from '../src/shared/errors.js';
 import { Workspace } from '../src/shared/workspace.js';
 import { inspectRenderPixels } from './render-smoke-check.js';
@@ -19,7 +19,7 @@ const workspace=new Workspace(values.workspace,fs);
 workspace.pngTarget('examples/atlas-64.png');
 const prefix=`models/mcp_render_${Date.now().toString(36)}_${randomUUID().slice(0,8)}`;
 workspace.exportTarget(`${prefix}_static.png`,'texture_png',false);
-const client=new Client({name:'blockbench-render-smoke',version:'0.5.0'});
+const client=new Client({name:'blockbench-render-smoke',version:PLUGIN_VERSION});
 const transport=new StdioClientTransport({command:process.execPath,args:[path.resolve('dist/server/index.js'),'--workspace',workspace.root],stderr:'inherit'});
 const evidence:unknown[]=[];
 async function call<K extends Command>(name:K,args:Record<string,unknown>):Promise<ToolOutput<K>>{
@@ -30,7 +30,7 @@ async function call<K extends Command>(name:K,args:Record<string,unknown>):Promi
 async function fails(args:Record<string,unknown>,code:string){const r=await client.callTool({name:'render_project',arguments:args});evidence.push({name:'render_project',arguments:args,result:r.structuredContent,isError:r.isError??false});assert.equal(r.isError,true);assert.equal(z.object({error:errorSchema}).parse(r.structuredContent).error.code,code);}
 try {
   await client.connect(transport);assert.deepEqual((await client.listTools()).tools.map(t=>t.name).sort(),[...commandNames].sort());
-  console.log('20 tools ready; connect the v0.5.0 desktop plugin.');
+  console.log(`${commandNames.length} tools ready; connect the v${PLUGIN_VERSION} desktop plugin.`);
   const end=Date.now()+wait*1000;
   while(true){const r=await client.callTool({name:'get_project_state',arguments:{}});if(!r.isError)break;const e=z.object({error:errorSchema}).parse(r.structuredContent).error;if(e.code!=='NOT_CONNECTED'||Date.now()>=end)throw new Error(e.message);await delay(1000);}
   const name=path.basename(prefix),id=(await call('create_project',{name,model_identifier:name})).project.id;
@@ -70,7 +70,7 @@ try {
   await call('render_project',{...base,path:rest.path,overwrite:true});
   assert.equal(inspectRenderPixels(fs.readFileSync(workspace.resolve(rest.path))).pixel_sha256,rest.pixel_sha256);
   assert.deepEqual(await call('get_project_state',{}),baseline);assert.deepEqual(await call('get_animation_state',{project_id:id,animation_id:animation}),frames);
-  const record={date:new Date().toISOString(),version:'0.5.0',transport:'official SDK -> stdio -> real desktop plugin',files,calls:evidence};
+  const record={date:new Date().toISOString(),version:PLUGIN_VERSION,transport:'official SDK -> stdio -> real desktop plugin',files,calls:evidence};
   fs.writeFileSync(workspace.resolve(`${prefix}.evidence.json`,true),JSON.stringify(record,null,2),{flag:'wx'});
   console.log(JSON.stringify({passed:true,files,evidence:`${prefix}.evidence.json`},null,2));
 } catch(error) {

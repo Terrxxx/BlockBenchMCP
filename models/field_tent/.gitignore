@@ -18,3 +18,13 @@
 !/refined-final/field_tent_atlas.png
 !/refined-final/ranger_field_tent.geo.json
 !/refined-final/ranger_field_tent.animation.json
+!/repair-beams.mjs
+!/verify-alignment-history.mjs
+!/verify-alignment.mjs
+!/ALIGNMENT.md
+!/alignment-verification.json
+!/aligned/
+/aligned/*
+!/aligned/field_tent_atlas.png
+!/aligned/ranger_field_tent_aligned.geo.json
+!/aligned/ranger_field_tent_aligned.animation.json

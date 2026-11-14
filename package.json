@@ -1,6 +1,6 @@
 {
   "name": "blockbench-ai-mcp",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "description": "A workspace-scoped MCP bridge for the Blockbench desktop application",
   "type": "module",

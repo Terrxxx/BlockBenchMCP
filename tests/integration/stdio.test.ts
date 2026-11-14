@@ -26,7 +26,7 @@ async function freePort(): Promise<number> {
 }
 
 describe('official SDK client -> real stdio server -> real WS -> adapter', () => {
-  it.each(['legacy', 'modern'] as const)('runs all twenty tools using %s protocol mode', async mode => {
+  it.each(['legacy', 'modern'] as const)('runs all twenty-two tools using %s protocol mode', async mode => {
     const root = tempWorkspace();
     const workspace = new Workspace(root, fs);
     fs.writeFileSync(path.join(root, 'atlas.png'), pngFixture());
@@ -53,7 +53,7 @@ describe('official SDK client -> real stdio server -> real WS -> adapter', () =>
       const peer = socket;
       await new Promise<void>((resolve, reject) => { peer.once('open', resolve); peer.once('error', reject); });
       const ready = new Promise<void>(resolve => peer.once('message', () => resolve()));
-      peer.send(JSON.stringify({ version: 5, type: 'hello', workspace: root, token: config.token, plugin_version: '0.5.0', blockbench_version: '5.2.2' }));
+      peer.send(JSON.stringify({ version: 6, type: 'hello', workspace: root, token: config.token, plugin_version: '0.6.0', blockbench_version: '5.2.2' }));
       await ready;
       peer.on('message', data => { void dispatcher.receive(data.toString()).then(response => { if (response) peer.send(JSON.stringify(response)); }); });
       const created = await client.callTool({ name: 'create_project', arguments: { name: 'stdio_test', model_identifier: 'stdio_test' } });
@@ -118,6 +118,11 @@ describe('official SDK client -> real stdio server -> real WS -> adapter', () =>
       expect(outputSchemas.save_project.parse(saved.structuredContent).saved).toBe(true);
       const blocked = await client.callTool({ name: 'save_project', arguments: { project_id: id, path: '../escape.bbmodel' } });
       expect(blocked.isError).toBe(true);
+      const rods=await client.callTool({name:'create_beams',arguments:{project_id:id,parent_id:head,beams:[{name:'rope',start:[0,0,0],end:[9,-20,13],thickness:.75,uv_offset:[4,4]}]}});
+      const rod=outputSchemas.create_beams.parse(rods.structuredContent).beams[0]!;
+      const aligned=await client.callTool({name:'align_beams',arguments:{project_id:id,beams:[{cube_id:rod.cube_id,start:[3,4,5],end:[-9,-20,13]}]}});
+      expect(outputSchemas.align_beams.parse(aligned.structuredContent).beams[0]).toMatchObject({cube_id:rod.cube_id});
+      expect(host.elements.find(c=>c.uuid===rod.cube_id)!.parent).toEqual(host.bones.find(b=>b.uuid===head));
       expect(logs).not.toContain(config.token);
       expect(fs.readFileSync(path.join(root, 'stdio.bbmodel'), 'utf8')).toBe('TEST_ONLY_OFFICIAL_CODEC_STUB');
     } finally {

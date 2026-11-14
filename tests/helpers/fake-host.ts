@@ -8,6 +8,8 @@ import type { BoneInput, BoneUpdate } from '../../src/shared/schemas/bones.js';
 import type { PngInfo } from '../../src/shared/png.js';
 import type { RenderInput } from '../../src/shared/schemas/render.js';
 import { pngFixture } from './png.js';
+import type { BeamGeometry } from '../../src/shared/beam-geometry.js';
+import type { Vector3 } from '../../src/shared/schemas/common.js';
 
 // Native Blockbench GUIDs need not have RFC UUID version/variant bits. Force
 // that case in every host fixture so the full MCP path exercises compatibility.
@@ -18,6 +20,22 @@ function nativeId(): string {
 
 /** Behavioral test double. Its output is deliberately NOT a bbmodel serializer. */
 export class FakeHost implements BlockbenchHost {
+  eulerOrder():string{return 'ZYX';}
+  updateCubeGeometry(cube:CubeHandle,geometry:BeamGeometry):void {
+    Object.assign(cube,structuredClone(geometry));
+    if(this.failUpdate)throw new Error('Injected cube update failure');
+  }
+  beamEndpoints(cube:CubeHandle):[Vector3,Vector3] {
+    // Independent sequential axis rotations (Rx, Ry, Rz), not solver formula.
+    return [cube.from[1],cube.to[1]].map(y=>{
+      let p=[(cube.from[0]+cube.to[0])/2-cube.origin[0],y-cube.origin[1],(cube.from[2]+cube.to[2])/2-cube.origin[2]];
+      for(let axis=0;axis<3;axis++){
+        const a=(axis+1)%3,b=(axis+2)%3,r=cube.rotation[axis]!*Math.PI/180,c=Math.cos(r),s=Math.sin(r),oldA=p[a]!,oldB=p[b]!;
+        p[a]=c*oldA-s*oldB;p[b]=s*oldA+c*oldB;
+      }
+      return p.map((v,i)=>v+cube.origin[i]!) as Vector3;
+    }) as [Vector3,Vector3];
+  }
   version = '5.2.2';
   desktop = true;
   renderPng(input:RenderInput):string {this.calls.push('Preview.render');return `data:image/png;base64,${pngFixture(input.width,input.height).toString('base64')}`;}

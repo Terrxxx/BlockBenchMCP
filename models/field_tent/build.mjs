@@ -8,6 +8,7 @@ import { Client } from '@modelcontextprotocol/client';
 import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
 import { inputSchemas, outputSchemas } from '../../src/shared/protocol.ts';
 import { pngChunk } from '../../tests/helpers/png.ts';
+import { beamGeometry } from '../../src/shared/beam-geometry.ts';
 
 const root=process.cwd(),dir='models/field_tent/final',W=1024,H=2048;
 assert.equal(path.resolve(root).toLowerCase(),'d:\\desktop\\blockbenchmcp');
@@ -42,9 +43,8 @@ function box(group,name,from,to,material='canvas',rotation=[0,0,0],origin=[0,0,0
  if(!groups.has(group))groups.set(group,[]);groups.get(group).push(spec);return spec;
 }
 function beam(group,name,a,b,width,material='metal'){
- const d=b.map((v,i)=>v-a[i]),len=Math.hypot(...d),mid=a.map((v,i)=>(v+b[i])/2);
- const rot=[Math.atan2(d[2],d[1])*180/Math.PI,0,-Math.asin(d[0]/len)*180/Math.PI];
- return box(group,name,[mid[0]-width/2,mid[1]-len/2,mid[2]-width/2],[mid[0]+width/2,mid[1]+len/2,mid[2]+width/2],material,rot,mid);
+ const g=beamGeometry(a,b,width);
+ return box(group,name,g.from,g.to,material,g.rotation,g.origin);
 }
 function chest(group,x,y,z,w=14,h=10,d=12,material='wood'){
  box(group,'crate_body',[x,y,z],[x+w,y+h,z+d],material);
@@ -219,6 +219,7 @@ const plan={name:'Ranger Field Tent',dimensions_blocks:[10,7,5],axis:'X width, Y
 for(const cubes of groups.values())for(const cube of cubes)inputSchemas.create_cubes.shape.cubes.element.parse(cube);
 fs.writeFileSync(`${dir}/recipe.json`,JSON.stringify(plan,null,2),{flag:'wx'});
 console.log(`Prepared ${serial} cubes in ${groups.size} groups; atlas ${atlas.length} bytes.`);
+if(process.argv.includes('--prepare-only'))process.exit(0);
 
 const client=new Client({name:'field-tent-model-builder',version:'1.0.0'});
 const transport=new StdioClientTransport({command:process.execPath,args:[path.resolve('dist/server/index.js'),'--workspace',root],stderr:'inherit'});

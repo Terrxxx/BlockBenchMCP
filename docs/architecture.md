@@ -4,7 +4,7 @@
 
 ## 0. 范围与实施顺序
 
-帐篷细化先按[设计记录](field-tent-refinement-plan.md)执行现有工具链，再对原位几何修改、纹理替换、临时可见性与查询体积提出[实战复盘](mcp-modeling-retrospective.md)。本次只改资产配方、资源与文档，服务器继续为 v0.5.0 / 20 工具；未来工具需独立实施及验证。
+帐篷细化先按[设计记录](field-tent-refinement-plan.md)执行现有工具链，再对原位几何修改、纹理替换、临时可见性与查询体积提出[实战复盘](mcp-modeling-retrospective.md)。细化当时只改资产配方、资源与文档；随后第六阶段按用户反馈实现[两点杆件与端点对齐](phase-six-architecture.md)，升级为 v0.6.0 / 22 工具，实测记录见[第六阶段验证](phase-six-verification.md)。其他建议仍需独立实施及验证。
 
 第五阶段后的实际资产案例为[野外指挥帐篷](../models/field_tent/README.md)。本地建模配方生成受 schema 校验的参数和 PNG 图集，再通过现有官方 SDK → stdio → WebSocket → 白名单工具创建工程、官方保存/导出与渲染；不增加宿主执行接口或改变服务器架构。最终资源与配方纳入版本控制，生成工程、原始会话日志和交付 ZIP 留在授权目录且不提交。
 

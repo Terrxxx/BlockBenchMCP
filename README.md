@@ -1,17 +1,18 @@
 # Blockbench AI MCP
 
-通过本机 stdio MCP Server 与 Blockbench 桌面插件，操作 **Minecraft Bedrock Entity** 工程。v0.5.0 提供二十个工具：工程、批量方块、骨骼层级、PNG 图集、Box UV、骨骼动画、官方 `.bbmodel` 保存、Bedrock 资源文件导出及离屏 PNG 渲染。
+通过本机 stdio MCP Server 与 Blockbench 桌面插件，操作 **Minecraft Bedrock Entity** 工程。v0.6.0 提供二十二个工具：工程、批量方块、骨骼层级、PNG 图集、Box UV、骨骼动画、官方 `.bbmodel` 保存、Bedrock 资源文件导出及离屏 PNG 渲染。
 
 第三阶段加入数值骨骼动画，第四阶段加入资源文件导出，第五阶段加入指定相机和动画时刻的 PNG 渲染。像素绘制、贴图生成、骨骼删除、Molang、动画控制器及完整资源包组装仍属于后续阶段。`save_project` 保存可继续编辑的 Blockbench 工程，不生成 Bedrock 资源包。
 
 ## 当前实现与验证
 
-- 实际建模案例：[参考图野外指挥帐篷](models/field_tent/README.md)，初版 702 方块；[细化版](models/field_tent/REFINEMENT.md) 1218 方块、21 骨骼，保留 440 个原有内饰/地板构件，七组同机位渲染对比。由此形成[下一阶段 MCP 改进建议](docs/mcp-modeling-retrospective.md)，建议工具尚未实现。
+- 实际建模案例：[参考图野外指挥帐篷](models/field_tent/README.md)，初版 702 方块；[细化版](models/field_tent/REFINEMENT.md) 1218 方块、21 骨骼，保留 440 个原有内饰/地板构件，七组同机位渲染对比。由此形成[下一阶段 MCP 改进建议](docs/mcp-modeling-retrospective.md)，其中两点杆件与原位端点对齐已于[第六阶段](docs/phase-six-architecture.md)实现；[修复版帐篷](models/field_tent/ALIGNMENT.md)完成 79 根杆件对齐，其他建议工具仍待实现。
 
 - 官方 MCP TypeScript SDK v2：`@modelcontextprotocol/server@2.4.0`，客户端测试使用同版 client；版本与 lockfile 已固定。
 - Blockbench 官方 API 基线 **5.2.2 桌面版**；编译类型 `blockbench-types@5.2.1`。
 - 共享 Zod schema、严格 TypeScript、白名单协议、工作目录隔离、批量 Undo、超时/重连、结构化日志。
-- v0.5.0 **152 项自动化测试通过**，覆盖单元、真实 WebSocket、两种 MCP 协议模式的二十工具 stdio 闭环和插件 bundle。严格类型检查与构建通过。
+- v0.6.0 **174 项自动化测试通过**，覆盖单元、真实 WebSocket、两种 MCP 协议模式的二十二工具 stdio 闭环和插件 bundle。严格类型检查与构建通过。
+- **第六阶段真实 Blockbench 5.2.2 端点验收通过**：9 个方向原生矩阵探针、79 根杆件原位对齐、一次 Undo/Redo、官方保存与五组同机位渲染；见[验证记录](docs/phase-six-verification.md)。
 - **第五阶段真实 Blockbench 5.2.2 渲染验收通过**：透视/正交侧视/顶视、动画 0/1 秒、透明/纯色背景、重复渲染一致及错误保护；见[第五阶段验证记录](docs/phase-five-verification.md)。
 - **第四阶段真实 Blockbench 5.2.2 导出验收通过**：模型 JSON、批量动画 JSON、PNG、覆盖与路径保护、吸附冲突拒绝、工程状态保持均已核对；见[第四阶段验证记录](docs/phase-four-verification.md)。
 - **第三阶段真实 Blockbench 5.2.2 验收通过**：官方 SDK 客户端调用六个动画工具，三通道关键帧、5 次 Undo/Redo、保存与重开一致；修复动画刷新和重建轨道的 Redo 问题。见[第三阶段验证记录](docs/phase-three-verification.md)。
@@ -74,7 +75,7 @@ args = ["D:/Desktop/BlockBenchMCP/dist/server/index.js", "--workspace", "D:/Desk
 cwd = "D:/Desktop/BlockBenchMCP"
 startup_timeout_sec = 15
 tool_timeout_sec = 30
-enabled_tools = ["create_project", "get_project_state", "create_cubes", "save_project", "create_bones", "update_bones", "reparent_cubes", "import_texture", "assign_texture", "set_cube_uv", "create_animation", "update_animation", "set_keyframes", "delete_keyframes", "get_animation_state", "preview_animation", "export_bedrock_model", "export_bedrock_animations", "export_texture_png", "render_project"]
+enabled_tools = ["create_project", "get_project_state", "create_cubes", "save_project", "create_bones", "update_bones", "reparent_cubes", "import_texture", "assign_texture", "set_cube_uv", "create_animation", "update_animation", "set_keyframes", "delete_keyframes", "get_animation_state", "preview_animation", "export_bedrock_model", "export_bedrock_animations", "export_texture_png", "render_project", "create_beams", "align_beams"]
 ```
 
 请根据实际安装位置调整路径。若 Codex 找不到 `node`，将 `command` 改为 `Get-Command node` 返回的完整路径。`--workspace` 必须是绝对路径；工具调用不能改变它。`tool_timeout_sec` 应大于连接配置的 `timeout_ms / 1000`。
@@ -89,11 +90,11 @@ codex mcp get blockbench_ai --json
 
 配置后在 Codex 中重启该 MCP Server；如果当前聊天仍看不到工具，完全退出并重新启动 Codex 桌面应用后再检查。Codex 会启动进程，不需要额外手动运行 `npm start`。避免同时启动独立 smoke/另一个 Codex 实例占用同一个端口。MCP 初始化不要求插件已连接；未连接时调用工具返回 `NOT_CONNECTED`。Codex 中启用 `blockbench_ai` 与 Blockbench 插件执行 Connect 是两个步骤；工具出现后仍需完成上述插件连接。
 
-## 升级到 v0.5.0
+## 升级到 v0.6.0
 
-构建后重载 Blockbench 中从文件加载的插件，并重启 Codex 的 `blockbench_ai` 服务，再在 Tools 中 Connect。本地桥接协议升级到 **v5**，要求插件 **0.5.0**；旧插件与新 Server 会拒绝握手。现有工作目录配置与密钥继续使用，不需要重新 setup。若原 Codex 配置设置了旧版 `enabled_tools`，更新为上面的二十项；没设置此白名单时无需添加它。
+构建后重载 Blockbench 中从文件加载的插件，并重启 Codex 的 `blockbench_ai` 服务，再在 Tools 中 Connect。本地桥接协议升级到 **v6**，要求插件 **0.6.0**；旧插件与新 Server 会拒绝握手。现有工作目录配置与密钥继续使用，不需要重新 setup。若原 Codex 配置设置了旧版 `enabled_tools`，更新为上面的二十二项；没设置此白名单时无需添加它。
 
-插件重载会开始新的管理会话，已有标签可读取但不能修改；请用 `create_project` 新建测试工程。第三阶段[手动冒烟步骤](docs/phase-three-smoke-test.md)覆盖完整动画闭环。本阶段已按用户授权使用正常 GUI 自动化验收。新增工具列表由客户端缓存时，需要完全重启 Codex；独立 SDK 验收不代表当前聊天已经热加载新工具。
+插件重载会开始新的管理会话，已有标签可读取但不能修改；请用 `create_project` 新建测试工程。第三阶段[手动冒烟步骤](docs/phase-three-smoke-test.md)覆盖完整动画闭环。第三阶段曾按用户授权使用正常 GUI 自动化验收；第六阶段未使用 Computer Use，原生 Undo/Redo 由用户操作后通过 MCP 查询验证。新增工具列表由客户端缓存时，需要完全重启 Codex；独立 SDK 验收不代表当前聊天已经热加载新工具。
 
 ## 四个基础工具
 
@@ -144,6 +145,19 @@ v0.2.0 可在请求顶层传 `parent_id`，把整批方块放入已有骨骼。�
 使用 `Codecs.project.compile({bitmaps:true, absolute_paths:false})` 和 `Codecs.project.write(...)`，不手写完整 bbmodel。父目录必须存在；示例 `models/` 已提供。成功返回相对路径和字节数。覆盖已有文件必须明确设置 `overwrite: true`。
 
 官方 5.2.2 文本写入是同步的，写入异常会还原工程保存元数据。官方 writer 不提供原子替换保证；磁盘写入中途失败时目标文件可能部分改变，不能把失败当成“磁盘未变化”。本项目不调用 `saveTextures(true)`，避免另行覆盖贴图文件；工程 codec 嵌入贴图，且编译前拒绝工作目录外的磁盘资源引用。
+
+## 两点杆件与端点对齐
+
+v0.6.0 新增以下工具，解决手算 Euler 角造成的杆件偏离连接点问题。示例见 [phase-six-tool-calls.json](examples/phase-six-tool-calls.json)。
+
+| 工具 | 参数与行为 |
+| --- | --- |
+| `create_beams` | `project_id,parent_id,beams:[{name,start,end,thickness,uv_offset?,mirror_uv?}]`；在指定骨骼下批量创建杆件方块 |
+| `align_beams` | `project_id,beams:[{cube_id,start,end,thickness?}]`；原位对齐已有方块，省略 thickness 时保持 X/Z 截面尺寸，保留 ID、名称、父级、贴图、UV |
+
+`start/end` 是两端面的中心，使用与 Cube.from/to 一致的、父骨骼旋转前的建模坐标。长度 0.01–4096，截面 0.01–256；每批最多 256 根，一个 Undo 步骤。两端必须不同；输入和生成坐标均限制 ±32768。支持 Bedrock ZYX 旋转、Box UV，无 inflate/stretch/rescale。改变长度后仍须保证完整 Box UV 位于图集中。
+
+工具先校验整批，修改后刷新原生视图，再用原生节点矩阵测量两端；误差超过 1e-6 则整批回滚。结果逐根返回实际 `start,end,length,endpoint_error,cube_id`。这项误差是内存中的几何精度，官方保存的数值舍入会产生额外误差，实际记录见[第六阶段验证](docs/phase-six-verification.md)。
 
 ## 骨骼与贴图工具
 

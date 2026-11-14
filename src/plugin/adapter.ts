@@ -9,6 +9,7 @@ import { assignTexture, importTexture, setCubeUV, textureSummary } from './textu
 import { createAnimation, updateAnimation, setKeyframes, deleteKeyframes, getAnimationState, previewAnimation } from './animations.js';
 import { exportResource } from './exports.js';
 import { renderProject } from './render.js';
+import { alignBeams, createBeams } from './beams.js';
 
 export class BlockbenchAdapter {
   private readonly managed = new Set<string>();
@@ -18,6 +19,8 @@ export class BlockbenchAdapter {
   execute(request: Request): unknown {
     this.assertHost();
     switch (request.command) {
+      case 'create_beams': return createBeams(this.host,this.mutableProject(request.params.project_id),request.params);
+      case 'align_beams': return alignBeams(this.host,this.mutableProject(request.params.project_id),request.params);
       case 'render_project': return renderProject(this.host,this.workspace,request.params,request.deadline_ms,()=>this.mutableProject(request.params.project_id));
       case 'export_bedrock_model':
       case 'export_bedrock_animations':

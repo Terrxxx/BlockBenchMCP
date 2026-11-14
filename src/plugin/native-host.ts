@@ -33,6 +33,19 @@ function nativeScope(scope: EditScope): UndoAspects {
 
 export function createNativeHost(): BlockbenchHost {
   return {
+    eulerOrder: () => Format.euler_order,
+    updateCubeGeometry: (cube,geometry) => {nativeCube(cube).extend(geometry);},
+    beamEndpoints: cube => {
+      const c=nativeCube(cube);
+      if(c.inflate!==0 || c.rescale || c.stretch.some(v=>v!==1))throw new BridgeError('INVALID_PARAMS','Beam tools require no inflate, stretch or rescale.');
+      c.mesh.updateMatrix();
+      const parent=c.parent instanceof Group?c.parent.origin:[0,0,0];
+      return [c.from[1],c.to[1]].map(y=>{
+        const point=c.mesh.position.clone().set((c.from[0]+c.to[0])/2-c.origin[0],y-c.origin[1],(c.from[2]+c.to[2])/2-c.origin[2]);
+        point.applyMatrix4(c.mesh.matrix);
+        return [point.x+parent[0]!,point.y+parent[1]!,point.z+parent[2]!];
+      }) as [[number,number,number],[number,number,number]];
+    },
     ...nativeAnimationHost(),
     ...nativeExportHost(),
     renderPng: renderNativePng,

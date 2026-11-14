@@ -1,0 +1,16 @@
+{
+  "note": "Replace placeholders with actual managed project/bone/cube IDs. Coordinates are end-face centres before parent bone rotation.",
+  "create_beams": {
+    "project_id": "<project_id>",
+    "parent_id": "<bone_id>",
+    "beams": [
+      { "name": "guy_rope", "start": [49, 50, 65], "end": [58, 1, 78], "thickness": 0.75, "uv_offset": [4, 4] }
+    ]
+  },
+  "align_beams": {
+    "project_id": "<project_id>",
+    "beams": [
+      { "cube_id": "<cube_id>", "start": [49, 50, 65], "end": [58, 1, 78] }
+    ]
+  }
+}

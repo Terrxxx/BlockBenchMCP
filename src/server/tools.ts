@@ -5,6 +5,8 @@ import type { BridgeServer } from './bridge.js';
 import type { Workspace } from '../shared/workspace.js';
 
 const descriptions: Record<Command, string> = {
+  create_beams: 'Create 1–256 square-section rods between two end-face centres with verified Bedrock ZYX rotation. Explicit parent_id. Coordinates are unrotated model coordinates before parent bone transforms, as Cube.from/to, not animated world positions. One Undo, Box UV preflight. No inflate/stretch/rescale.',
+  align_beams: 'Align existing cubes between start/end face centres in unrotated model coordinates before parent bone transforms. Preserves cube IDs, names, parents and UV/texture bindings. Optional thickness replaces both cross-section sizes; omitted preserves X/Z sizes. Entire batch preflight, one Undo and native endpoint verification.',
   render_project: 'Render active managed Bedrock cubes to workspace-relative PNG from an explicit perspective or orthographic camera. Optional numeric bone animation ID/time; omitted means rest pose. Internal textures only; no IK/controllers. Restores display state; does not save the project. Defaults transparent 512x512, maximum 2048 per side. Overwrite is explicit.',
   export_bedrock_model: 'Export active managed Bedrock geometry through the official codec to a workspace-relative .geo.json. Omits visible bounds; honors native export flags. Does not save or dirty the project. Overwrite replaces the whole file.',
   export_bedrock_animations: 'Export 1–128 selected numeric bone animations through the official codec to one workspace-relative .animation.json. Official snapping applies; collisions are rejected before writing. No IK, effects or controllers. Overwrite replaces the whole file.',
@@ -28,7 +30,7 @@ const descriptions: Record<Command, string> = {
 };
 
 export function createMcpServer(bridge: BridgeServer, workspace: Workspace): McpServer {
-  const server = new McpServer({ name: 'blockbench-ai-mcp', version: '0.5.0', title: 'Blockbench AI MCP' }, {
+  const server = new McpServer({ name: 'blockbench-ai-mcp', version: '0.6.0', title: 'Blockbench AI MCP' }, {
     instructions: 'Connect the desktop plugin to the same workspace. Create a Bedrock project, retain its project UUID, then batch cubes and save relative .bbmodel paths. Never automatically retry mutations after timeout/disconnect: inspect get_project_state first. Only plugin-created projects in the active connection session are mutable. No arbitrary code or filesystem tools are available.',
   });
   function register(command: Command): void {
