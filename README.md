@@ -6,7 +6,7 @@
 
 ## 当前实现与验证
 
-- 实际建模案例：[参考图野外指挥帐篷](models/field_tent/README.md)，通过现有 MCP 创建 702 个方块、19 个骨骼分组及完整内饰，保存工程、导出资源并渲染预览。
+- 实际建模案例：[参考图野外指挥帐篷](models/field_tent/README.md)，初版 702 方块；[细化版](models/field_tent/REFINEMENT.md) 1218 方块、21 骨骼，保留 440 个原有内饰/地板构件，七组同机位渲染对比。由此形成[下一阶段 MCP 改进建议](docs/mcp-modeling-retrospective.md)，建议工具尚未实现。
 
 - 官方 MCP TypeScript SDK v2：`@modelcontextprotocol/server@2.4.0`，客户端测试使用同版 client；版本与 lockfile 已固定。
 - Blockbench 官方 API 基线 **5.2.2 桌面版**；编译类型 `blockbench-types@5.2.1`。
