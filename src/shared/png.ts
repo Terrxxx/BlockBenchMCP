@@ -3,6 +3,15 @@ import { BridgeError } from './errors.js';
 export const MAX_PNG_BYTES = 8 * 1024 * 1024;
 export const MAX_PNG_SIDE = 4096;
 export interface PngInfo { width: number; height: number }
+export function decodePngDataUrl(content: string): {bytes: Uint8Array; info: PngInfo} {
+  const prefix = 'data:image/png;base64,';
+  if (!content.startsWith(prefix) || content.length > prefix.length + Math.ceil(MAX_PNG_BYTES / 3) * 4
+    || (content.length - prefix.length) % 4 !== 0 || !/^[A-Za-z0-9+/]*={0,2}$/.test(content.slice(prefix.length))) {
+    throw new BridgeError('INVALID_TEXTURE', 'Host did not return a bounded PNG data URL.');
+  }
+  const bytes = Uint8Array.from(atob(content.slice(prefix.length)), char => char.charCodeAt(0));
+  return {bytes,info:inspectPng(bytes)};
+}
 const signature = [137, 80, 78, 71, 13, 10, 26, 10];
 const table = Uint32Array.from({ length: 256 }, (_, value) => {
   let crc = value;

@@ -8,6 +8,7 @@ import { edit } from './edits.js';
 import { assignTexture, importTexture, setCubeUV, textureSummary } from './textures.js';
 import { createAnimation, updateAnimation, setKeyframes, deleteKeyframes, getAnimationState, previewAnimation } from './animations.js';
 import { exportResource } from './exports.js';
+import { renderProject } from './render.js';
 
 export class BlockbenchAdapter {
   private readonly managed = new Set<string>();
@@ -17,6 +18,7 @@ export class BlockbenchAdapter {
   execute(request: Request): unknown {
     this.assertHost();
     switch (request.command) {
+      case 'render_project': return renderProject(this.host,this.workspace,request.params,request.deadline_ms,()=>this.mutableProject(request.params.project_id));
       case 'export_bedrock_model':
       case 'export_bedrock_animations':
       case 'export_texture_png':

@@ -26,7 +26,7 @@ async function freePort(): Promise<number> {
 }
 
 describe('official SDK client -> real stdio server -> real WS -> adapter', () => {
-  it.each(['legacy', 'modern'] as const)('runs all nineteen tools using %s protocol mode', async mode => {
+  it.each(['legacy', 'modern'] as const)('runs all twenty tools using %s protocol mode', async mode => {
     const root = tempWorkspace();
     const workspace = new Workspace(root, fs);
     fs.writeFileSync(path.join(root, 'atlas.png'), pngFixture());
@@ -53,7 +53,7 @@ describe('official SDK client -> real stdio server -> real WS -> adapter', () =>
       const peer = socket;
       await new Promise<void>((resolve, reject) => { peer.once('open', resolve); peer.once('error', reject); });
       const ready = new Promise<void>(resolve => peer.once('message', () => resolve()));
-      peer.send(JSON.stringify({ version: 4, type: 'hello', workspace: root, token: config.token, plugin_version: '0.4.0', blockbench_version: '5.2.2' }));
+      peer.send(JSON.stringify({ version: 5, type: 'hello', workspace: root, token: config.token, plugin_version: '0.5.0', blockbench_version: '5.2.2' }));
       await ready;
       peer.on('message', data => { void dispatcher.receive(data.toString()).then(response => { if (response) peer.send(JSON.stringify(response)); }); });
       const created = await client.callTool({ name: 'create_project', arguments: { name: 'stdio_test', model_identifier: 'stdio_test' } });
@@ -105,6 +105,10 @@ describe('official SDK client -> real stdio server -> real WS -> adapter', () =>
       expect(outputSchemas.export_bedrock_animations.parse(exportedAnimation.structuredContent).kind).toBe('bedrock_animations');
       const exportedTexture = await client.callTool({name:'export_texture_png',arguments:{project_id:id,path:'exported.png',texture_id:texture.id}});
       expect(outputSchemas.export_texture_png.parse(exportedTexture.structuredContent).kind).toBe('texture_png');
+      const rendered=await client.callTool({name:'render_project',arguments:{project_id:id,path:'render.png',width:64,height:64,
+        camera:{projection:'orthographic',position:[32,24,40],target:[0,8,0],vertical_size:32},animation:{animation_id:animationId,time:0.5}}});
+      expect(outputSchemas.render_project.parse(rendered.structuredContent)).toMatchObject({width:64,height:64,time:0.5});
+      expect(fs.readFileSync(path.join(root,'render.png'))).toEqual(pngFixture(64,64));
       expect(fs.readFileSync(path.join(root,'exported.png'))).toEqual(fs.readFileSync(path.join(root,'atlas.png')));
       const overwriteDenied = await client.callTool({name:'export_bedrock_model',arguments:{project_id:id,path:'test.geo.json'}});
       expect(overwriteDenied.structuredContent).toMatchObject({error:{code:'FILE_EXISTS',outcome_unknown:false}});

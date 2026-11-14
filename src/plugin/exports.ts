@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { BridgeError } from '../shared/errors.js';
-import { inspectPng, MAX_PNG_BYTES } from '../shared/png.js';
+import { decodePngDataUrl } from '../shared/png.js';
 import type { ToolInput } from '../shared/protocol.js';
 import type { ExportKind } from '../shared/schemas/exports.js';
 import type { Workspace } from '../shared/workspace.js';
@@ -38,13 +38,9 @@ export function exportResource(host: BlockbenchHost, workspace: Workspace, reque
       if (!texture) throw new BridgeError('NOT_FOUND', 'Texture not found in the active project.');
       if (!texture.internal) throw new BridgeError('INVALID_TEXTURE', 'Export requires an internal PNG atlas.');
       content = host.textureDataUrl(texture);
-      const prefix = 'data:image/png;base64,';
-      if (!content.startsWith(prefix) || content.length > prefix.length + Math.ceil(MAX_PNG_BYTES / 3) * 4
-        || (content.length - prefix.length) % 4 !== 0 || !/^[A-Za-z0-9+/]*={0,2}$/.test(content.slice(prefix.length))) {
-        throw new BridgeError('INVALID_TEXTURE', 'Host did not return a bounded PNG data URL.');
-      }
-      bytes = Uint8Array.from(atob(content.slice(prefix.length)), char => char.charCodeAt(0));
-      const info = inspectPng(bytes);
+      const decoded = decodePngDataUrl(content);
+      bytes = decoded.bytes;
+      const info = decoded.info;
       if (info.width !== texture.width || info.height !== texture.height) throw new BridgeError('TEXTURE_SIZE_MISMATCH', 'Exported PNG dimensions differ from the texture.');
     } else {
       let document: unknown;

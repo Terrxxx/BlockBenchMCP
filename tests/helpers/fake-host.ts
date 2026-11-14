@@ -6,6 +6,8 @@ import type { BlockbenchHost, CubeHandle, EditScope, GroupHandle, ProjectHandle,
 import type { CubeInput, ToolInput } from '../../src/shared/protocol.js';
 import type { BoneInput, BoneUpdate } from '../../src/shared/schemas/bones.js';
 import type { PngInfo } from '../../src/shared/png.js';
+import type { RenderInput } from '../../src/shared/schemas/render.js';
+import { pngFixture } from './png.js';
 
 // Native Blockbench GUIDs need not have RFC UUID version/variant bits. Force
 // that case in every host fixture so the full MCP path exercises compatibility.
@@ -18,6 +20,7 @@ function nativeId(): string {
 export class FakeHost implements BlockbenchHost {
   version = '5.2.2';
   desktop = true;
+  renderPng(input:RenderInput):string {this.calls.push('Preview.render');return `data:image/png;base64,${pngFixture(input.width,input.height).toString('base64')}`;}
   project: ProjectHandle | null = null;
   elements: CubeHandle[] = [];
   bones: GroupHandle[] = [];

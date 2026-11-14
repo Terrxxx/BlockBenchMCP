@@ -1,0 +1,43 @@
+# 第五阶段验证记录
+
+日期：2026-11-13（America/Chicago）；版本 0.5.0，bridge v5；宿主 Blockbench 5.2.2。
+
+## 自动化验证
+
+严格类型检查、18 个测试文件共 **152 项测试**与构建通过。新增覆盖相机方向/上向量、投影、尺寸、背景、路径与覆盖、工程所有权、内置资源、动画与时间、渲染后截止时间/宿主切换、PNG 检查、写入失败、异常恢复。native 绑定单测核对媒体相机/renderer/场景/时间/插值缓存恢复及重复使用既有视口，模拟控件 dispose 抛错而不调用它。真实 stdio 与 WebSocket 两种 MCP 协议模式覆盖全部 20 工具；其中宿主为替身。
+
+像素验收辅助程序另有五种 PNG 过滤方式的解码测试，避免把 PNG 文件字节差异误当作真实像素差异。
+
+## 真实宿主与修复
+
+首轮于本地 23:03 返回 RENDER_FAILED、outcome_unknown=true，未写入 PNG。没有重试该修改，独立客户端先查询现场，确认 2 骨骼、2 方块、1 内置图集仍在，saved=true。源码检查发现 Blockbench 5.2.2 的 OrbitControls.dispose 引用了没有定义的 onContextMenu。改为复用官方 MediaPreview，恢复它的两个相机、控件、renderer 尺寸/像素比例/背景，不再新建和销毁控件。恢复异常现在返回具体步骤名，且一个步骤失败仍尝试恢复其余状态。
+
+用户再次重载修正版后，于本地 **23:08**（证据 UTC 2026-11-14T05:08:21Z）运行 `npm run smoke:render`，退出码 0、passed:true。通过官方 SDK → stdio → 回环 WebSocket → 真实桌面插件执行，本轮未使用 Computer Use。当前聊天未暴露 Blockbench 原生 MCP 工具，因此不宣称当前聊天直接调用了 render_project。
+
+| 真实检查 | 结果 |
+| --- | --- |
+| 20 工具发现、创建工程与保存 | 2 骨骼、2 方块、1 内置图集、1 动画，官方保存 bbmodel |
+| 静态透视 | 256×256，3965 个非透明像素，61571 个透明像素 |
+| 动画时刻 | 0 秒等于静态；1 秒像素 hash 改变，3368 个非透明像素 |
+| 侧视/顶视 | 正交相机分别 3072/2816 个非透明像素，视角结果不同 |
+| 纯色背景 | 无透明像素，角像素 [16,32,48,255] 对应 #102030 |
+| 恢复与重复 | 动画渲染后重复静态，像素 hash 与首次完全相同；显式覆盖亦一致 |
+| 保护 | 隐式覆盖、越界路径、超出片段长度均被拒绝；越界时间未生成文件 |
+| 数据保持 | 渲染前后完整工程及动画查询相等，包括 saved=true 和 UUID |
+| 视觉检查 | 查看本机静态、动画 1 秒、顶视 PNG：贴图可见，手臂姿态变化，顶视方向对应设定 |
+
+用户 GUI 相机/模式/时间线未另做界面检查；这些状态的恢复依据原生绑定单元测试及同步实现，不混写为 GUI 自动化验收。没有游戏引擎、视频、多帧或其他 Blockbench 版本的验证。
+
+## 留存产物
+
+本机前缀 `models/mcp_render_mwfy3b71_59b83498`：bbmodel、七张 PNG、证据 JSON，均由 Git 忽略。[调用及像素 hash 记录](phase-five-live-evidence.json)保留在文档中。
+
+| PNG 后缀 | 字节数 | SHA-256 |
+| --- | --- | --- |
+| static / time0 / repeat | 3375 | `2dd80908c6a197f59bbc6ea8717d806324cccc018898c1c84b87bbc9e60fe34e` |
+| time1 | 3809 | `c27af7fd8135d6ecec7317616ff4e9cea0fe963f171c2eec0d460977b8cd0da7` |
+| side | 2409 | `e6a6349317fc4a61a12f47a59f5b0ff7b1285194b223cd2ffcdc4c5ee4a3c2d0` |
+| top | 2414 | `49dd688efc59569fee780745ce4f44283b3792cf59966bb457d3097427d9ad26` |
+| solid | 3370 | `dd65dda76380357819c8b6dddf18b5f67d93d709d04e5da1310ff0835ed75cd1` |
+
+验收插件 SHA-256：`c4c5529359859ac8c0566bf4a698d59d10c50a1c5a1a496dc04622f037a80f2b`。详见[手动步骤](phase-five-smoke-test.md)和[架构](phase-five-architecture.md)。

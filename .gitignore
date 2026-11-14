@@ -8,3 +8,4 @@ coverage/
 .blockbench-ai-mcp.json
 *.bbmodel
 models/mcp_export_*
+models/mcp_render_*

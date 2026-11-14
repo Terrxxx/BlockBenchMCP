@@ -3,6 +3,7 @@ import type { BoneInput } from '../shared/schemas/bones.js';
 import type { PngInfo } from '../shared/png.js';
 import type { AnimationHandle, AnimationHost, KeyframeHandle } from './animation-host.js';
 import type { ExportHost } from './export-host.js';
+import type { RenderInput } from '../shared/schemas/render.js';
 
 /** Narrow, typed seam around the official host API; no dynamically named calls. */
 export interface ProjectHandle {
@@ -33,6 +34,7 @@ export interface CubeHandle {
 }
 export interface TextureHandle { uuid: string; name: string; width: number; height: number; internal: boolean }
 export interface BlockbenchHost extends AnimationHost, ExportHost {
+  renderPng(input: RenderInput, animation?: AnimationHandle): string;
   readonly version: string;
   readonly desktop: boolean;
   getProject(): ProjectHandle | null;

@@ -1,15 +1,16 @@
 # Blockbench AI MCP
 
-通过本机 stdio MCP Server 与 Blockbench 桌面插件，操作 **Minecraft Bedrock Entity** 工程。v0.4.0 提供十九个工具：工程、批量方块、骨骼层级、PNG 图集、Box UV、骨骼动画、官方 `.bbmodel` 保存及 Bedrock 资源文件导出。
+通过本机 stdio MCP Server 与 Blockbench 桌面插件，操作 **Minecraft Bedrock Entity** 工程。v0.5.0 提供二十个工具：工程、批量方块、骨骼层级、PNG 图集、Box UV、骨骼动画、官方 `.bbmodel` 保存、Bedrock 资源文件导出及离屏 PNG 渲染。
 
-第三阶段加入数值骨骼动画片段、批量关键帧与定点预览；像素绘制、贴图生成、骨骼删除、Molang、动画控制器、渲染及完整资源包组装仍属于后续阶段。`save_project` 保存可继续编辑的 Blockbench 工程，不生成 Bedrock 资源包。
+第三阶段加入数值骨骼动画，第四阶段加入资源文件导出，第五阶段加入指定相机和动画时刻的 PNG 渲染。像素绘制、贴图生成、骨骼删除、Molang、动画控制器及完整资源包组装仍属于后续阶段。`save_project` 保存可继续编辑的 Blockbench 工程，不生成 Bedrock 资源包。
 
 ## 当前实现与验证
 
 - 官方 MCP TypeScript SDK v2：`@modelcontextprotocol/server@2.4.0`，客户端测试使用同版 client；版本与 lockfile 已固定。
 - Blockbench 官方 API 基线 **5.2.2 桌面版**；编译类型 `blockbench-types@5.2.1`。
 - 共享 Zod schema、严格 TypeScript、白名单协议、工作目录隔离、批量 Undo、超时/重连、结构化日志。
-- v0.4.0 **125 项自动化测试通过**，覆盖单元、真实 WebSocket、两种 MCP 协议模式的十九工具 stdio 闭环和插件 bundle。严格类型检查与构建通过。
+- v0.5.0 **152 项自动化测试通过**，覆盖单元、真实 WebSocket、两种 MCP 协议模式的二十工具 stdio 闭环和插件 bundle。严格类型检查与构建通过。
+- **第五阶段真实 Blockbench 5.2.2 渲染验收通过**：透视/正交侧视/顶视、动画 0/1 秒、透明/纯色背景、重复渲染一致及错误保护；见[第五阶段验证记录](docs/phase-five-verification.md)。
 - **第四阶段真实 Blockbench 5.2.2 导出验收通过**：模型 JSON、批量动画 JSON、PNG、覆盖与路径保护、吸附冲突拒绝、工程状态保持均已核对；见[第四阶段验证记录](docs/phase-four-verification.md)。
 - **第三阶段真实 Blockbench 5.2.2 验收通过**：官方 SDK 客户端调用六个动画工具，三通道关键帧、5 次 Undo/Redo、保存与重开一致；修复动画刷新和重建轨道的 Redo 问题。见[第三阶段验证记录](docs/phase-three-verification.md)。
 - **2026-11-13 真实 Blockbench 5.2.2 桌面验收通过**：两批共 6 个方块、Undo/Redo、官方保存、关闭后重新打开及错误保护。见[验收记录](docs/verification.md)和[复现步骤](docs/manual-smoke-test.md)。
@@ -71,7 +72,7 @@ args = ["D:/Desktop/BlockBenchMCP/dist/server/index.js", "--workspace", "D:/Desk
 cwd = "D:/Desktop/BlockBenchMCP"
 startup_timeout_sec = 15
 tool_timeout_sec = 30
-enabled_tools = ["create_project", "get_project_state", "create_cubes", "save_project", "create_bones", "update_bones", "reparent_cubes", "import_texture", "assign_texture", "set_cube_uv", "create_animation", "update_animation", "set_keyframes", "delete_keyframes", "get_animation_state", "preview_animation", "export_bedrock_model", "export_bedrock_animations", "export_texture_png"]
+enabled_tools = ["create_project", "get_project_state", "create_cubes", "save_project", "create_bones", "update_bones", "reparent_cubes", "import_texture", "assign_texture", "set_cube_uv", "create_animation", "update_animation", "set_keyframes", "delete_keyframes", "get_animation_state", "preview_animation", "export_bedrock_model", "export_bedrock_animations", "export_texture_png", "render_project"]
 ```
 
 请根据实际安装位置调整路径。若 Codex 找不到 `node`，将 `command` 改为 `Get-Command node` 返回的完整路径。`--workspace` 必须是绝对路径；工具调用不能改变它。`tool_timeout_sec` 应大于连接配置的 `timeout_ms / 1000`。
@@ -86,9 +87,9 @@ codex mcp get blockbench_ai --json
 
 配置后在 Codex 中重启该 MCP Server；如果当前聊天仍看不到工具，完全退出并重新启动 Codex 桌面应用后再检查。Codex 会启动进程，不需要额外手动运行 `npm start`。避免同时启动独立 smoke/另一个 Codex 实例占用同一个端口。MCP 初始化不要求插件已连接；未连接时调用工具返回 `NOT_CONNECTED`。Codex 中启用 `blockbench_ai` 与 Blockbench 插件执行 Connect 是两个步骤；工具出现后仍需完成上述插件连接。
 
-## 升级到 v0.4.0
+## 升级到 v0.5.0
 
-构建后重载 Blockbench 中从文件加载的插件，并重启 Codex 的 `blockbench_ai` 服务，再在 Tools 中 Connect。本地桥接协议升级到 **v4**，要求插件 **0.4.0**；旧插件与新 Server 会拒绝握手。现有工作目录配置与密钥继续使用，不需要重新 setup。若原 Codex 配置设置了旧版 `enabled_tools`，更新为上面的十九项；没设置此白名单时无需添加它。
+构建后重载 Blockbench 中从文件加载的插件，并重启 Codex 的 `blockbench_ai` 服务，再在 Tools 中 Connect。本地桥接协议升级到 **v5**，要求插件 **0.5.0**；旧插件与新 Server 会拒绝握手。现有工作目录配置与密钥继续使用，不需要重新 setup。若原 Codex 配置设置了旧版 `enabled_tools`，更新为上面的二十项；没设置此白名单时无需添加它。
 
 插件重载会开始新的管理会话，已有标签可读取但不能修改；请用 `create_project` 新建测试工程。第三阶段[手动冒烟步骤](docs/phase-three-smoke-test.md)覆盖完整动画闭环。本阶段已按用户授权使用正常 GUI 自动化验收。新增工具列表由客户端缓存时，需要完全重启 Codex；独立 SDK 验收不代表当前聊天已经热加载新工具。
 
@@ -234,6 +235,42 @@ npm run smoke:exports -- --workspace 'D:\Desktop\BlockBenchMCP'
 
 脚本等待插件连接，新建测试工程、导出三种文件，核对坐标、UV、动画插值、PNG 内容、覆盖保护和导出前后状态。生成文件仅留在 `models/mcp_export_*`，被 Git 忽略。不自动重试修改；失败时保留现场。
 
+## 指定相机与动画时刻渲染
+
+`render_project` 从官方离屏媒体视口输出 PNG，输入如下（替换实际 project_id，选择未占用的路径）：
+
+```json
+{
+  "project_id": "<project_id>",
+  "path": "models/render.png",
+  "width": 512,
+  "height": 512,
+  "camera": {
+    "projection": "perspective",
+    "position": [40, 28, 48],
+    "target": [0, 8, 0],
+    "fov": 40
+  },
+  "background": "transparent"
+}
+```
+
+可增加 `animation:{"animation_id":"<animation_id>","time":0.5}` 指定姿态；省略则渲染静态初始姿态。时间不按 snapping 吸附，使用官方插值，须在片段长度内。支持第三阶段纯数值、linear/step 骨骼动画；不支持控制器、IK、全局旋转轨道或非方块元素。
+
+相机使用 Blockbench 预览世界坐标，`up` 默认 `[0,1,0]`。正交相机使用 `projection:"orthographic"` 和 `vertical_size`（竖直可见范围，0.1–4096 模型单位）；透视相机 fov 为 10–120 度，默认 45。顶视图可用 position `[0,64,0]`、target `[0,8,0]`、up `[0,0,-1]`。位置不得与目标重合，up 不得与视线平行。
+
+尺寸每边 64–2048，默认 512×512，PNG 上限 8 MiB。背景为 transparent 或 #RRGGBB；输出不自动裁切，模型可能因相机参数位于画面外。保留宿主材质、灯光、抗锯齿及通道 mute 设置；隐藏网格、控件及预览场景，不加载外部背景。仅允许会话托管工程与内置贴图，路径/覆盖限制同第四阶段。
+
+调用不切换用户模式、所选动画或用户相机，不添加 Undo，不把工程标记为已保存。临时模型姿态、时间、插值缓存和媒体相机/尺寸/背景会在写入前恢复。同步 GPU 渲染不能强制中断；超过请求截止时间则不再写文件。`RENDER_FAILED` 且 outcome_unknown=true 表示恢复失败或写入结果不确定，应先检查现场。
+
+完整[架构](docs/phase-five-architecture.md)、[示例](examples/phase-five-tool-calls.json)和[手动冒烟说明](docs/phase-five-smoke-test.md)。独立真实验收需先停止同端口 Codex MCP：
+
+```powershell
+npm run smoke:render -- --workspace 'D:\Desktop\BlockBenchMCP'
+```
+
+脚本等待插件连接并生成七张 PNG，解码像素验证视角/动画差异、透明背景、纯色角像素、重复静态一致性及工程数据不变。文件和证据位于 Git 忽略的 `models/mcp_render_*`。
+
 ## 项目结构
 
 ```text
@@ -269,4 +306,4 @@ models/         示例模型保存目录
 
 ## 后续阶段
 
-第四阶段完成资源文件导出后，再分别设计贴图绘制、高级动画、渲染与完整资源包组装模块；每次扩展都需要专用输入 schema、官方 API 调研、Undo 策略、目录边界与对应验证，不添加通用 `eval` 或 shell 工具。
+第五阶段完成 PNG 渲染后，再分别设计贴图绘制、高级动画、批量帧渲染与完整资源包组装模块；每次扩展都需要专用输入 schema、官方 API 调研、Undo 策略、目录边界与对应验证，不添加通用 `eval` 或 shell 工具。

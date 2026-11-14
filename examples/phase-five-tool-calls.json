@@ -1,0 +1,8 @@
+{
+  "instructions": "替换本会话活动工程与动画的实际 ID；使用未占用路径，父目录须存在。camera 坐标是 Blockbench 预览世界坐标。",
+  "calls": [
+    { "name": "render_project", "arguments": { "project_id": "<project_id>", "path": "models/render_static.png", "width": 512, "height": 512, "camera": { "projection": "perspective", "position": [40,28,48], "target": [0,8,0], "fov": 40 } } },
+    { "name": "render_project", "arguments": { "project_id": "<project_id>", "path": "models/render_animated.png", "camera": { "projection": "perspective", "position": [40,28,48], "target": [0,8,0] }, "animation": { "animation_id": "<animation_id>", "time": 0.5 } } },
+    { "name": "render_project", "arguments": { "project_id": "<project_id>", "path": "models/render_top.png", "camera": { "projection": "orthographic", "position": [0,64,0], "target": [0,8,0], "up": [0,0,-1], "vertical_size": 32 }, "background": "#102030" } }
+  ]
+}
