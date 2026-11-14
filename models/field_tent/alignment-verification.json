@@ -1,155 +1,18 @@
 {
   "date_local": "2026-11-14",
-  "timezone": "America/Chicago",
   "host": "Blockbench 5.2.2",
   "mcp_version": "0.6.0",
-  "transport": "official SDK -> stdio -> desktop plugin",
   "cube_count": 1218,
   "bone_count": 21,
   "aligned_count": 79,
-  "untouched_cubes": 1139,
-  "original_interior_components_preserved": 440,
   "max_native_endpoint_error": 1.4210854715202004e-14,
   "max_saved_endpoint_error": 0.000005249303572378007,
-  "saved_endpoint_tolerance": 0.0001,
   "native_probe_directions": 9,
   "rotated_parent_probe": true,
-  "baseline_files_unchanged": true,
-  "computer_use": false,
-  "history": [
-    {
-      "mode": "undo",
-      "passed": true,
-      "time": "2026-11-14T06:34:52.380Z",
-      "cube_count": 1218,
-      "bone_count": 21,
-      "texture_count": 1,
-      "aligned_count": 79,
-      "ids_preserved": true,
-      "saved_after_redo": false
-    },
-    {
-      "mode": "redo",
-      "passed": true,
-      "time": "2026-11-14T06:35:19.241Z",
-      "cube_count": 1218,
-      "bone_count": 21,
-      "texture_count": 1,
-      "aligned_count": 79,
-      "ids_preserved": true,
-      "saved_after_redo": true
-    }
-  ],
+  "undo_redo_verified": true,
   "gui_reopen_tested": false,
   "in_game_tested": false,
-  "comparisons": [
-    {
-      "name": "exterior",
-      "camera": {
-        "projection": "perspective",
-        "position": [
-          175,
-          104,
-          -224
-        ],
-        "target": [
-          0,
-          33,
-          0
-        ],
-        "fov": 42
-      },
-      "before_pixel_sha256": "ac6dbd7159dcf4bd0b5311ce6e9c22eec372b6c8b113e6a055fa568505d7ec05",
-      "after_pixel_sha256": "74239402bbdfc69ec764dc05831338cca25fe866002547cc301cf1d61ab5187d",
-      "changed": true
-    },
-    {
-      "name": "interior",
-      "camera": {
-        "projection": "perspective",
-        "position": [
-          0,
-          38,
-          -65
-        ],
-        "target": [
-          0,
-          33,
-          48
-        ],
-        "fov": 78
-      },
-      "before_pixel_sha256": "502e559111e4a9cc503652424beaee7a917d3129e7156c9494e57f9b24ea36a4",
-      "after_pixel_sha256": "5148b1e823bd67d188365b4c18fe439b6bc5de30d3cb3483cbb7f4c4aeeadaa6",
-      "changed": true
-    },
-    {
-      "name": "front",
-      "camera": {
-        "projection": "orthographic",
-        "position": [
-          0,
-          36,
-          -240
-        ],
-        "target": [
-          0,
-          36,
-          0
-        ],
-        "vertical_size": 100
-      },
-      "before_pixel_sha256": "7360b314e8f92bfd31c1efcff7ae90b6116a92400de318fe28a33f224a7d6922",
-      "after_pixel_sha256": "b4098c6973dff3ce179be1e7b8dd08f90513e17f10b03696bfa19e1bc54554b1",
-      "changed": true
-    },
-    {
-      "name": "side",
-      "camera": {
-        "projection": "orthographic",
-        "position": [
-          240,
-          40,
-          0
-        ],
-        "target": [
-          0,
-          40,
-          0
-        ],
-        "vertical_size": 130
-      },
-      "before_pixel_sha256": "2c74dba7f234d6e9e263aa8973c947c51d706c478b785d9e6aa566ea95a1a709",
-      "after_pixel_sha256": "24a1898544efb5f15802b2cff763f0bda20b4b73b65d1f1a083177c84f45727f",
-      "changed": true
-    },
-    {
-      "name": "entrance_detail",
-      "camera": {
-        "projection": "perspective",
-        "position": [
-          63,
-          44,
-          -128
-        ],
-        "target": [
-          0,
-          32,
-          -72
-        ],
-        "fov": 48
-      },
-      "before_pixel_sha256": "3b65c39d7e5ccf24872aea79d8b5abec6f180c20bf5278529333890fc24a8375",
-      "after_pixel_sha256": "ea235f2c7558e6d3f0b23c5a78817615e897d3cd69818622caabfa462c2aea16",
-      "changed": true
-    }
-  ],
   "files": [
-    {
-      "file": "ranger_field_tent_aligned.bbmodel",
-      "bytes": 4901492,
-      "sha256": "a699b3fa5e71b6aa8e7c35428f6af1476e80534b9a07ac26be380201a04adfd7"
-    },
     {
       "file": "ranger_field_tent_aligned.geo.json",
       "bytes": 456742,
@@ -164,56 +27,6 @@
       "file": "field_tent_atlas.png",
       "bytes": 3106435,
       "sha256": "a7d9473a53c54b7a92a303b69eb6821e87262549cee2a0098366050e1ad84426"
-    },
-    {
-      "file": "exterior.png",
-      "bytes": 311718,
-      "sha256": "25f8bf57128706695de0276c87e4a6a549c7cf36b81612261e31759cb9556e4f"
-    },
-    {
-      "file": "before_exterior.png",
-      "bytes": 312581,
-      "sha256": "1e93c6e448cd4f5956f0c3ced52b240afdf93a71dc1f3b103022c1baec2c2551"
-    },
-    {
-      "file": "interior.png",
-      "bytes": 482301,
-      "sha256": "9f78fa66aabf96df11763db6783313e06de7ffe431ec21e60e301b855f29d2c9"
-    },
-    {
-      "file": "before_interior.png",
-      "bytes": 482235,
-      "sha256": "7ce8cbb60500a809e2df3d22d462afc665399c6f3221521762f717c4ef6a6be0"
-    },
-    {
-      "file": "front.png",
-      "bytes": 148151,
-      "sha256": "8dd219a1de14763a25c73e9d56d7060fa08d7e3896437b3901c9a5e5d9e67257"
-    },
-    {
-      "file": "before_front.png",
-      "bytes": 151103,
-      "sha256": "c9bbd8539220ff9b4b525a74f3aee39d0f57112b37e566c4ff557e58fda53cc9"
-    },
-    {
-      "file": "side.png",
-      "bytes": 141659,
-      "sha256": "acfdf78991bed804164c939aed69518eda3dbef91c4026843f8b0e9a7d6f50be"
-    },
-    {
-      "file": "before_side.png",
-      "bytes": 141156,
-      "sha256": "e87224f3a1fe13ca7223cf37fdc180fddd1cde0fbead95996a4983c130de8d95"
-    },
-    {
-      "file": "entrance_detail.png",
-      "bytes": 267684,
-      "sha256": "ba3754cbe27430e095e65022dc63bb37c29003adaefa31a0c71b0a11a9343248"
-    },
-    {
-      "file": "before_entrance_detail.png",
-      "bytes": 266701,
-      "sha256": "3283f5a69ca6f21268d463ec2b3dda9d49a0f104258faba8af4a45f8b739bb79"
     }
   ]
 }

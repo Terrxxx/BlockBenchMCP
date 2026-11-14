@@ -30,7 +30,7 @@
 
 ## 留存产物
 
-本机前缀 `models/mcp_render_mwfy3b71_59b83498`：bbmodel、七张 PNG、证据 JSON，均由 Git 忽略。[调用及像素 hash 记录](phase-five-live-evidence.json)保留在文档中。
+当时的本机产物包含 bbmodel、七张 PNG 和证据 JSON，均由 Git 忽略。原始调用与像素 hash 明细已从当前仓库移除，本文件保留验证结论。
 
 | PNG 后缀 | 字节数 | SHA-256 |
 | --- | --- | --- |

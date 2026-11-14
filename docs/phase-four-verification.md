@@ -14,7 +14,7 @@
 
 ## 真实宿主验收状态
 
-**真实 Blockbench 5.2.2 验收通过**。用户重载插件后，运行 `npm run smoke:exports -- --workspace 'D:\Desktop\BlockBenchMCP' --wait-seconds 120`，脚本退出码 0，`passed:true`。本地时间 2026-11-13 22:50（America/Chicago），证据使用 UTC 时间 2026-11-14T04:50:36Z。
+**真实 Blockbench 5.2.2 验收通过**。用户重载插件后，运行 `npm run smoke:exports -- --workspace 'C:\path\to\BlockBenchMCP' --wait-seconds 120`，脚本退出码 0，`passed:true`。本地时间 2026-11-13 22:50（America/Chicago），证据使用 UTC 时间 2026-11-14T04:50:36Z。
 
 本轮未使用 Computer Use。当前聊天没有暴露 Blockbench MCP 工具，因此使用官方 SDK 独立客户端 → 真实 stdio Server → 127.0.0.1 WebSocket → 实际桌面插件。客户端确认全部 19 工具，验收后正常退出并释放端口；不宣称本轮由 Codex 当前聊天直接调用导出工具。
 
@@ -31,7 +31,7 @@
 
 ## 文件与证据
 
-- [调用和文件 hash 记录](phase-four-live-evidence.json)。
+- 原始调用记录（已从当前仓库移除）。
 - 本机产物前缀：`models/mcp_export_mwfxgj4o_c4b4f047`，生成文件已由 Git 忽略。
 
 | 文件后缀 | 字节数 | SHA-256 |

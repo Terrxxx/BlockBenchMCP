@@ -7,7 +7,7 @@
 公开仓库文档入口为根目录 README，详细安装与工具参数放在[使用指南](usage.md)。项目采用根目录 MIT LICENSE，作者 Terrxx；公开仓库整理不改变 MCP 协议或运行时能力，验证记录见[公开仓库整理](public-repository-verification.md)。
 帐篷细化先按[设计记录](field-tent-refinement-plan.md)执行现有工具链，再对原位几何修改、纹理替换、临时可见性与查询体积提出[实战复盘](mcp-modeling-retrospective.md)。细化当时只改资产配方、资源与文档；随后第六阶段按用户反馈实现[两点杆件与端点对齐](phase-six-architecture.md)，升级为 v0.6.0 / 22 工具，实测记录见[第六阶段验证](phase-six-verification.md)。其他建议仍需独立实施及验证。
 
-第五阶段后的实际资产案例为[野外指挥帐篷](../models/field_tent/README.md)。本地建模配方生成受 schema 校验的参数和 PNG 图集，再通过现有官方 SDK → stdio → WebSocket → 白名单工具创建工程、官方保存/导出与渲染；不增加宿主执行接口或改变服务器架构。最终资源与配方纳入版本控制，生成工程、原始会话日志和交付 ZIP 留在授权目录且不提交。
+第五阶段后的实际资产案例为[野外指挥帐篷](../models/field_tent/README.md)。制作时由本地配方生成受 schema 校验的参数和 PNG 图集，再通过官方 SDK → stdio → WebSocket → 白名单工具创建工程、官方保存/导出与渲染。当前仓库仅保留最新资源及精简验证摘要；旧模型、过期配方与原始调用明细已移除，核心架构、使用文档和测试保留。生成工程、原始会话日志与交付 ZIP 不提交。
 
 最终方向包含模型、贴图、骨骼、动画、渲染与资源导出。第一阶段交付 `create_project`、`get_project_state`、`create_cubes`、`save_project`，已完成真实桌面及 Codex 原生验收。第二阶段已按用户选择限定为 Bedrock 骨骼、工作目录 PNG 导入、方块绑定和 Box UV，设计与实施门槛见[第二阶段架构](phase-two-architecture.md)。第三阶段新增骨骼数值动画，见[第三阶段架构](phase-three-architecture.md)与[真实验证](phase-three-verification.md)。第四阶段导出模型、动画 JSON 和 PNG，见[资源导出架构](phase-four-architecture.md)。第五阶段增加指定相机与动画时刻的 PNG 渲染，见[渲染架构](phase-five-architecture.md)。下文保留第一阶段的实现依据。
 

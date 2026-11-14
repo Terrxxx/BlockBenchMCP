@@ -1,6 +1,6 @@
 # 第一阶段验证记录
 
-日期：2026-11-13。工作目录：`D:\Desktop\BlockBenchMCP`。Windows，Blockbench **5.2.2**，Node.js **24.14.0**，npm **11.9.0**，插件 **0.1.0**，官方 MCP SDK **2.4.0**。
+日期：2026-11-13。工作目录：`C:\path\to\BlockBenchMCP`。Windows，Blockbench **5.2.2**，Node.js **24.14.0**，npm **11.9.0**，插件 **0.1.0**，官方 MCP SDK **2.4.0**。
 
 ## 结论
 
@@ -8,14 +8,14 @@
 
 真实测试发现并修复了两个宿主兼容问题，随后重新构建、重载插件，在新工程上完整复测。最终 `npm run check`：严格类型检查、7 个测试文件、**48 项测试**和两端构建全部通过。
 
-随后同日完成 **Codex 当前聊天内的原生 MCP 闭环**：直接调用四个工具，新建另一 Bedrock 工程，一次创建 6 个方块，核对内存状态，保存 3690 字节 bbmodel 并复核实际文件。本轮由用户连接桌面插件，全程未使用 Computer Use。详见[原生调用验收](codex-direct-verification.md)与[结构化证据](codex-direct-smoke-evidence.json)。下文 Undo/Redo、关闭重开的记录属于首次桌面验收。
+随后同日完成 **Codex 当前聊天内的原生 MCP 闭环**：直接调用四个工具，新建另一 Bedrock 工程，一次创建 6 个方块，核对内存状态，保存 3690 字节 bbmodel 并复核实际文件。本轮由用户连接桌面插件，全程未使用 Computer Use。详见[原生调用验收](codex-direct-verification.md)与原始调用记录（已从当前仓库移除）。下文 Undo/Redo、关闭重开的记录属于首次桌面验收。
 
 ## Git 与本机配置
 
 - 已执行 `git init -b main`。私有配置、依赖、构建产物、临时数据和 bbmodel 文件均被 `.gitignore` 排除。
 - 已通过 `codex mcp add blockbench_ai` 注册到本机用户的全局配置；`codex mcp get blockbench_ai --json` 确认 `enabled: true`、transport 为 stdio。
 - 实际命令：`D:\Program Files\nodejs\node.exe`。
-- 实际参数：`D:\Desktop\BlockBenchMCP\dist\server\index.js --workspace D:\Desktop\BlockBenchMCP`。均为绝对路径，不依赖 Codex 启动目录。
+- 实际参数：`C:\path\to\BlockBenchMCP\dist\server\index.js --workspace C:\path\to\BlockBenchMCP`。均为绝对路径，不依赖 Codex 启动目录。
 - 已在本机 Blockbench 的“从文件加载”中加载 `dist/plugin/blockbench_ai_mcp.js`，并给当前目录选择 **Allow once**。本次没有授予持久目录权限；重载插件或下次启动时可能再次询问。
 - 首次桌面验收使用官方 SDK 独立客户端，与 Codex 配置使用相同入口和参数。当时聊天尚未加载四个工具；随后 Codex 加载 `blockbench_ai`，原生调用也已验证通过。
 - 首次验收后已停止独立测试 Server，释放 `30031`。原生验收时由 Codex 启动服务端；用户通过 Tools 菜单连接同一工作目录后，四个工具调用成功。
@@ -27,7 +27,7 @@
 
 ## 真实桌面结果
 
-下面的计数均为“方块数 / 骨骼数”。[结构化调用证据](desktop-smoke-evidence.json) 记录最终轮次的输入、结果和时间，不含连接密钥。
+下面的计数均为“方块数 / 骨骼数”。原始调用明细已从当前仓库移除，以下保留最终轮次的结果与验证边界。
 
 | 检查 | 结果 |
 | --- | --- |

@@ -12,7 +12,7 @@ Server 固定绑定 `127.0.0.1`。插件连接 `ws://127.0.0.1:<port>`，3 秒�
 {
   "version": 6,
   "type": "hello",
-  "workspace": "D:\\Desktop\\BlockBenchMCP",
+  "workspace": "C:\\path\\to\\BlockBenchMCP",
   "token": "<初始化生成的64位十六进制随机密钥>",
   "plugin_version": "0.6.0",
   "blockbench_version": "5.2.2"

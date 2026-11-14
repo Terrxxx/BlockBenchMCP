@@ -9,3 +9,13 @@ coverage/
 *.bbmodel
 models/mcp_export_*
 models/mcp_render_*
+
+# Local history backups, credentials and generated smoke evidence
+*.bundle
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.pfx
+docs/*-evidence.json

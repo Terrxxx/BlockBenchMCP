@@ -18,7 +18,7 @@
 
 ## Codex 原生真实宿主验收
 
-测试时间：2026-11-13 14:30 起（America/Chicago）。工程 ID：`ccbddb9d-c393-f89d-4b73-8dd06e0a09b2`。全部模型修改通过当前聊天的原生 MCP 工具执行；Undo/Redo 由用户按键，结果通过 MCP 查询核对。[结构化证据](phase-two-live-evidence.json) 保留调用输入、返回和检查结果。
+测试时间：2026-11-13 14:30 起（America/Chicago）。全部模型修改通过原生 MCP 工具执行；Undo/Redo 由用户按键，结果通过 MCP 查询核对。原始调用记录已从当前仓库移除，本文件保留检查结果。
 
 | 检查 | 结果 |
 | --- | --- |

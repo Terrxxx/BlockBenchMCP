@@ -1,11 +1,11 @@
 # 桌面手动冒烟测试
 
-**2026-11-13 已在真实 Blockbench 5.2.2 上通过核心闭环。** 本次测试使用两批共六个方块，完整结果见[验证记录](verification.md)，精确输入和状态见[结构化证据](desktop-smoke-evidence.json)。以下步骤供后续构建复验。
+**2026-11-13 已在真实 Blockbench 5.2.2 上通过核心闭环。** 本次测试使用两批共六个方块，结果见[验证记录](verification.md)。原始调用记录已从当前仓库移除，以下步骤供后续构建复验。
 
 ## 前置条件
 
 1. 使用 Blockbench **5.2.2** 桌面版、Node.js 24 LTS，在仓库执行 `npm ci --include=dev`、`npm run check`。
-2. 首次执行 `npm run setup -- --workspace "D:\Desktop\BlockBenchMCP"`。已有配置不要重复初始化。
+2. 首次执行 `npm run setup -- --workspace "C:\path\to\BlockBenchMCP"`。已有配置不要重复初始化。
 3. 在 Blockbench 插件管理选择“从文件加载”，选中 `dist/plugin/blockbench_ai_mcp.js`。更新代码后先构建，再在该插件详情页点“重新加载”。
 4. 按 README 配置并启动 Codex MCP。在 Tools 菜单点击 **Blockbench AI MCP: Connect**，输入同一绝对工作目录；官方权限弹窗选择 **Allow once** 即可完成本次验收。
 5. 使用专用新测试标签。全程仅通过四个 MCP 工具修改模型，通过正常桌面快捷键 Undo/Redo 和重新打开。
@@ -13,7 +13,7 @@
 独立快速检查也可执行：
 
 ```powershell
-npm run smoke -- --workspace 'D:\Desktop\BlockBenchMCP'
+npm run smoke -- --workspace 'C:\path\to\BlockBenchMCP'
 ```
 
 它使用官方 Client 启动独立 Server，创建 body/head 两个方块并保存唯一文件名，然后退出。加 `--inspect-only` 时只查询当前状态。与 Codex MCP 二选一运行，避免端口冲突。下面的完整验收需要保持 MCP 会话，以便每次桌面操作后查询状态。

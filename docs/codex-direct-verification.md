@@ -1,6 +1,6 @@
 # Codex 原生 MCP 闭环验收
 
-日期：2026-11-13，约 13:40（America/Chicago，UTC−06:00）。工作目录：`D:\Desktop\BlockBenchMCP`。
+日期：2026-11-13，约 13:40（America/Chicago，UTC−06:00）。工作目录：`C:\path\to\BlockBenchMCP`。
 
 ## 结论
 
@@ -26,7 +26,7 @@
 
 所有 12 项程序化比较均通过，包含非零头部/手臂旋转和小数坐标。官方 codec 会省略零旋转字段，读取复核时将缺省值按 `[0,0,0]` 比较。
 
-完整输入、工具返回与比较结果见 [codex-direct-smoke-evidence.json](codex-direct-smoke-evidence.json)。证据记录 6 次成功原生调用；连接前的诊断失败未混入成功调用记录。
+当时的证据包含 6 次成功原生调用，连接前的诊断失败未混入成功记录。原始调用记录已从当前仓库移除，本文件保留验证结论与边界。
 
 ## 保存产物
 

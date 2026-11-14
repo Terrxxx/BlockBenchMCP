@@ -6,7 +6,7 @@
 
 1. `npm run check` 成功后，在 Blockbench 插件管理中重载 `dist/plugin/blockbench_ai_mcp.js`，确认版本 0.2.0。
 2. 重启 Codex 的 `blockbench_ai` MCP，使其加载新 `dist/server/index.js`。若配置中 `enabled_tools` 仅四项，按 README 更新；如果聊天仍无新工具，完全退出并重启 Codex。
-3. 在 Blockbench 顶部 Tools 菜单执行 **Blockbench AI MCP: Connect**，Workspace directory 为 `D:\Desktop\BlockBenchMCP`。若需要目录权限，选择 Allow once。确认出现 connected 提示。
+3. 在 Blockbench 顶部 Tools 菜单执行 **Blockbench AI MCP: Connect**，Workspace directory 为 `C:\path\to\BlockBenchMCP`。若需要目录权限，选择 Allow once。确认出现 connected 提示。
 4. 原生调用 `get_project_state` 验证连接；返回应有 bones、textures、texture_count 等新字段。旧协议/插件组合会拒绝握手，不应继续执行修改。
 
 ## 新工程闭环

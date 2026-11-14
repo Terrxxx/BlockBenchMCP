@@ -21,12 +21,12 @@
 5. 用户执行一次 Ctrl+Z，SDK 分页查询全部 1218 方块，与修复前逐项完全一致；用户一次 Ctrl+Y 后与修复后完全一致，骨骼和贴图也一致。随后官方保存覆盖本次修复版。
 6. 独立读取官方保存文件，以逐轴旋转重算 79 根杆件端点，最大误差 **0.000005249303572378007**，低于保存校验阈值 1e-4。差异来自官方数字序列化精度；内存 1e-6 阈值不应直接套用序列化文件。原细化版文件 SHA-256 全部未变化。
 
-精简可提交证据：[alignment-verification.json](../models/field_tent/alignment-verification.json)。原始模型、调用会话和 PNG 在 `models/field_tent/aligned/`，不提交生成工程及原始日志。
+精简统计和当前资源哈希见 [alignment-verification.json](../models/field_tent/alignment-verification.json)。仓库只保留最新帐篷的模型 JSON、动画 JSON、PNG 图集及示例说明，不提交生成工程及原始日志。
 
 ## 复现与边界
 
 全新工程可按[调用示例](../examples/phase-six-tool-calls.json)新建骨骼与向下杆件，检查 endpoint_error，修改端点、手动一次 Undo/Redo、查询并保存。每批失败应先查询状态，不自动重试修改。
 
-本机已有旧细化版 recipe/result/bbmodel 的情况下，可运行 `node --import tsx models/field_tent/repair-beams.mjs` 重建修复验收；目标目录必须没有同名文件，脚本拒绝覆盖。先停止同端口 Codex MCP。脚本输出后按提示人工 Undo/Redo，分别运行 `node --import tsx models/field_tent/verify-alignment-history.mjs undo` / `redo`。最后运行 `node --import tsx models/field_tent/verify-alignment.mjs` 检查文件及生成对比页。上述旧 recipe/result/bbmodel 属于本机保留资产，不是 Git checkout 自带文件。
+依赖旧模型和本机原始记录的制作、修复与回放脚本已从当前仓库移除，避免将过期配方作为可独立复现的示例。最新资源见[帐篷示例](../models/field_tent/README.md)；新环境验证 API 时使用上述独立工具调用示例与项目测试，不依赖旧配方。
 
 **未执行**：本阶段 GUI 关闭重开、Minecraft 游戏内导入；没有把文件解析检查写成真实重开通过。`create_beams` 的真实创建/对齐经过探针，真实手动 Undo/Redo 本次覆盖的是 79 项 `align_beams`。非 ZYX、非 Box UV、inflate/stretch/rescale 不在首版支持范围；不支持动画世界坐标或自动搜索任意网格顶点。
