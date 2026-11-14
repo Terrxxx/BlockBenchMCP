@@ -5,10 +5,10 @@ import { readConfig } from '../shared/config.js';
 import { asBridgeError } from '../shared/errors.js';
 import { stderrLogger as log } from '../shared/logger.js';
 import { Workspace } from '../shared/workspace.js';
-import { BridgeServer } from './bridge.js';
+import { SharedBridge } from './shared-bridge.js';
 import { createMcpServer } from './tools.js';
 
-let bridge: BridgeServer | undefined;
+let bridge: SharedBridge | undefined;
 let handle: StdioServerHandle | undefined;
 let shuttingDown = false;
 async function shutdown(): Promise<void> {
@@ -22,7 +22,7 @@ try {
   const { values } = parseArgs({ options: { workspace: { type: 'string' } } });
   if (!values.workspace) throw new Error('Required argument: --workspace <absolute directory>');
   const workspace = new Workspace(values.workspace, fs);
-  bridge = new BridgeServer(readConfig(workspace), log);
+  bridge = new SharedBridge(readConfig(workspace), log);
   await bridge.start();
   const activeBridge = bridge;
   handle = serveStdio(() => createMcpServer(activeBridge, workspace), { onerror: () => log('error', 'mcp_transport_error') });

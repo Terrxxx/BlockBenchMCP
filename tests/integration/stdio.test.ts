@@ -143,6 +143,18 @@ describe('official SDK client -> real stdio server -> real WS -> adapter', () =>
       expect(outputSchemas.select_project.parse(selected.structuredContent).project).toMatchObject({ id, active: true, managed: true });
       const afterSwitch = await client.callTool({ name: 'get_project_state', arguments: {} });
       expect(outputSchemas.get_project_state.parse(afterSwitch.structuredContent).cubes.find(c => c.id === rod.cube_id)!.name).toBe('repaired_rope');
+      const secondClient = new Client({ name: 'parallel-chat', version: '1.0' });
+      try {
+        await secondClient.connect(new StdioClientTransport({ command: process.execPath, args: [entry, '--workspace', root], stderr: 'pipe' }));
+        expect((await secondClient.listTools()).tools).toHaveLength(commandNames.length);
+        const own = await secondClient.callTool({ name: 'create_project', arguments: { name: 'parallel_chat', model_identifier: 'parallel_chat' } });
+        const ownId = outputSchemas.create_project.parse(own.structuredContent).project.id;
+        const [firstState, secondState] = await Promise.all([
+          client.callTool({ name: 'get_project_state', arguments: {} }), secondClient.callTool({ name: 'get_project_state', arguments: {} }),
+        ]);
+        expect(outputSchemas.get_project_state.parse(firstState.structuredContent).project!.id).toBe(id);
+        expect(outputSchemas.get_project_state.parse(secondState.structuredContent).project!.id).toBe(ownId);
+      } finally { await secondClient.close(); }
       expect(logs).not.toContain(config.token);
       expect(fs.readFileSync(path.join(root, 'stdio.bbmodel'), 'utf8')).toBe('TEST_ONLY_OFFICIAL_CODEC_STUB');
     } finally {

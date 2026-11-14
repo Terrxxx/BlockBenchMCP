@@ -2,7 +2,7 @@
 
 **让支持 MCP 的 AI 客户端直接操作本机 Blockbench，完成 Minecraft 基岩版实体的建模、贴图绑定、骨骼动画、渲染与资源导出。**
 
-> **v0.7.0**，**29 个工具**，通过 Blockbench 官方 API 修改工程，支持批量 Undo/Redo、逐面 UV、建模诊断和可编辑 `.bbmodel` 保存。
+> **v0.7.1 服务端 / v0.7.0 插件**，**29 个工具**，通过 Blockbench 官方 API 修改工程，支持批量 Undo/Redo、逐面 UV、建模诊断和可编辑 `.bbmodel` 保存。
 
 [快速开始](#快速开始) · [完整使用指南](docs/usage.md) · [工具示例](#工具一览) · [架构设计](docs/architecture.md) · [MIT 许可证](LICENSE)
 
@@ -77,7 +77,7 @@ tool_timeout_sec = 30
 
 如果客户端找不到 `node`，将 `command` 改为 Node 可执行文件的绝对路径。其他 MCP 客户端使用相同的命令和参数配置 stdio 服务。完整的工具白名单示例见 [codex-config.toml](examples/codex-config.toml)。
 
-重新启动客户端的 MCP 服务。客户端会启动 Server，无需再单独运行 `npm start`；同一端口不能同时运行多个 Server。
+重新启动客户端的 MCP 服务。客户端会启动 Server，无需再单独运行 `npm start`；v0.7.1 起，同一工作目录的多个 stdio 会话会自动复用同一端口和插件。
 
 ### 4. 加载 Blockbench 插件
 
@@ -113,6 +113,12 @@ Connect 窗口的 Status 随连接实时更新。如果旧构建的窗口停在 
 
 方块、骨骼、杆件与关键帧的批量修改每次最多 256 项，每批使用一个 Undo 步骤。详细参数、限制和错误恢复见[使用指南](docs/usage.md)与[协议说明](docs/protocol.md)。
 
+## 多对话共用 Blockbench
+
+v0.7.1 服务端支持多个对话同时连接同一个工作目录。首个进程持有桥接，其他进程通过认证后转发；每个 stdio 会话保留自己的目标工程，带 project_id 的操作会原子切换目标后执行，避免查询或编辑串到其他标签。主进程退出后，存活客户端可接管，插件自动重连。
+
+首次从旧版升级时，需要重启 Codex 的 MCP 服务（或完整退出再打开 Codex），清除旧进程及初始化失败缓存；插件协议仍为 v7，不必重新加载插件。不同对话仍共享同一个桌面和工程，修改同一模型的内容需要协调。详情见[设计](docs/multi-session-architecture.md)与[真实验证](docs/multi-session-verification.md)。
+
 ## 使用边界
 
 - 仅支持当前插件管理会话创建的活动工程。手动打开或插件重载前的工程可以查询，但不能直接接管修改；普通网络断线自动重连保留管理会话。
@@ -133,7 +139,7 @@ npm run build           # 构建服务端与插件
 npm run check           # 以上类型检查、全部测试与构建
 ```
 
-v0.7.0 通过 **207 项自动化测试**，新增能力的真实 Blockbench 验收见[第七阶段验证](docs/phase-seven-verification.md)。此前各阶段已验证建模、骨骼、贴图、动画、导出、渲染与端点对齐；自动化替身测试不等同于真实宿主测试：
+当前通过 **213 项自动化测试**，新增能力的真实 Blockbench 验收见[第七阶段验证](docs/phase-seven-verification.md)。此前各阶段已验证建模、骨骼、贴图、动画、导出、渲染与端点对齐；自动化替身测试不等同于真实宿主测试：
 
 - [骨骼与贴图验证](docs/phase-two-verification.md) · [动画验证](docs/phase-three-verification.md)
 - [资源导出验证](docs/phase-four-verification.md) · [渲染验证](docs/phase-five-verification.md)

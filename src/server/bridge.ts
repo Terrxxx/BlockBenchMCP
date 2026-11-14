@@ -20,7 +20,8 @@ export class BridgeServer {
   private readonly pending = new Map<string, Pending>();
   private heartbeat: ReturnType<typeof setInterval> | undefined;
   private alive = true;
-  constructor(readonly config: BridgeConfig, private readonly log: Logger) {}
+  constructor(readonly config: BridgeConfig, private readonly log: Logger,
+    private readonly acceptClient?: (socket: WebSocket, hello: unknown) => void) {}
 
   get connected(): boolean { return this.peer?.readyState === WebSocket.OPEN; }
   get port(): number {
@@ -39,16 +40,19 @@ export class BridgeServer {
         return info.req.socket.remoteAddress === '127.0.0.1'
           && host === `127.0.0.1:${this.port}`
           && (origin === undefined || origin === 'file://' || origin === 'null')
-          && (this.server?.clients.size ?? 0) < 4;
+          && (this.server?.clients.size ?? 0) < (this.acceptClient ? 20 : 4);
       },
     });
     this.server = server;
     server.on('connection', socket => this.accept(socket));
-    server.on('error', () => this.log('error', 'bridge_error'));
+    server.on('error', error => {
+      if (this.acceptClient && 'code' in error && error.code === 'EADDRINUSE') return; // Normal follower election.
+      this.log('error', 'bridge_error');
+    });
     await new Promise<void>((resolve, reject) => {
       server.once('listening', resolve);
       server.once('error', reject);
-    });
+    }).catch(error => { this.server = undefined; server.close(); throw error; });
     this.heartbeat = setInterval(() => {
       if (!this.peer) return;
       if (!this.alive) { this.peer.terminate(); return; }
@@ -61,6 +65,7 @@ export class BridgeServer {
 
   private accept(socket: WebSocket): void {
     let authenticated = false;
+    let client = false;
     const timer = setTimeout(() => socket.terminate(), 3000);
     socket.on('error', () => this.log('warn', 'socket_error'));
     socket.on('pong', () => { if (this.peer === socket) this.alive = true; });
@@ -72,10 +77,17 @@ export class BridgeServer {
       this.log('warn', 'plugin_disconnected');
     });
     socket.on('message', (data, binary) => {
+      if (client) return;
       try {
         if (binary) throw new BridgeError('INVALID_MESSAGE', 'Text frames required.');
         const message = parseJson(data.toString());
         if (!authenticated) {
+          if (this.acceptClient && typeof message === 'object' && message !== null && 'type' in message && message.type === 'client_hello') {
+            client = true;
+            clearTimeout(timer);
+            this.acceptClient(socket, message);
+            return;
+          }
           const hello = helloSchema.parse(message);
           const supplied = Buffer.from(hello.token);
           const expected = Buffer.from(this.config.token);

@@ -1,6 +1,6 @@
 # 使用指南与工具参考
 
-> 当前 v0.7.0 / 29 工具 / bridge 7。新增标签切换、逐面 UV、原位修改和质量诊断，见[第七阶段使用指南](phase-seven-usage.md)。下文各阶段示例保留其原始功能范围。升级必须同时重载插件和重启 MCP 服务；若配置了工具白名单，请同步更新。
+> 当前服务端 v0.7.1 / 插件 v0.7.0 / 29 工具 / bridge 7。多会话共享桥接见[说明](multi-session-architecture.md)。新增标签切换、逐面 UV、原位修改和质量诊断，见[第七阶段使用指南](phase-seven-usage.md)。下文各阶段示例保留其原始功能范围。升级必须同时重载插件和重启 MCP 服务；若配置了工具白名单，请同步更新。
 
 
 本文包含安装、连接、工具参数与错误恢复说明。项目概览见[仓库首页](../README.md)。
@@ -71,7 +71,7 @@ codex mcp list
 codex mcp get blockbench_ai --json
 ```
 
-配置后在 Codex 中重启该 MCP Server；如果当前聊天仍看不到工具，完全退出并重新启动 Codex 桌面应用后再检查。Codex 会启动进程，不需要额外手动运行 `npm start`。避免同时启动独立 smoke/另一个 Codex 实例占用同一个端口。MCP 初始化不要求插件已连接；未连接时调用工具返回 `NOT_CONNECTED`。Codex 中启用 `blockbench_ai` 与 Blockbench 插件执行 Connect 是两个步骤；工具出现后仍需完成上述插件连接。
+配置后在 Codex 中重启该 MCP Server；如果当前聊天仍看不到工具，完全退出并重新启动 Codex 桌面应用后再检查。Codex 会启动进程，不需要额外手动运行 `npm start`。v0.7.1 的多个 stdio 进程可共用同一工作目录与端口；旧服务端必须先退出。运行故障接管测试时请停止日常服务，以确保测试持有主进程。MCP 初始化不要求插件已连接；未连接时调用工具返回 `NOT_CONNECTED`。Codex 中启用 `blockbench_ai` 与 Blockbench 插件执行 Connect 是两个步骤；工具出现后仍需完成上述插件连接。
 
 ## 升级到 v0.7.0
 

@@ -134,3 +134,7 @@ MCP 工具成功同时返回 `content` 和 `structuredContent`。业务错误返
 create_cubes 现在预检 Box UV 全图边界，并与 set_cube_uv、update_cubes 一同返回 `uv_warnings: [{cube_id,code:"DEGENERATE_BOX_UV",faces:[...]}]`。这是警告，不自动拒绝有意点取样。set_face_uv 默认拒绝退化矩形，明确 allow_degenerate 才允许。assign_texture 接受 Box UV 和逐面 UV。
 
 list_projects/get_cube_uv/validate_project/check_collisions 标记只读；select_project 不标记只读。碰撞检查在 finally 中恢复临时姿态；恢复失败返回 outcome_unknown:true。输出有界，validate_project 的 truncated 与 check_collisions 的 complete 明确提示检查覆盖范围。
+
+## 服务端多会话协议
+
+v0.7.1 在同一回环端口增加客户端角色，独立于插件 bridge v7：client_hello(version:1,workspace,token) → client_ready；client_call(id,command,params,target?,deadline) → client_result；client_cancel 只能取消同连接的请求。共享工作目录、密钥验证和白名单 schema，细节见[多会话架构](multi-session-architecture.md)。旧版服务端不支持该角色，升级必须退出旧进程。

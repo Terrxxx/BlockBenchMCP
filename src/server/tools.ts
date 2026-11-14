@@ -1,7 +1,7 @@
 import { McpServer, type CallToolResult, type ServerContext } from '@modelcontextprotocol/server';
 import { asBridgeError } from '../shared/errors.js';
 import { commandNames, isReadOnlyCommand, inputSchemas, outputSchemas, type Command, type ToolInput } from '../shared/protocol.js';
-import type { BridgeServer } from './bridge.js';
+import type { BridgeCaller } from './shared-bridge.js';
 import type { Workspace } from '../shared/workspace.js';
 
 const descriptions: Record<Command, string> = {
@@ -36,9 +36,9 @@ const descriptions: Record<Command, string> = {
   set_cube_uv: 'Set Box UV offsets and optional mirror_uv for a cube batch. Validates the entire UV rectangle against project dimensions. Missing mirror_uv preserves the current value. Switches to Box UV; returns uv_warnings when thin dimensions collapse faces. Use set_face_uv for independent pixel density.',
 };
 
-export function createMcpServer(bridge: BridgeServer, workspace: Workspace): McpServer {
-  const server = new McpServer({ name: 'blockbench-ai-mcp', version: '0.7.0', title: 'Blockbench AI MCP' }, {
-    instructions: 'Connect the desktop plugin to the same workspace. Create a Bedrock project, retain its project UUID, then batch cubes and save relative .bbmodel paths. Never automatically retry mutations after timeout/disconnect: inspect get_project_state first. Only plugin-created projects in the active connection session are mutable. Use list_projects/select_project to target the correct tab. Plan atlas regions before creating details; sub-unit Box UV dimensions truncate, so use get_cube_uv and set_face_uv for thin parts. Review uv_warnings after mutations, validate_project before saving, and check_collisions at rest/open/intermediate animation times. Render multiple views for visual acceptance; successful writes do not guarantee quality. No arbitrary code or filesystem tools are available.',
+export function createMcpServer(bridge: BridgeCaller, workspace: Workspace): McpServer {
+  const server = new McpServer({ name: 'blockbench-ai-mcp', version: '0.7.1', title: 'Blockbench AI MCP' }, {
+    instructions: 'Connect the desktop plugin to the same workspace. Create a Bedrock project, retain its project UUID, then batch cubes and save relative .bbmodel paths. Never automatically retry mutations after timeout/disconnect: inspect get_project_state first. Only plugin-created projects in the active connection session are mutable. Multiple stdio sessions share one authenticated bridge. Calls with project_id select that tab atomically before execution; get_project_state uses this session last successful target. Use list_projects/select_project to choose a target. All sessions share the desktop and managed project authority; edits to the same project are serialized, not semantically merged. Plan atlas regions before creating details; sub-unit Box UV dimensions truncate, so use get_cube_uv and set_face_uv for thin parts. Review uv_warnings after mutations, validate_project before saving, and check_collisions at rest/open/intermediate animation times. Render multiple views for visual acceptance; successful writes do not guarantee quality. No arbitrary code or filesystem tools are available.',
   });
   function register(command: Command): void {
     server.registerTool<typeof outputSchemas[Command], typeof inputSchemas[Command]>(command, {
