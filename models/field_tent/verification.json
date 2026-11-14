@@ -1,0 +1,42 @@
+{
+  "date_local": "2026-11-14",
+  "selection": "用户指定的 702 方块帐篷版本",
+  "host": "Blockbench 5.2.2",
+  "mcp_version": "0.6.0",
+  "cube_count": 702,
+  "bone_count": 19,
+  "texture": {
+    "width": 1024,
+    "height": 2048
+  },
+  "geometry_identifier": "geometry.ranger_field_tent",
+  "source_copy_verified": true,
+  "recorded_official_save_export_render": true,
+  "new_desktop_test_performed": false,
+  "undo_redo_tested_for_this_variant": false,
+  "gui_reopen_tested": false,
+  "in_game_tested": false,
+  "files": [
+    {
+      "file": "ranger_field_tent.geo.json",
+      "bytes": 249634,
+      "sha256": "1d23be9c292bee839e6d1d89a04e61908814d9198138fb9359ade95f3b98a9d3"
+    },
+    {
+      "file": "ranger_field_tent.animation.json",
+      "bytes": 440,
+      "sha256": "c9ee519015760c6fbdf2be952261da0eaeb7aeee25642bac120f8f551c9a2f2c"
+    },
+    {
+      "file": "field_tent_atlas.png",
+      "bytes": 1492883,
+      "sha256": "259952a1b1ba859e2809b115c7560661fde82dd2488ad09322016c84e0b5e074"
+    }
+  ],
+  "preview": {
+    "file": "../../docs/images/field-tent.png",
+    "width": 1200,
+    "height": 900,
+    "sha256": "4acf14f9906a5379426a51ad05831a9fbc0bd84f99cce610c65ef428cbb7a55d"
+  }
+}
