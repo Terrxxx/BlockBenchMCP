@@ -18,7 +18,7 @@ const logger: Logger = (level, event, fields = {}) => console[level === 'info' ?
 
 BBPlugin.register('blockbench_ai_mcp', {
   title: 'Blockbench AI MCP', author: 'Terrxx',
-  description: 'Workspace-scoped local MCP bridge for Bedrock Entity modeling.',
+  description: '基岩版 Minecraft 模型 MCP 桥接插件',
   icon: 'smart_toy', version: PLUGIN_VERSION, variant: 'desktop', min_version: '5.2.2', max_version: '5.99.99',
   tags: ['Minecraft: Bedrock Edition'],
   onload() {
@@ -28,7 +28,7 @@ BBPlugin.register('blockbench_ai_mcp', {
         connectionDialog = new Dialog('blockbench_ai_mcp_connection', {
           title: 'Blockbench AI MCP',
           form: {
-            workspace: { label: 'Workspace directory', type: 'text', placeholder: 'D:\\Desktop\\BlockBenchMCP' },
+            workspace: { label: 'Workspace directory', type: 'text', placeholder: '...\BlockBenchMCP' },
             status: { label: 'Status', type: 'info', text: status },
           },
           onConfirm(form) {

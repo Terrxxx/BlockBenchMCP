@@ -1,9 +1,9 @@
-# Copy this table into your Codex config.toml. Adjust all paths for your machine.
-# This file does not install or activate the MCP server by itself.
+# 将此配置加入 Codex config.toml；所有 C:/path/to 路径必须替换为本机绝对路径。
+# 此文件不会自动安装或启用 MCP 服务。
 [mcp_servers.blockbench_ai]
 command = "node"
-args = ["D:/Desktop/BlockBenchMCP/dist/server/index.js", "--workspace", "D:/Desktop/BlockBenchMCP"]
-cwd = "D:/Desktop/BlockBenchMCP"
+args = ["C:/path/to/BlockBenchMCP/dist/server/index.js", "--workspace", "C:/path/to/BlockBenchMCP"]
+cwd = "C:/path/to/BlockBenchMCP"
 startup_timeout_sec = 15
 tool_timeout_sec = 30
 enabled_tools = ["create_project", "get_project_state", "create_cubes", "save_project", "create_bones", "update_bones", "reparent_cubes", "import_texture", "assign_texture", "set_cube_uv", "create_animation", "update_animation", "set_keyframes", "delete_keyframes", "get_animation_state", "preview_animation", "export_bedrock_model", "export_bedrock_animations", "export_texture_png", "render_project", "create_beams", "align_beams"]
