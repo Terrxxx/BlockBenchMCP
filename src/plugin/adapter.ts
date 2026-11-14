@@ -7,6 +7,7 @@ import { createBones, findGroup, reparentCubes, updateBones } from './bones.js';
 import { edit } from './edits.js';
 import { assignTexture, importTexture, setCubeUV, textureSummary } from './textures.js';
 import { createAnimation, updateAnimation, setKeyframes, deleteKeyframes, getAnimationState, previewAnimation } from './animations.js';
+import { exportResource } from './exports.js';
 
 export class BlockbenchAdapter {
   private readonly managed = new Set<string>();
@@ -16,6 +17,10 @@ export class BlockbenchAdapter {
   execute(request: Request): unknown {
     this.assertHost();
     switch (request.command) {
+      case 'export_bedrock_model':
+      case 'export_bedrock_animations':
+      case 'export_texture_png':
+        return exportResource(this.host, this.workspace, request, request.deadline_ms, () => this.mutableProject(request.params.project_id));
       case 'create_animation': return createAnimation(this.host, this.mutableProject(request.params.project_id), request.params);
       case 'update_animation': return updateAnimation(this.host, this.mutableProject(request.params.project_id), request.params);
       case 'set_keyframes': return setKeyframes(this.host, this.mutableProject(request.params.project_id), request.params);

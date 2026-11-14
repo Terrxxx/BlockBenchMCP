@@ -1,8 +1,8 @@
-# 本地桥接协议 v3
+# 本地桥接协议 v4
 
 外层为官方 SDK 提供的 MCP JSON-RPC/stdio；本文件描述 stdio Server 与 Blockbench 插件之间的私有 WebSocket 消息。它不是通用代码执行通道。
 
-v0.3.0 使用桥接协议 v3，服务端和插件必须同步重载。工作目录配置文件的 version 仍是 1；无需更换密钥或重新 setup。新旧插件/服务端混用会拒绝握手。
+v0.4.0 使用桥接协议 v4，服务端和插件必须同步重载。工作目录配置文件的 version 仍是 1；无需更换密钥或重新 setup。新旧插件/服务端混用会拒绝握手。
 
 ## 握手
 
@@ -10,16 +10,16 @@ Server 固定绑定 `127.0.0.1`。插件连接 `ws://127.0.0.1:<port>`，3 秒�
 
 ```json
 {
-  "version": 3,
+  "version": 4,
   "type": "hello",
   "workspace": "D:\\Desktop\\BlockBenchMCP",
   "token": "<初始化生成的64位十六进制随机密钥>",
-  "plugin_version": "0.3.0",
+  "plugin_version": "0.4.0",
   "blockbench_version": "5.2.2"
 }
 ```
 
-常量时间比较密钥、匹配工作目录与版本后，Server 回复 `{"version":3,"type":"ready"}`。握手失败关闭连接（1008）；未完成握手的连接 3 秒后终止。握手期间不接受工具请求。最多 4 个未关闭连接、1 个认证插件。无 Origin / `file://` / `null` 只为桌面运行时兼容，均仍需密钥。
+常量时间比较密钥、匹配工作目录与版本后，Server 回复 `{"version":4,"type":"ready"}`。握手失败关闭连接（1008）；未完成握手的连接 3 秒后终止。握手期间不接受工具请求。最多 4 个未关闭连接、1 个认证插件。无 Origin / `file://` / `null` 只为桌面运行时兼容，均仍需密钥。
 
 WebSocket 文本帧最大 1 MiB，关闭压缩，不接受二进制帧。每 10 秒协议级 ping/pong 检测失联；插件使用 0.5、1、2、4、8、10 秒上限退避重连。插件卸载或手动断开后停止重连。
 
@@ -27,7 +27,7 @@ WebSocket 文本帧最大 1 MiB，关闭压缩，不接受二进制帧。每 10 
 
 ```json
 {
-  "version": 3,
+  "version": 4,
   "type": "request",
   "request_id": "ca16f180-e67b-4b6f-bdf7-a856f826af48",
   "deadline_ms": 1794595500000,
@@ -42,7 +42,7 @@ WebSocket 文本帧最大 1 MiB，关闭压缩，不接受二进制帧。每 10 
 
 ```json
 {
-  "version": 3,
+  "version": 4,
   "type": "response",
   "request_id": "ca16f180-e67b-4b6f-bdf7-a856f826af48",
   "ok": true,
@@ -56,7 +56,7 @@ WebSocket 文本帧最大 1 MiB，关闭压缩，不接受二进制帧。每 10 
 
 ```json
 {
-  "version": 3,
+  "version": 4,
   "type": "response",
   "request_id": "ca16f180-e67b-4b6f-bdf7-a856f826af48",
   "ok": false,
@@ -67,6 +67,10 @@ WebSocket 文本帧最大 1 MiB，关闭压缩，不接受二进制帧。每 10 
 MCP 工具成功同时返回 `content` 和 `structuredContent`。业务错误返回 `isError: true` 与 `structuredContent.error`。MCP 参数不符合工具 schema 时，官方 SDK 也可能直接产生协议参数错误（`-32602`）；桥接收到无效工具参数时使用 `INVALID_PARAMS`。无法提取合法 request_id 的消息无法安全关联，关闭连接。
 
 ## 工具参数
+
+第四阶段新增 `export_bedrock_model`、`export_bedrock_animations`、`export_texture_png`，总共 19 个工具。三者均写文件，readOnlyHint=false；overwrite 默认为 false。路径分别限制 `.geo.json`、`.animation.json`、`.png`，参数详见[第四阶段架构](phase-four-architecture.md)。结果包含 project_id、path、bytes、kind、warnings；文件上限 8 MiB，内容不经 WebSocket 返回。
+
+新增错误码 `EXPORT_FAILED`（编译、写入或字节验证失败）与 `EXPORT_TOO_LARGE`（输出超过上限）。写入开始后的失败设置 outcome_unknown=true；预检和编译失败为 false。动画官方吸附导致碰撞使用 KEYFRAME_CONFLICT，吸附后越界使用 KEYFRAME_OUT_OF_BOUNDS。
 
 | 工具 | 输入 | 结果要点 |
 | --- | --- | --- |

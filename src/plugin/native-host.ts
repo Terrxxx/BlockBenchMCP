@@ -3,6 +3,7 @@ import { BridgeError } from '../shared/errors.js';
 import type { BlockbenchHost, CubeHandle, EditScope, GroupHandle } from './host.js';
 import { disposeNativeTexture, nativeTexture, prepareNativeTexture } from './native-texture.js';
 import { nativeAnimation, nativeAnimationHost, nativeKeyframe, refreshNativeAnimation } from './native-animation.js';
+import { nativeExportHost } from './native-export.js';
 
 function nativeCube(cube: CubeHandle): Cube {
   if (!(cube instanceof Cube)) throw new Error('Expected native Cube');
@@ -32,6 +33,7 @@ function nativeScope(scope: EditScope): UndoAspects {
 export function createNativeHost(): BlockbenchHost {
   return {
     ...nativeAnimationHost(),
+    ...nativeExportHost(),
     get version() { return Blockbench.version; },
     get desktop() { return !Blockbench.isWeb; },
     getProject: () => typeof Project === 'undefined' || !Project ? null : Project,

@@ -22,6 +22,7 @@ export class FakeHost implements BlockbenchHost {
   elements: CubeHandle[] = [];
   bones: GroupHandle[] = [];
   atlases: TextureHandle[] = [];
+  textureSources = new Map<string, string>();
   clips: AnimationHandle[] = [];
   frames: Record<string, KeyframeHandle[]> = {};
   failKeyframeAt = -1;
@@ -105,9 +106,11 @@ export class FakeHost implements BlockbenchHost {
     if (this.elements.length === this.failAttachAt) throw new Error('Injected partial cube initialization failure');
   }
   reparentCube(cube: CubeHandle, group: GroupHandle): void { cube.parent = group; this.calls.push('Cube.addTo'); }
-  async prepareTexture(name: string, _dataUrl: string, info: PngInfo): Promise<TextureHandle> {
+  async prepareTexture(name: string, dataUrl: string, info: PngInfo): Promise<TextureHandle> {
     this.calls.push('Texture.decode'); await this.decodeGate;
-    return { uuid: nativeId(), name, ...info, internal: true };
+    const texture = { uuid: nativeId(), name, ...info, internal: true };
+    this.textureSources.set(texture.uuid, dataUrl);
+    return texture;
   }
   addTexture(texture: TextureHandle): void { this.calls.push('Texture.add(false)'); this.atlases.push(texture); if (this.failAddTexture) throw new Error('Injected add failure'); }
   disposeTexture(): void { this.calls.push('Texture.dispose'); }
@@ -125,6 +128,20 @@ export class FakeHost implements BlockbenchHost {
   }
   refresh(): void { this.calls.push('Canvas.updateAll'); }
   compileProject(): string { this.calls.push('Codecs.project.compile'); return 'TEST_ONLY_OFFICIAL_CODEC_STUB'; }
+  compileBedrockModel(): unknown {
+    this.calls.push('Codecs.bedrock.compile');
+    return { format_version: 'TEST_ONLY', 'minecraft:geometry': [{ description: { identifier: 'geometry.test_stub' } }] };
+  }
+  compileBedrockAnimations(animations: AnimationHandle[]): unknown {
+    this.calls.push('AnimationCodec.compileFile');
+    return { format_version: 'TEST_ONLY', animations: Object.fromEntries(animations.map(a => [a.name, { test_stub: true }])) };
+  }
+  textureDataUrl(texture: TextureHandle): string { return this.textureSources.get(texture.uuid) ?? ''; }
+  writeResource(content: string, target: string, image: boolean): void {
+    this.calls.push('Blockbench.writeFile');
+    if (this.failWrite) throw new Error('Injected write failure');
+    fs.writeFileSync(target, image ? Buffer.from(content.split(',')[1]!, 'base64') : content);
+  }
   writeProject(content: string, target: string): void {
     this.calls.push('Codecs.project.write');
     if (this.failWrite) throw new Error('Injected write failure');

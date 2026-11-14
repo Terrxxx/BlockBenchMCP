@@ -26,7 +26,7 @@ async function freePort(): Promise<number> {
 }
 
 describe('official SDK client -> real stdio server -> real WS -> adapter', () => {
-  it.each(['legacy', 'modern'] as const)('runs all sixteen tools using %s protocol mode', async mode => {
+  it.each(['legacy', 'modern'] as const)('runs all nineteen tools using %s protocol mode', async mode => {
     const root = tempWorkspace();
     const workspace = new Workspace(root, fs);
     fs.writeFileSync(path.join(root, 'atlas.png'), pngFixture());
@@ -53,7 +53,7 @@ describe('official SDK client -> real stdio server -> real WS -> adapter', () =>
       const peer = socket;
       await new Promise<void>((resolve, reject) => { peer.once('open', resolve); peer.once('error', reject); });
       const ready = new Promise<void>(resolve => peer.once('message', () => resolve()));
-      peer.send(JSON.stringify({ version: 3, type: 'hello', workspace: root, token: config.token, plugin_version: '0.3.0', blockbench_version: '5.2.2' }));
+      peer.send(JSON.stringify({ version: 4, type: 'hello', workspace: root, token: config.token, plugin_version: '0.4.0', blockbench_version: '5.2.2' }));
       await ready;
       peer.on('message', data => { void dispatcher.receive(data.toString()).then(response => { if (response) peer.send(JSON.stringify(response)); }); });
       const created = await client.callTool({ name: 'create_project', arguments: { name: 'stdio_test', model_identifier: 'stdio_test' } });
@@ -99,6 +99,17 @@ describe('official SDK client -> real stdio server -> real WS -> adapter', () =>
       expect(outputSchemas.delete_keyframes.parse(removed.structuredContent).count).toBe(1);
       const animState=await client.callTool({name:'get_animation_state',arguments:{project_id:id,animation_id:animationId}});
       expect(outputSchemas.get_animation_state.parse(animState.structuredContent).total).toBe(3);
+      const exportedModel = await client.callTool({name:'export_bedrock_model',arguments:{project_id:id,path:'test.geo.json'}});
+      expect(outputSchemas.export_bedrock_model.parse(exportedModel.structuredContent).kind).toBe('bedrock_model');
+      const exportedAnimation = await client.callTool({name:'export_bedrock_animations',arguments:{project_id:id,path:'test.animation.json',animation_ids:[animationId]}});
+      expect(outputSchemas.export_bedrock_animations.parse(exportedAnimation.structuredContent).kind).toBe('bedrock_animations');
+      const exportedTexture = await client.callTool({name:'export_texture_png',arguments:{project_id:id,path:'exported.png',texture_id:texture.id}});
+      expect(outputSchemas.export_texture_png.parse(exportedTexture.structuredContent).kind).toBe('texture_png');
+      expect(fs.readFileSync(path.join(root,'exported.png'))).toEqual(fs.readFileSync(path.join(root,'atlas.png')));
+      const overwriteDenied = await client.callTool({name:'export_bedrock_model',arguments:{project_id:id,path:'test.geo.json'}});
+      expect(overwriteDenied.structuredContent).toMatchObject({error:{code:'FILE_EXISTS',outcome_unknown:false}});
+      const exportEscape = await client.callTool({name:'export_texture_png',arguments:{project_id:id,path:'../escape.png',texture_id:texture.id}});
+      expect(exportEscape.structuredContent).toMatchObject({error:{code:'PATH_FORBIDDEN',outcome_unknown:false}});
       const saved = await client.callTool({ name: 'save_project', arguments: { project_id: id, path: 'stdio.bbmodel' } });
       expect(outputSchemas.save_project.parse(saved.structuredContent).saved).toBe(true);
       const blocked = await client.callTool({ name: 'save_project', arguments: { project_id: id, path: '../escape.bbmodel' } });

@@ -1,4 +1,5 @@
 import { animationInputs, animationOutputs } from './schemas/animations.js';
+import { exportInputs, exportOutputs } from './schemas/exports.js';
 import { z } from 'zod';
 import { BridgeError, errorSchema } from './errors.js';
 import { displayName as name, nativeId as id, rotationSchema, stateVectorSchema, uvOffsetSchema, vectorSchema } from './schemas/common.js';
@@ -6,11 +7,11 @@ import { boneInputs, boneOutputs, boneStateSchema } from './schemas/bones.js';
 import { textureInputs, textureOutputs, textureStateSchema } from './schemas/textures.js';
 export { vectorSchema, type Vector3 } from './schemas/common.js';
 
-export const VERSION = 3;
-export const PLUGIN_VERSION = '0.3.0';
+export const VERSION = 4;
+export const PLUGIN_VERSION = '0.4.0';
 export const MAX_MESSAGE_BYTES = 1_048_576;
 export const MAX_BATCH = 256;
-export const commandNames = ['create_project', 'get_project_state', 'create_cubes', 'save_project', 'create_bones', 'update_bones', 'reparent_cubes', 'import_texture', 'assign_texture', 'set_cube_uv', 'create_animation', 'update_animation', 'set_keyframes', 'delete_keyframes', 'get_animation_state', 'preview_animation'] as const;
+export const commandNames = ['create_project', 'get_project_state', 'create_cubes', 'save_project', 'create_bones', 'update_bones', 'reparent_cubes', 'import_texture', 'assign_texture', 'set_cube_uv', 'create_animation', 'update_animation', 'set_keyframes', 'delete_keyframes', 'get_animation_state', 'preview_animation', 'export_bedrock_model', 'export_bedrock_animations', 'export_texture_png'] as const;
 export type Command = typeof commandNames[number];
 // Blockbench guid()/isUUID() use 8-4-4-4-12 hex groups without RFC version or
 // variant bits. Keep those native IDs distinct from our RFC request UUIDs.
@@ -27,6 +28,7 @@ export const cubeSchema = z.strictObject({
 export type CubeInput = z.infer<typeof cubeSchema>;
 
 export const inputSchemas = {
+  ...exportInputs,
   ...animationInputs,
   ...boneInputs,
   ...textureInputs,
@@ -64,6 +66,7 @@ export const cubeStateSchema = z.strictObject({
   box_uv: z.boolean(), uv_offset: z.tuple([z.number().finite(), z.number().finite()]), mirror_uv: z.boolean(), texture_ids: z.array(id).max(6),
 });
 export const outputSchemas = {
+  ...exportOutputs,
   ...animationOutputs,
   ...boneOutputs,
   ...textureOutputs,
@@ -84,6 +87,9 @@ const envelope = {
   deadline_ms: z.number().int().positive(),
 };
 export const requestSchema = z.discriminatedUnion('command', [
+  z.strictObject({ ...envelope, command: z.literal('export_bedrock_model'), params: inputSchemas.export_bedrock_model }),
+  z.strictObject({ ...envelope, command: z.literal('export_bedrock_animations'), params: inputSchemas.export_bedrock_animations }),
+  z.strictObject({ ...envelope, command: z.literal('export_texture_png'), params: inputSchemas.export_texture_png }),
   z.strictObject({ ...envelope, command: z.literal('create_animation'), params: inputSchemas.create_animation }),
   z.strictObject({ ...envelope, command: z.literal('update_animation'), params: inputSchemas.update_animation }),
   z.strictObject({ ...envelope, command: z.literal('set_keyframes'), params: inputSchemas.set_keyframes }),

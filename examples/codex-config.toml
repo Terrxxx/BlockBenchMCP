@@ -6,4 +6,4 @@ args = ["D:/Desktop/BlockBenchMCP/dist/server/index.js", "--workspace", "D:/Desk
 cwd = "D:/Desktop/BlockBenchMCP"
 startup_timeout_sec = 15
 tool_timeout_sec = 30
-enabled_tools = ["create_project", "get_project_state", "create_cubes", "save_project", "create_bones", "update_bones", "reparent_cubes", "import_texture", "assign_texture", "set_cube_uv", "create_animation", "update_animation", "set_keyframes", "delete_keyframes", "get_animation_state", "preview_animation"]
+enabled_tools = ["create_project", "get_project_state", "create_cubes", "save_project", "create_bones", "update_bones", "reparent_cubes", "import_texture", "assign_texture", "set_cube_uv", "create_animation", "update_animation", "set_keyframes", "delete_keyframes", "get_animation_state", "preview_animation", "export_bedrock_model", "export_bedrock_animations", "export_texture_png"]

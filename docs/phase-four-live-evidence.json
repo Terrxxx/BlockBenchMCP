@@ -1,0 +1,988 @@
+{
+  "date": "2026-11-14T04:50:36.714Z",
+  "version": "0.4.0",
+  "transport": "official SDK -> stdio -> real desktop plugin",
+  "files": [
+    {
+      "path": "models/mcp_export_mwfxgj4o_c4b4f047.geo.json",
+      "bytes": 863,
+      "sha256": "89d601e524b1df59f3abba1e965f30e39e0bbaed8de6f7c7ef64893d6184aa83"
+    },
+    {
+      "path": "models/mcp_export_mwfxgj4o_c4b4f047.animation.json",
+      "bytes": 925,
+      "sha256": "49c53842877df7a0c46af447fbeab19817a724553f87ba67b7ab32ac8b4e7ebb"
+    },
+    {
+      "path": "models/mcp_export_mwfxgj4o_c4b4f047.png",
+      "bytes": 250,
+      "sha256": "d852b07075ba1b6d249098e41bbd3aab58029721a888775e08773b493f2b9c12"
+    }
+  ],
+  "calls": [
+    {
+      "name": "create_project",
+      "arguments": {
+        "name": "mcp_export_mwfxgj4o_c4b4f047",
+        "model_identifier": "mcp_export_mwfxgj4o_c4b4f047"
+      },
+      "result": {
+        "project": {
+          "id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+          "name": "mcp_export_mwfxgj4o_c4b4f047",
+          "format": "bedrock",
+          "model_identifier": "mcp_export_mwfxgj4o_c4b4f047",
+          "saved": false,
+          "texture_width": 64,
+          "texture_height": 64,
+          "cube_count": 0,
+          "group_count": 0,
+          "managed": true,
+          "texture_count": 0
+        }
+      },
+      "isError": false
+    },
+    {
+      "name": "create_bones",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "bones": [
+          {
+            "key": "root",
+            "name": "root"
+          },
+          {
+            "key": "arm",
+            "name": "arm",
+            "parent_key": "root",
+            "origin": [
+              2,
+              8,
+              0
+            ]
+          }
+        ]
+      },
+      "result": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "count": 2,
+        "bones": [
+          {
+            "key": "root",
+            "id": "721f11d8-d4ea-f8fe-766e-ac26ee06312f"
+          },
+          {
+            "key": "arm",
+            "id": "7adabba9-243e-5a6b-3395-bd672900ef6d"
+          }
+        ]
+      },
+      "isError": false
+    },
+    {
+      "name": "create_cubes",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "parent_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+        "cubes": [
+          {
+            "name": "arm",
+            "from": [
+              1,
+              2,
+              3
+            ],
+            "to": [
+              5,
+              8,
+              7
+            ]
+          }
+        ]
+      },
+      "result": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "cube_ids": [
+          "1c334202-7eb0-528c-b273-94c073dbb07e"
+        ],
+        "count": 1,
+        "root_group_id": "7adabba9-243e-5a6b-3395-bd672900ef6d"
+      },
+      "isError": false
+    },
+    {
+      "name": "import_texture",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "path": "examples/atlas-64.png"
+      },
+      "result": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "texture": {
+          "id": "e27c28a1-ed69-84fe-a45c-5f0ffe07bcad",
+          "name": "atlas-64.png",
+          "width": 64,
+          "height": 64,
+          "internal": true
+        }
+      },
+      "isError": false
+    },
+    {
+      "name": "assign_texture",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "texture_id": "e27c28a1-ed69-84fe-a45c-5f0ffe07bcad",
+        "cube_ids": [
+          "1c334202-7eb0-528c-b273-94c073dbb07e"
+        ]
+      },
+      "result": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "texture_id": "e27c28a1-ed69-84fe-a45c-5f0ffe07bcad",
+        "cube_ids": [
+          "1c334202-7eb0-528c-b273-94c073dbb07e"
+        ],
+        "count": 1
+      },
+      "isError": false
+    },
+    {
+      "name": "create_animation",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "name": "animation.export.wave",
+        "length": 1,
+        "loop": "hold"
+      },
+      "result": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "animation": {
+          "id": "2ea85418-fcfa-d6eb-bcdf-9d3df4b184dc",
+          "name": "animation.export.wave",
+          "length": 1,
+          "loop": "hold",
+          "snapping": 20,
+          "keyframe_count": 0,
+          "editable": true
+        }
+      },
+      "isError": false
+    },
+    {
+      "name": "create_animation",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "name": "animation.export.idle",
+        "length": 1
+      },
+      "result": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "animation": {
+          "id": "9bdff97b-5a8b-1a51-3c52-4ede9aee8e96",
+          "name": "animation.export.idle",
+          "length": 1,
+          "loop": "once",
+          "snapping": 20,
+          "keyframe_count": 0,
+          "editable": true
+        }
+      },
+      "isError": false
+    },
+    {
+      "name": "set_keyframes",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "animation_id": "2ea85418-fcfa-d6eb-bcdf-9d3df4b184dc",
+        "keyframes": [
+          {
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "rotation",
+            "time": 0,
+            "value": [
+              10,
+              20,
+              30
+            ]
+          },
+          {
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "rotation",
+            "time": 1,
+            "value": [
+              20,
+              30,
+              40
+            ]
+          },
+          {
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "position",
+            "time": 0,
+            "value": [
+              2,
+              3,
+              4
+            ],
+            "interpolation": "step"
+          },
+          {
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "position",
+            "time": 1,
+            "value": [
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "scale",
+            "time": 0,
+            "value": [
+              1,
+              1.2,
+              1
+            ]
+          }
+        ]
+      },
+      "result": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "animation_id": "2ea85418-fcfa-d6eb-bcdf-9d3df4b184dc",
+        "keyframe_ids": [
+          "1c768e17-1c1b-a1b0-41cf-5a8dfedf9f35",
+          "e373bb2d-9eaf-4042-6ad4-ecd7985a9e4a",
+          "0b8301a5-d251-6d3e-fc75-35931f505eb8",
+          "2f07b9fb-7c7e-c358-1bda-3ebcf76a2bdb",
+          "10c1e944-8f86-c52d-5d61-c5b0e4141e9f"
+        ],
+        "created": 5,
+        "updated": 0
+      },
+      "isError": false
+    },
+    {
+      "name": "save_project",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "path": "models/mcp_export_mwfxgj4o_c4b4f047.bbmodel"
+      },
+      "result": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "path": "models/mcp_export_mwfxgj4o_c4b4f047.bbmodel",
+        "bytes": 4316,
+        "saved": true
+      },
+      "isError": false
+    },
+    {
+      "name": "get_project_state",
+      "arguments": {},
+      "result": {
+        "project": {
+          "id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+          "name": "mcp_export_mwfxgj4o_c4b4f047",
+          "format": "bedrock",
+          "model_identifier": "mcp_export_mwfxgj4o_c4b4f047",
+          "saved": true,
+          "texture_width": 64,
+          "texture_height": 64,
+          "cube_count": 1,
+          "group_count": 2,
+          "managed": true,
+          "texture_count": 1
+        },
+        "cubes": [
+          {
+            "id": "1c334202-7eb0-528c-b273-94c073dbb07e",
+            "name": "arm",
+            "from": [
+              1,
+              2,
+              3
+            ],
+            "to": [
+              5,
+              8,
+              7
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "box_uv": true,
+            "uv_offset": [
+              0,
+              0
+            ],
+            "mirror_uv": false,
+            "texture_ids": [
+              "e27c28a1-ed69-84fe-a45c-5f0ffe07bcad"
+            ]
+          }
+        ],
+        "offset": 0,
+        "next_offset": null,
+        "bones": [
+          {
+            "id": "721f11d8-d4ea-f8fe-766e-ac26ee06312f",
+            "name": "root",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": null
+          },
+          {
+            "id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "name": "arm",
+            "origin": [
+              2,
+              8,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "721f11d8-d4ea-f8fe-766e-ac26ee06312f"
+          }
+        ],
+        "bone_offset": 0,
+        "next_bone_offset": null,
+        "textures": [
+          {
+            "id": "e27c28a1-ed69-84fe-a45c-5f0ffe07bcad",
+            "name": "atlas-64.png",
+            "width": 64,
+            "height": 64,
+            "internal": true
+          }
+        ],
+        "texture_offset": 0,
+        "next_texture_offset": null
+      },
+      "isError": false
+    },
+    {
+      "name": "get_animation_state",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "animation_id": "2ea85418-fcfa-d6eb-bcdf-9d3df4b184dc"
+      },
+      "result": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "animations": [
+          {
+            "id": "2ea85418-fcfa-d6eb-bcdf-9d3df4b184dc",
+            "name": "animation.export.wave",
+            "length": 1,
+            "loop": "hold",
+            "snapping": 20,
+            "keyframe_count": 5,
+            "editable": true
+          }
+        ],
+        "keyframes": [
+          {
+            "id": "1c768e17-1c1b-a1b0-41cf-5a8dfedf9f35",
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "rotation",
+            "time": 0,
+            "interpolation": "linear",
+            "values": [
+              [
+                "10",
+                "20",
+                "30"
+              ]
+            ]
+          },
+          {
+            "id": "e373bb2d-9eaf-4042-6ad4-ecd7985a9e4a",
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "rotation",
+            "time": 1,
+            "interpolation": "linear",
+            "values": [
+              [
+                "20",
+                "30",
+                "40"
+              ]
+            ]
+          },
+          {
+            "id": "0b8301a5-d251-6d3e-fc75-35931f505eb8",
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "position",
+            "time": 0,
+            "interpolation": "step",
+            "values": [
+              [
+                "2",
+                "3",
+                "4"
+              ]
+            ]
+          },
+          {
+            "id": "2f07b9fb-7c7e-c358-1bda-3ebcf76a2bdb",
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "position",
+            "time": 1,
+            "interpolation": "linear",
+            "values": [
+              [
+                "4",
+                "5",
+                "6"
+              ]
+            ]
+          },
+          {
+            "id": "10c1e944-8f86-c52d-5d61-c5b0e4141e9f",
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "scale",
+            "time": 0,
+            "interpolation": "linear",
+            "values": [
+              [
+                "1",
+                "1.2",
+                "1"
+              ]
+            ]
+          }
+        ],
+        "total": 5,
+        "offset": 0,
+        "next_offset": null
+      },
+      "isError": false
+    },
+    {
+      "name": "export_bedrock_model",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "path": "models/mcp_export_mwfxgj4o_c4b4f047.geo.json"
+      },
+      "result": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "path": "models/mcp_export_mwfxgj4o_c4b4f047.geo.json",
+        "bytes": 863,
+        "kind": "bedrock_model",
+        "warnings": [
+          "Visible bounds are omitted to avoid changing project state or depending on the current animation pose. Official export flags and empty-bone settings apply."
+        ]
+      },
+      "isError": false
+    },
+    {
+      "name": "export_bedrock_animations",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "path": "models/mcp_export_mwfxgj4o_c4b4f047.animation.json",
+        "animation_ids": [
+          "2ea85418-fcfa-d6eb-bcdf-9d3df4b184dc",
+          "9bdff97b-5a8b-1a51-3c52-4ede9aee8e96"
+        ]
+      },
+      "result": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "path": "models/mcp_export_mwfxgj4o_c4b4f047.animation.json",
+        "bytes": 925,
+        "kind": "bedrock_animations",
+        "warnings": [
+          "Official Bedrock export snaps keyframe times to animation snapping and rounds clip length to four decimals. Source keyframes stay unchanged."
+        ]
+      },
+      "isError": false
+    },
+    {
+      "name": "export_texture_png",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "path": "models/mcp_export_mwfxgj4o_c4b4f047.png",
+        "texture_id": "e27c28a1-ed69-84fe-a45c-5f0ffe07bcad"
+      },
+      "result": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "path": "models/mcp_export_mwfxgj4o_c4b4f047.png",
+        "bytes": 250,
+        "kind": "texture_png",
+        "warnings": []
+      },
+      "isError": false
+    },
+    {
+      "name": "export_bedrock_model",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "path": "models/mcp_export_mwfxgj4o_c4b4f047.geo.json"
+      },
+      "result": {
+        "error": {
+          "code": "FILE_EXISTS",
+          "message": "Target exists. Choose a new path or explicitly set overwrite: true.",
+          "outcome_unknown": false
+        }
+      },
+      "isError": true
+    },
+    {
+      "name": "export_texture_png",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "path": "../escape.png",
+        "texture_id": "e27c28a1-ed69-84fe-a45c-5f0ffe07bcad"
+      },
+      "result": {
+        "error": {
+          "code": "PATH_FORBIDDEN",
+          "message": "Unsafe path component.",
+          "outcome_unknown": false
+        }
+      },
+      "isError": true
+    },
+    {
+      "name": "export_bedrock_animations",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "path": "models/mcp_export_mwfxgj4o_c4b4f047_missing.animation.json",
+        "animation_ids": [
+          "2ea85418-fcfa-d6eb-bcdf-9d3df4b184dc",
+          "a5232ab4-a62a-42e2-80a2-88940f8de180"
+        ]
+      },
+      "result": {
+        "error": {
+          "code": "NOT_FOUND",
+          "message": "Animation not found in the active project.",
+          "outcome_unknown": false
+        }
+      },
+      "isError": true
+    },
+    {
+      "name": "export_bedrock_model",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "path": "models/mcp_export_mwfxgj4o_c4b4f047.geo.json",
+        "overwrite": true
+      },
+      "result": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "path": "models/mcp_export_mwfxgj4o_c4b4f047.geo.json",
+        "bytes": 863,
+        "kind": "bedrock_model",
+        "warnings": [
+          "Visible bounds are omitted to avoid changing project state or depending on the current animation pose. Official export flags and empty-bone settings apply."
+        ]
+      },
+      "isError": false
+    },
+    {
+      "name": "get_project_state",
+      "arguments": {},
+      "result": {
+        "project": {
+          "id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+          "name": "mcp_export_mwfxgj4o_c4b4f047",
+          "format": "bedrock",
+          "model_identifier": "mcp_export_mwfxgj4o_c4b4f047",
+          "saved": true,
+          "texture_width": 64,
+          "texture_height": 64,
+          "cube_count": 1,
+          "group_count": 2,
+          "managed": true,
+          "texture_count": 1
+        },
+        "cubes": [
+          {
+            "id": "1c334202-7eb0-528c-b273-94c073dbb07e",
+            "name": "arm",
+            "from": [
+              1,
+              2,
+              3
+            ],
+            "to": [
+              5,
+              8,
+              7
+            ],
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "box_uv": true,
+            "uv_offset": [
+              0,
+              0
+            ],
+            "mirror_uv": false,
+            "texture_ids": [
+              "e27c28a1-ed69-84fe-a45c-5f0ffe07bcad"
+            ]
+          }
+        ],
+        "offset": 0,
+        "next_offset": null,
+        "bones": [
+          {
+            "id": "721f11d8-d4ea-f8fe-766e-ac26ee06312f",
+            "name": "root",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": null
+          },
+          {
+            "id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "name": "arm",
+            "origin": [
+              2,
+              8,
+              0
+            ],
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "parent_id": "721f11d8-d4ea-f8fe-766e-ac26ee06312f"
+          }
+        ],
+        "bone_offset": 0,
+        "next_bone_offset": null,
+        "textures": [
+          {
+            "id": "e27c28a1-ed69-84fe-a45c-5f0ffe07bcad",
+            "name": "atlas-64.png",
+            "width": 64,
+            "height": 64,
+            "internal": true
+          }
+        ],
+        "texture_offset": 0,
+        "next_texture_offset": null
+      },
+      "isError": false
+    },
+    {
+      "name": "get_animation_state",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "animation_id": "2ea85418-fcfa-d6eb-bcdf-9d3df4b184dc"
+      },
+      "result": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "animations": [
+          {
+            "id": "2ea85418-fcfa-d6eb-bcdf-9d3df4b184dc",
+            "name": "animation.export.wave",
+            "length": 1,
+            "loop": "hold",
+            "snapping": 20,
+            "keyframe_count": 5,
+            "editable": true
+          }
+        ],
+        "keyframes": [
+          {
+            "id": "1c768e17-1c1b-a1b0-41cf-5a8dfedf9f35",
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "rotation",
+            "time": 0,
+            "interpolation": "linear",
+            "values": [
+              [
+                "10",
+                "20",
+                "30"
+              ]
+            ]
+          },
+          {
+            "id": "e373bb2d-9eaf-4042-6ad4-ecd7985a9e4a",
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "rotation",
+            "time": 1,
+            "interpolation": "linear",
+            "values": [
+              [
+                "20",
+                "30",
+                "40"
+              ]
+            ]
+          },
+          {
+            "id": "0b8301a5-d251-6d3e-fc75-35931f505eb8",
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "position",
+            "time": 0,
+            "interpolation": "step",
+            "values": [
+              [
+                "2",
+                "3",
+                "4"
+              ]
+            ]
+          },
+          {
+            "id": "2f07b9fb-7c7e-c358-1bda-3ebcf76a2bdb",
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "position",
+            "time": 1,
+            "interpolation": "linear",
+            "values": [
+              [
+                "4",
+                "5",
+                "6"
+              ]
+            ]
+          },
+          {
+            "id": "10c1e944-8f86-c52d-5d61-c5b0e4141e9f",
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "scale",
+            "time": 0,
+            "interpolation": "linear",
+            "values": [
+              [
+                "1",
+                "1.2",
+                "1"
+              ]
+            ]
+          }
+        ],
+        "total": 5,
+        "offset": 0,
+        "next_offset": null
+      },
+      "isError": false
+    },
+    {
+      "name": "set_keyframes",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "animation_id": "9bdff97b-5a8b-1a51-3c52-4ede9aee8e96",
+        "keyframes": [
+          {
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "rotation",
+            "time": 0.1,
+            "value": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "rotation",
+            "time": 0.1001,
+            "value": [
+              0,
+              1,
+              0
+            ]
+          }
+        ]
+      },
+      "result": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "animation_id": "9bdff97b-5a8b-1a51-3c52-4ede9aee8e96",
+        "keyframe_ids": [
+          "63874141-8a8d-7622-9c51-ec78cc62b16c",
+          "cd01cb25-b381-3ff1-f525-628a00739f32"
+        ],
+        "created": 2,
+        "updated": 0
+      },
+      "isError": false
+    },
+    {
+      "name": "get_animation_state",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "animation_id": "9bdff97b-5a8b-1a51-3c52-4ede9aee8e96"
+      },
+      "result": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "animations": [
+          {
+            "id": "9bdff97b-5a8b-1a51-3c52-4ede9aee8e96",
+            "name": "animation.export.idle",
+            "length": 1,
+            "loop": "once",
+            "snapping": 20,
+            "keyframe_count": 2,
+            "editable": true
+          }
+        ],
+        "keyframes": [
+          {
+            "id": "63874141-8a8d-7622-9c51-ec78cc62b16c",
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "rotation",
+            "time": 0.1,
+            "interpolation": "linear",
+            "values": [
+              [
+                "0",
+                "0",
+                "0"
+              ]
+            ]
+          },
+          {
+            "id": "cd01cb25-b381-3ff1-f525-628a00739f32",
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "rotation",
+            "time": 0.1001,
+            "interpolation": "linear",
+            "values": [
+              [
+                "0",
+                "1",
+                "0"
+              ]
+            ]
+          }
+        ],
+        "total": 2,
+        "offset": 0,
+        "next_offset": null
+      },
+      "isError": false
+    },
+    {
+      "name": "export_bedrock_animations",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "path": "models/mcp_export_mwfxgj4o_c4b4f047_conflict.animation.json",
+        "animation_ids": [
+          "2ea85418-fcfa-d6eb-bcdf-9d3df4b184dc",
+          "9bdff97b-5a8b-1a51-3c52-4ede9aee8e96"
+        ]
+      },
+      "result": {
+        "error": {
+          "code": "KEYFRAME_CONFLICT",
+          "message": "Official export snapping would merge keyframes. Adjust time or snapping first.",
+          "outcome_unknown": false
+        }
+      },
+      "isError": true
+    },
+    {
+      "name": "get_animation_state",
+      "arguments": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "animation_id": "9bdff97b-5a8b-1a51-3c52-4ede9aee8e96"
+      },
+      "result": {
+        "project_id": "5fb2c73c-d1c8-e007-0ba3-5710c3d0ee1c",
+        "animations": [
+          {
+            "id": "9bdff97b-5a8b-1a51-3c52-4ede9aee8e96",
+            "name": "animation.export.idle",
+            "length": 1,
+            "loop": "once",
+            "snapping": 20,
+            "keyframe_count": 2,
+            "editable": true
+          }
+        ],
+        "keyframes": [
+          {
+            "id": "63874141-8a8d-7622-9c51-ec78cc62b16c",
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "rotation",
+            "time": 0.1,
+            "interpolation": "linear",
+            "values": [
+              [
+                "0",
+                "0",
+                "0"
+              ]
+            ]
+          },
+          {
+            "id": "cd01cb25-b381-3ff1-f525-628a00739f32",
+            "bone_id": "7adabba9-243e-5a6b-3395-bd672900ef6d",
+            "channel": "rotation",
+            "time": 0.1001,
+            "interpolation": "linear",
+            "values": [
+              [
+                "0",
+                "1",
+                "0"
+              ]
+            ]
+          }
+        ],
+        "total": 2,
+        "offset": 0,
+        "next_offset": null
+      },
+      "isError": false
+    }
+  ],
+  "host": "Blockbench 5.2.2",
+  "gui_used": false,
+  "plugin_sha256": "4f3a11347cf4825975ad915f236c20b5f9f15c8b475c1784857edc222a5ce561",
+  "checks": {
+    "geometry_coordinates_uv_and_hierarchy": true,
+    "animation_selection_and_coordinate_conversion": true,
+    "step_pre_post_and_hold": true,
+    "png_exact_bytes": true,
+    "overwrite_protection": true,
+    "outside_workspace_rejected": true,
+    "missing_animation_rejected": true,
+    "project_and_animation_unchanged_by_exports": true,
+    "snapping_collision_rejected_without_file_or_frame_change": true
+  }
+}

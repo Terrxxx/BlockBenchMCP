@@ -5,6 +5,9 @@ import type { BridgeServer } from './bridge.js';
 import type { Workspace } from '../shared/workspace.js';
 
 const descriptions: Record<Command, string> = {
+  export_bedrock_model: 'Export active managed Bedrock geometry through the official codec to a workspace-relative .geo.json. Omits visible bounds; honors native export flags. Does not save or dirty the project. Overwrite replaces the whole file.',
+  export_bedrock_animations: 'Export 1–128 selected numeric bone animations through the official codec to one workspace-relative .animation.json. Official snapping applies; collisions are rejected before writing. No IK, effects or controllers. Overwrite replaces the whole file.',
+  export_texture_png: 'Export an internal static PNG atlas by texture_id to a workspace-relative .png using the official image writer. Does not relink or mark the source texture as saved. Overwrite replaces the whole file.',
   create_animation: 'Create an undoable numeric Bedrock animation clip. Name animation.namespace.name; length in seconds; loop once/loop/hold. Does not write an external animation file.',
   update_animation: 'Update animation name, length, loop or snapping as one Undo step. Length must include every existing keyframe.',
   set_keyframes: 'Upsert 1–256 numeric bone transform keyframes, one Undo batch. Key is bone_id/channel/exact time in seconds. Existing UUIDs preserved. No time snapping, Molang or effects. Selects target animation and prepares timeline tracks.',
@@ -24,14 +27,14 @@ const descriptions: Record<Command, string> = {
 };
 
 export function createMcpServer(bridge: BridgeServer, workspace: Workspace): McpServer {
-  const server = new McpServer({ name: 'blockbench-ai-mcp', version: '0.3.0', title: 'Blockbench AI MCP' }, {
+  const server = new McpServer({ name: 'blockbench-ai-mcp', version: '0.4.0', title: 'Blockbench AI MCP' }, {
     instructions: 'Connect the desktop plugin to the same workspace. Create a Bedrock project, retain its project UUID, then batch cubes and save relative .bbmodel paths. Never automatically retry mutations after timeout/disconnect: inspect get_project_state first. Only plugin-created projects in the active connection session are mutable. No arbitrary code or filesystem tools are available.',
   });
   function register(command: Command): void {
     server.registerTool<typeof outputSchemas[Command], typeof inputSchemas[Command]>(command, {
       description: descriptions[command], inputSchema: inputSchemas[command], outputSchema: outputSchemas[command],
       annotations: {
-        readOnlyHint: isReadOnlyCommand(command), destructiveHint: command === 'save_project',
+        readOnlyHint: isReadOnlyCommand(command), destructiveHint: command === 'save_project' || command.startsWith('export_'),
         idempotentHint: isReadOnlyCommand(command), openWorldHint: false,
       },
     }, async (raw: unknown, context: ServerContext): Promise<CallToolResult> => {
@@ -42,6 +45,11 @@ export function createMcpServer(bridge: BridgeServer, workspace: Workspace): Mcp
           workspace.saveTarget(save.path, save.overwrite);
         }
         if (command === 'import_texture') workspace.pngTarget(inputSchemas.import_texture.parse(input).path);
+        if (command === 'export_bedrock_model' || command === 'export_bedrock_animations' || command === 'export_texture_png') {
+          const output = inputSchemas[command].parse(input);
+          workspace.exportTarget(output.path, command === 'export_bedrock_model' ? 'bedrock_model'
+            : command === 'export_bedrock_animations' ? 'bedrock_animations' : 'texture_png', output.overwrite);
+        }
         const result = await bridge.call(command, input, context.mcpReq.signal);
         return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: result };
       } catch (error) {

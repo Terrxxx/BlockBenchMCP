@@ -2,6 +2,7 @@ import type * as fs from 'node:fs';
 import * as path from 'node:path';
 import { BridgeError } from './errors.js';
 import { inspectPng, MAX_PNG_BYTES, type PngInfo } from './png.js';
+import { exportSuffixes, type ExportKind } from './schemas/exports.js';
 
 function forbidden(message: string): never { throw new BridgeError('PATH_FORBIDDEN', message); }
 export type FileSystem = Pick<typeof fs, 'statSync' | 'readdirSync' | 'readFileSync' | 'writeFileSync' | 'existsSync'>
@@ -64,6 +65,13 @@ export class Workspace {
     if (path.extname(relative).toLowerCase() !== '.png') forbidden('Only workspace-relative PNG files can be imported.');
     const target = this.resolve(relative);
     if (this.fs.statSync(target).size > MAX_PNG_BYTES) throw new BridgeError('TEXTURE_TOO_LARGE', 'PNG exceeds the 8 MiB limit.');
+    return target;
+  }
+
+  exportTarget(relative: string, kind: ExportKind, overwrite: boolean): string {
+    if (!relative.toLowerCase().endsWith(exportSuffixes[kind])) forbidden('Incorrect resource export suffix.');
+    const target = this.resolve(relative, true);
+    if (this.fs.existsSync(target) && !overwrite) throw new BridgeError('FILE_EXISTS', 'Target exists. Choose a new path or explicitly set overwrite: true.');
     return target;
   }
 

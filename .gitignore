@@ -7,3 +7,4 @@ dist/
 coverage/
 .blockbench-ai-mcp.json
 *.bbmodel
+models/mcp_export_*

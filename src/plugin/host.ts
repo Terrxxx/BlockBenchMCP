@@ -2,6 +2,7 @@ import type { CubeInput, ToolInput, Vector3 } from '../shared/protocol.js';
 import type { BoneInput } from '../shared/schemas/bones.js';
 import type { PngInfo } from '../shared/png.js';
 import type { AnimationHandle, AnimationHost, KeyframeHandle } from './animation-host.js';
+import type { ExportHost } from './export-host.js';
 
 /** Narrow, typed seam around the official host API; no dynamically named calls. */
 export interface ProjectHandle {
@@ -31,7 +32,7 @@ export interface CubeHandle {
   faces: Record<string, { texture: string | false | null | undefined }>;
 }
 export interface TextureHandle { uuid: string; name: string; width: number; height: number; internal: boolean }
-export interface BlockbenchHost extends AnimationHost {
+export interface BlockbenchHost extends AnimationHost, ExportHost {
   readonly version: string;
   readonly desktop: boolean;
   getProject(): ProjectHandle | null;

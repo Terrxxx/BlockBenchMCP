@@ -1,15 +1,16 @@
 # Blockbench AI MCP
 
-通过本机 stdio MCP Server 与 Blockbench 桌面插件，操作 **Minecraft Bedrock Entity** 工程。v0.3.0 提供十六个工具：工程、批量方块、骨骼层级、PNG 图集、Box UV、骨骼动画和官方 `.bbmodel` 保存。
+通过本机 stdio MCP Server 与 Blockbench 桌面插件，操作 **Minecraft Bedrock Entity** 工程。v0.4.0 提供十九个工具：工程、批量方块、骨骼层级、PNG 图集、Box UV、骨骼动画、官方 `.bbmodel` 保存及 Bedrock 资源文件导出。
 
-第三阶段加入数值骨骼动画片段、批量关键帧与定点预览；像素绘制、贴图生成、骨骼删除、Molang、动画控制器、渲染及资源包导出仍属于后续阶段。`save_project` 保存可继续编辑的 Blockbench 工程，不生成 Bedrock 资源包。
+第三阶段加入数值骨骼动画片段、批量关键帧与定点预览；像素绘制、贴图生成、骨骼删除、Molang、动画控制器、渲染及完整资源包组装仍属于后续阶段。`save_project` 保存可继续编辑的 Blockbench 工程，不生成 Bedrock 资源包。
 
 ## 当前实现与验证
 
 - 官方 MCP TypeScript SDK v2：`@modelcontextprotocol/server@2.4.0`，客户端测试使用同版 client；版本与 lockfile 已固定。
 - Blockbench 官方 API 基线 **5.2.2 桌面版**；编译类型 `blockbench-types@5.2.1`。
 - 共享 Zod schema、严格 TypeScript、白名单协议、工作目录隔离、批量 Undo、超时/重连、结构化日志。
-- v0.3.0 **105 项自动化测试通过**，覆盖单元、真实 WebSocket、两种 MCP 协议模式的十六工具 stdio 闭环和插件 bundle。严格类型检查与构建通过。
+- v0.4.0 **125 项自动化测试通过**，覆盖单元、真实 WebSocket、两种 MCP 协议模式的十九工具 stdio 闭环和插件 bundle。严格类型检查与构建通过。
+- **第四阶段真实 Blockbench 5.2.2 导出验收通过**：模型 JSON、批量动画 JSON、PNG、覆盖与路径保护、吸附冲突拒绝、工程状态保持均已核对；见[第四阶段验证记录](docs/phase-four-verification.md)。
 - **第三阶段真实 Blockbench 5.2.2 验收通过**：官方 SDK 客户端调用六个动画工具，三通道关键帧、5 次 Undo/Redo、保存与重开一致；修复动画刷新和重建轨道的 Redo 问题。见[第三阶段验证记录](docs/phase-three-verification.md)。
 - **2026-11-13 真实 Blockbench 5.2.2 桌面验收通过**：两批共 6 个方块、Undo/Redo、官方保存、关闭后重新打开及错误保护。见[验收记录](docs/verification.md)和[复现步骤](docs/manual-smoke-test.md)。
 - **2026-11-13 Codex 原生 MCP 闭环通过**：当前聊天直接调用四个工具，新建 Bedrock 工程、一次创建 6 个方块、查询核对、保存并读取文件复核；本轮未使用 Computer Use。见[原生调用验收](docs/codex-direct-verification.md)。
@@ -70,7 +71,7 @@ args = ["D:/Desktop/BlockBenchMCP/dist/server/index.js", "--workspace", "D:/Desk
 cwd = "D:/Desktop/BlockBenchMCP"
 startup_timeout_sec = 15
 tool_timeout_sec = 30
-enabled_tools = ["create_project", "get_project_state", "create_cubes", "save_project", "create_bones", "update_bones", "reparent_cubes", "import_texture", "assign_texture", "set_cube_uv", "create_animation", "update_animation", "set_keyframes", "delete_keyframes", "get_animation_state", "preview_animation"]
+enabled_tools = ["create_project", "get_project_state", "create_cubes", "save_project", "create_bones", "update_bones", "reparent_cubes", "import_texture", "assign_texture", "set_cube_uv", "create_animation", "update_animation", "set_keyframes", "delete_keyframes", "get_animation_state", "preview_animation", "export_bedrock_model", "export_bedrock_animations", "export_texture_png"]
 ```
 
 请根据实际安装位置调整路径。若 Codex 找不到 `node`，将 `command` 改为 `Get-Command node` 返回的完整路径。`--workspace` 必须是绝对路径；工具调用不能改变它。`tool_timeout_sec` 应大于连接配置的 `timeout_ms / 1000`。
@@ -85,9 +86,9 @@ codex mcp get blockbench_ai --json
 
 配置后在 Codex 中重启该 MCP Server；如果当前聊天仍看不到工具，完全退出并重新启动 Codex 桌面应用后再检查。Codex 会启动进程，不需要额外手动运行 `npm start`。避免同时启动独立 smoke/另一个 Codex 实例占用同一个端口。MCP 初始化不要求插件已连接；未连接时调用工具返回 `NOT_CONNECTED`。Codex 中启用 `blockbench_ai` 与 Blockbench 插件执行 Connect 是两个步骤；工具出现后仍需完成上述插件连接。
 
-## 升级到 v0.3.0
+## 升级到 v0.4.0
 
-构建后重载 Blockbench 中从文件加载的插件，并重启 Codex 的 `blockbench_ai` 服务，再在 Tools 中 Connect。本地桥接协议升级到 **v3**，要求插件 **0.3.0**；旧插件与新 Server 会拒绝握手。现有工作目录配置与密钥继续使用，不需要重新 setup。若原 Codex 配置设置了旧版 `enabled_tools`，更新为上面的十六项；没设置此白名单时无需添加它。
+构建后重载 Blockbench 中从文件加载的插件，并重启 Codex 的 `blockbench_ai` 服务，再在 Tools 中 Connect。本地桥接协议升级到 **v4**，要求插件 **0.4.0**；旧插件与新 Server 会拒绝握手。现有工作目录配置与密钥继续使用，不需要重新 setup。若原 Codex 配置设置了旧版 `enabled_tools`，更新为上面的十九项；没设置此白名单时无需添加它。
 
 插件重载会开始新的管理会话，已有标签可读取但不能修改；请用 `create_project` 新建测试工程。第三阶段[手动冒烟步骤](docs/phase-three-smoke-test.md)覆盖完整动画闭环。本阶段已按用户授权使用正常 GUI 自动化验收。新增工具列表由客户端缓存时，需要完全重启 Codex；独立 SDK 验收不代表当前聊天已经热加载新工具。
 
@@ -205,7 +206,33 @@ npm run smoke -- --workspace 'D:\Desktop\BlockBenchMCP'
 
 设置/删除关键帧会选择目标片段并把所需轨道放入时间线。每批使用一个原生 Undo；先准备轨道再共同登记 animations/keyframes，确保从零动画重做时也能恢复。定点预览的 `playing:false` 表示时间线暂停，动画列表的播放标记表示该片段参与当前姿态计算。
 
-读取不计算 Molang，原生数值字符串原样返回；`editable:false` 表示包含本阶段不支持的表达式、效果或插值。预览/关键帧操作要求整个工程没有动画控制器和含表达式或效果的片段，因为暂停与选择动作也会触发宿主预览。重开的工程可以查询，不能直接修改。动画随官方 bbmodel 保存，尚不单独导出 Bedrock animation JSON；界面中的 “Unsaved” 动画文件分组不代表 bbmodel 没有保存。
+读取不计算 Molang，原生数值字符串原样返回；`editable:false` 表示包含本阶段不支持的表达式、效果或插值。预览/关键帧操作要求整个工程没有动画控制器和含表达式或效果的片段，因为暂停与选择动作也会触发宿主预览。重开的工程可以查询，不能直接修改。动画随官方 bbmodel 保存，v0.4.0 可通过下方专用工具导出 Bedrock animation JSON；界面中的 “Unsaved” 动画文件分组不代表 bbmodel 没有保存。
+
+## Bedrock 资源导出
+
+v0.4.0 新增三个文件导出工具，设计依据见[第四阶段架构](docs/phase-four-architecture.md)，[验收状态](docs/phase-four-verification.md)与[复现步骤](docs/phase-four-smoke-test.md)单独记录。
+
+| 工具 | 参数与行为 |
+| --- | --- |
+| `export_bedrock_model` | `project_id,path,overwrite?`；path 必须以 `.geo.json` 结尾，调用官方 Bedrock codec |
+| `export_bedrock_animations` | 上述参数及 `animation_ids`（1–128 个不同 ID）；path 以 `.animation.json` 结尾；选定数值动画编译到同一文件 |
+| `export_texture_png` | `project_id,texture_id,path,overwrite?`；path 以 `.png` 结尾，导出内置静态 PNG |
+
+全部要求本会话托管的活动 Bedrock 工程；只写授权工作目录，父目录须存在，默认不覆盖，`overwrite:true` 表示替换整个目标文件。每个资源最大 8 MiB；PNG 最大 4096×4096。返回相对 path、bytes、kind、warnings，写入后核对实际内容，不传回大段文件内容。
+
+导出不添加 Undo、不设置工程、动画或贴图为已保存，也不修改源资源路径。`save_project` 仍负责 `.bbmodel` 保存。这三个工具产生可供资源包使用的文件，尚不生成 manifest/client_entity 或可安装资源包。
+
+模型沿用官方 export 标志及“导出空骨骼”设置；省略可见边界以避免当前动画姿态影响导出并改变工程。动画沿用官方坐标转换、step pre/post 表示、snapping 时间吸附及长度四位小数规则；吸附冲突或越界会在写入前拒绝。第三阶段存储的精确时间保持不变。暂不支持表达式、IK、控制器和效果轨道。
+
+三个工具分别写一个文件，没有跨文件事务。写入异常返回 `EXPORT_FAILED`；`outcome_unknown:true` 时目标可能部分写入，须先核对文件，不能自动重试。编译或预检失败不会开始写入。覆盖不会合并原 JSON 中的其他模型或动画。
+
+独立真实验收（先停止同端口 Codex MCP）：
+
+```powershell
+npm run smoke:exports -- --workspace 'D:\Desktop\BlockBenchMCP'
+```
+
+脚本等待插件连接，新建测试工程、导出三种文件，核对坐标、UV、动画插值、PNG 内容、覆盖保护和导出前后状态。生成文件仅留在 `models/mcp_export_*`，被 Git 忽略。不自动重试修改；失败时保留现场。
 
 ## 项目结构
 
@@ -242,4 +269,4 @@ models/         示例模型保存目录
 
 ## 后续阶段
 
-在第三阶段验收后，再分别设计贴图绘制、高级动画、渲染与资源导出模块；每次扩展都需要专用输入 schema、官方 API 调研、Undo 策略、目录边界与对应验证，不添加通用 `eval` 或 shell 工具。
+第四阶段完成资源文件导出后，再分别设计贴图绘制、高级动画、渲染与完整资源包组装模块；每次扩展都需要专用输入 schema、官方 API 调研、Undo 策略、目录边界与对应验证，不添加通用 `eval` 或 shell 工具。
