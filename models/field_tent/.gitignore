@@ -1,0 +1,10 @@
+/*
+!/.gitignore
+!/build.mjs
+!/README.md
+!/verification.json
+!/final/
+/final/*
+!/final/field_tent_atlas.png
+!/final/ranger_field_tent.geo.json
+!/final/ranger_field_tent.animation.json

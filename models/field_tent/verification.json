@@ -1,0 +1,66 @@
+{
+  "date_local": "2026-11-13",
+  "in_game_tested": false,
+  "paginated_state_and_texture_binding_checked": true,
+  "texture_count": 1,
+  "bone_count": 19,
+  "gui_undo_redo_and_reopen_tested_this_asset": false,
+  "host": "Blockbench 5.2.2",
+  "cube_count": 702,
+  "files": [
+    {
+      "bytes": 2422532,
+      "sha256": "4e7df4ea8321c82cf7e367c72c6128abaa7a8369a097dc445ec09e9ad253f831",
+      "file": "ranger_field_tent.bbmodel"
+    },
+    {
+      "bytes": 249620,
+      "sha256": "bd28a115165190e0745a2d30f3e3c3016098815ff8ce0ad294c2e582c971a9f0",
+      "file": "ranger_field_tent.geo.json"
+    },
+    {
+      "bytes": 440,
+      "sha256": "c9ee519015760c6fbdf2be952261da0eaeb7aeee25642bac120f8f551c9a2f2c",
+      "file": "ranger_field_tent.animation.json"
+    },
+    {
+      "bytes": 1492883,
+      "sha256": "259952a1b1ba859e2809b115c7560661fde82dd2488ad09322016c84e0b5e074",
+      "file": "field_tent_atlas.png"
+    },
+    {
+      "bytes": 266846,
+      "sha256": "ca9f6ae9e5e998bc431cc2df612e0f59344ed61321ad1e2fbe6af10ff01c183a",
+      "file": "exterior.png"
+    },
+    {
+      "bytes": 464649,
+      "sha256": "30738ba314a178c0f8d58087c5872f759676c22c40e2f0ba9f72b15950fa547e",
+      "file": "interior.png"
+    },
+    {
+      "bytes": 314391,
+      "sha256": "bf14e07f0ee80ceb8f6b77a3f406f3fb9258dfa8a24fedb1304cb7376c713702",
+      "file": "cutaway.png"
+    },
+    {
+      "bytes": 89491,
+      "sha256": "0bdcc91fa8cec0b842f7ea4e9debb1c94c49840ea478ec025e649f6ce8d96ba2",
+      "file": "front.png"
+    },
+    {
+      "bytes": 87066,
+      "sha256": "44680c368b930dd3efbcbe702d873d0c4235674cf392ba0ba6484e1020fe23c8",
+      "file": "back.png"
+    }
+  ],
+  "timezone": "America/Chicago",
+  "native_save": true,
+  "computer_use": false,
+  "visual_checks": [
+    "exterior",
+    "interior",
+    "cutaway"
+  ],
+  "mcp_version": "0.5.0"
+}

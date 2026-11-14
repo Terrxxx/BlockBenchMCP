@@ -6,6 +6,8 @@
 
 ## 当前实现与验证
 
+- 实际建模案例：[参考图野外指挥帐篷](models/field_tent/README.md)，通过现有 MCP 创建 702 个方块、19 个骨骼分组及完整内饰，保存工程、导出资源并渲染预览。
+
 - 官方 MCP TypeScript SDK v2：`@modelcontextprotocol/server@2.4.0`，客户端测试使用同版 client；版本与 lockfile 已固定。
 - Blockbench 官方 API 基线 **5.2.2 桌面版**；编译类型 `blockbench-types@5.2.1`。
 - 共享 Zod schema、严格 TypeScript、白名单协议、工作目录隔离、批量 Undo、超时/重连、结构化日志。
