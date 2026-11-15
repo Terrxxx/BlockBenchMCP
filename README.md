@@ -40,7 +40,7 @@ flowchart LR
 | --- | --- |
 | Node.js | 推荐 24；支持 `^22.12.0 \|\| ^24.0.0 \|\| >=26.0.0` |
 | Blockbench | 5.2.2+ 桌面版，主版本 5；不支持 Web 版 |
-| MCP 客户端 | 支持 stdio，例如 Codex |
+| MCP 客户端 | 支持 stdio，例如 Codex、DeepSeek Harness 桌面版 |
 | 工程格式 | Minecraft Bedrock Entity |
 
 已在 Windows、Node 24.14.0、Blockbench 5.2.2 上验证；其他桌面操作系统尚未完成真实宿主验收。
@@ -64,6 +64,8 @@ npm run setup -- --workspace (Get-Location).Path
 
 ### 3. 配置 MCP 客户端
 
+#### Codex
+
 在 Codex 的 `~/.codex/config.toml` 中加入以下配置，**将所有 `C:/path/to/BlockBenchMCP` 替换为本机仓库的绝对路径**：
 
 ```toml
@@ -78,6 +80,46 @@ tool_timeout_sec = 30
 如果客户端找不到 `node`，将 `command` 改为 Node 可执行文件的绝对路径。其他 MCP 客户端使用相同的命令和参数配置 stdio 服务。完整的工具白名单示例见 [codex-config.toml](examples/codex-config.toml)。
 
 重新启动客户端的 MCP 服务。客户端会启动 Server，无需再单独运行 `npm start`；v0.7.1 起，同一工作目录的多个 stdio 会话会自动复用同一端口和插件。
+
+#### DeepSeek Harness 桌面版
+
+先完成上面的安装、构建与初始化，再打开 Harness 的 **Settings / 设置**，找到 MCP 服务器配置并新增本地服务。官方桌面版通过内置 MCP manager 管理这些服务，无需为本项目另写 Harness 插件。不同版本的界面名称可能不同，按下表对应字段填写：
+
+| 配置项 | 填写内容 |
+| --- | --- |
+| 服务名称 | `blockbench_ai` |
+| 传输方式（`transport`） | `stdio` |
+| 命令（`command`） | `node`，也可填写 Node 可执行文件的绝对路径 |
+| 参数（`args`） | 依次填写下面的三个参数，每项为独立参数 |
+| 工作目录（`cwd`） | `C:/path/to/BlockBenchMCP` |
+| 启用（`enabled`） | 开启 |
+| 启动超时（`startupTimeoutMs`，如可设置） | `30000`，单位为毫秒 |
+| 工具超时（`toolCallTimeoutMs`，如可设置） | `60000`，单位为毫秒 |
+
+参数数组如下，**将两处示例路径和上表中的工作目录替换为本机绝对路径**；若界面逐项添加参数，请分别添加三项，不要把整段命令填进 `command`：
+
+```json
+[
+  "C:/path/to/BlockBenchMCP/dist/server/index.js",
+  "--workspace",
+  "C:/path/to/BlockBenchMCP"
+]
+```
+
+Windows 下若提示找不到 `node`，可在 PowerShell 执行 `(Get-Command node).Source` 获取路径，再将结果填入命令字段。路径包含空格时，单独的命令和参数字段无需额外包裹引号。
+
+保存并启用服务后，继续完成第 4 步，在 Blockbench 插件中连接**同一个工作目录**。回到 Harness 对话，先做只读检查：
+
+> 调用 blockbench_ai 的 list_projects，列出当前工程，不修改任何模型。
+
+当前版本应发现 29 个工具；Harness 中的工具名带有 `mcp__blockbench_ai__` 前缀。空工程列表也是正常结果，表示调用成功但尚未打开工程。之后可按第 5 步验证创建、批量建模、查询与保存。
+
+- **不要填写 WebSocket 地址**：`127.0.0.1:30031` 是服务端与 Blockbench 插件的内部桥接端口，不是 HTTP MCP 地址；这里必须选择 `stdio`。
+- **工具已出现但返回 `NOT_CONNECTED`**：检查 Blockbench 插件是否已 Connect，以及双方工作目录是否一致。
+- **没有工具或启动失败**：检查构建产物、Node 路径和参数，查看 Harness 中该服务的错误；修正后重启该 MCP 服务，必要时重启 Harness。
+- **与 Codex 同时使用**：双方使用 v0.7.1 或更新的服务端、相同的 `--workspace`，即可复用桥接。不要复制连接密钥或重复初始化；编辑同一工程时仍需协调操作。
+
+本节依据 [Harness 官方 MCP manager 文档](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-manager/README.md)与 [MCP client 文档](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md)编写（2026-11-15 核对）。已核对配置与本项目 stdio 入口；**尚未完成 Harness 桌面版实机验收**。
 
 ### 4. 加载 Blockbench 插件
 
